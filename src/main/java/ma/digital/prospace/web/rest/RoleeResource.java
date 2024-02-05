@@ -5,16 +5,31 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import ma.digital.prospace.domain.Rolee;
-import ma.digital.prospace.repository.RoleeRepository;
-import ma.digital.prospace.service.RoleeService;
-import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import ma.digital.prospace.repository.RoleeRepository;
+import ma.digital.prospace.service.RoleeService;
+import ma.digital.prospace.service.dto.RoleeDTO;
+import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
 /**
@@ -48,12 +63,12 @@ public class RoleeResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/rolees")
-    public ResponseEntity<Rolee> createRolee(@RequestBody Rolee rolee) throws URISyntaxException {
-        log.debug("REST request to save Rolee : {}", rolee);
+    public ResponseEntity<RoleeDTO> createRolee(@RequestBody RoleeDTO rolee) throws URISyntaxException {
+        log.debug("REST request to save RoleeDTO : {}", rolee);
         if (rolee.getId() != null) {
             throw new BadRequestAlertException("A new rolee cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Rolee result = roleeService.save(rolee);
+        RoleeDTO result = roleeService.save(rolee);
         return ResponseEntity
             .created(new URI("/api/rolees/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -71,9 +86,9 @@ public class RoleeResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/rolees/{id}")
-    public ResponseEntity<Rolee> updateRolee(@PathVariable(value = "id", required = false) final Long id, @RequestBody Rolee rolee)
+    public ResponseEntity<RoleeDTO> updateRolee(@PathVariable(value = "id", required = false) final Long id, @RequestBody RoleeDTO rolee)
         throws URISyntaxException {
-        log.debug("REST request to update Rolee : {}, {}", id, rolee);
+        log.debug("REST request to update RoleeDTO : {}, {}", id, rolee);
         if (rolee.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -85,7 +100,7 @@ public class RoleeResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Rolee result = roleeService.update(rolee);
+        RoleeDTO result = roleeService.update(rolee);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, rolee.getId().toString()))
@@ -104,9 +119,9 @@ public class RoleeResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/rolees/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Rolee> partialUpdateRolee(@PathVariable(value = "id", required = false) final Long id, @RequestBody Rolee rolee)
+    public ResponseEntity<RoleeDTO> partialUpdateRolee(@PathVariable(value = "id", required = false) final Long id, @RequestBody RoleeDTO rolee)
         throws URISyntaxException {
-        log.debug("REST request to partial update Rolee partially : {}, {}", id, rolee);
+        log.debug("REST request to partial update RoleeDTO partially : {}, {}", id, rolee);
         if (rolee.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -118,7 +133,7 @@ public class RoleeResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Rolee> result = roleeService.partialUpdate(rolee);
+        Optional<RoleeDTO> result = roleeService.partialUpdate(rolee);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -129,12 +144,15 @@ public class RoleeResource {
     /**
      * {@code GET  /rolees} : get all the rolees.
      *
+     * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of rolees in body.
      */
     @GetMapping("/rolees")
-    public List<Rolee> getAllRolees() {
-        log.debug("REST request to get all Rolees");
-        return roleeService.findAll();
+    public ResponseEntity<List<RoleeDTO>> getAllRolees(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        log.debug("REST request to get a page of Rolees");
+        Page<RoleeDTO> page = roleeService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -144,9 +162,9 @@ public class RoleeResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the rolee, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/rolees/{id}")
-    public ResponseEntity<Rolee> getRolee(@PathVariable Long id) {
-        log.debug("REST request to get Rolee : {}", id);
-        Optional<Rolee> rolee = roleeService.findOne(id);
+    public ResponseEntity<RoleeDTO> getRolee(@PathVariable Long id) {
+        log.debug("REST request to get RoleeDTO : {}", id);
+        Optional<RoleeDTO> rolee = roleeService.findOne(id);
         return ResponseUtil.wrapOrNotFound(rolee);
     }
 
@@ -158,7 +176,7 @@ public class RoleeResource {
      */
     @DeleteMapping("/rolees/{id}")
     public ResponseEntity<Void> deleteRolee(@PathVariable Long id) {
-        log.debug("REST request to delete Rolee : {}", id);
+        log.debug("REST request to delete RoleeDTO : {}", id);
         roleeService.delete(id);
         return ResponseEntity
             .noContent()

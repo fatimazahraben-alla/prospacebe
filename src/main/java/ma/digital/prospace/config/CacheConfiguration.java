@@ -49,19 +49,17 @@ public class CacheConfiguration {
             createCache(cm, ma.digital.prospace.domain.Authority.class.getName());
             createCache(cm, ma.digital.prospace.domain.User.class.getName() + ".authorities");
             createCache(cm, ma.digital.prospace.domain.ComptePro.class.getName());
-            createCache(cm, ma.digital.prospace.domain.ComptePro.class.getName() + ".dAssociations");
-            createCache(cm, ma.digital.prospace.domain.ComptePro.class.getName() + ".iAssociations");
+            createCache(cm, ma.digital.prospace.domain.ComptePro.class.getName() + ".mandataires");
+            createCache(cm, ma.digital.prospace.domain.ComptePro.class.getName() + ".mandants");
+            createCache(cm, ma.digital.prospace.domain.ComptePro.class.getName() + ".associations");
+            createCache(cm, ma.digital.prospace.domain.Procuration.class.getName());
             createCache(cm, ma.digital.prospace.domain.Entreprise.class.getName());
+            createCache(cm, ma.digital.prospace.domain.Entreprise.class.getName() + ".gerants");
             createCache(cm, ma.digital.prospace.domain.Entreprise.class.getName() + ".associations");
             createCache(cm, ma.digital.prospace.domain.Rolee.class.getName());
             createCache(cm, ma.digital.prospace.domain.FournisseurService.class.getName());
             createCache(cm, ma.digital.prospace.domain.FournisseurService.class.getName() + ".roles");
             createCache(cm, ma.digital.prospace.domain.Association.class.getName());
-            createCache(cm, ma.digital.prospace.domain.ComptePro.class.getName() + ".mandataires");
-            createCache(cm, ma.digital.prospace.domain.ComptePro.class.getName() + ".mandants");
-            createCache(cm, ma.digital.prospace.domain.ComptePro.class.getName() + ".associations");
-            createCache(cm, ma.digital.prospace.domain.Entreprise.class.getName() + ".gerants");
-            createCache(cm, ma.digital.prospace.domain.Procuration.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

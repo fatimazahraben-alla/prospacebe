@@ -1,13 +1,19 @@
 package ma.digital.prospace.service;
 
-import java.util.List;
 import java.util.Optional;
-import ma.digital.prospace.domain.Rolee;
-import ma.digital.prospace.repository.RoleeRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import ma.digital.prospace.domain.Rolee;
+import ma.digital.prospace.repository.RoleeRepository;
+import ma.digital.prospace.service.mapper.RoleeMapper;
+import ma.digital.prospace.service.dto.*;
+
 
 /**
  * Service Implementation for managing {@link Rolee}.
@@ -20,8 +26,11 @@ public class RoleeService {
 
     private final RoleeRepository roleeRepository;
 
-    public RoleeService(RoleeRepository roleeRepository) {
+    private final RoleeMapper roleeMapper;
+
+    public RoleeService(RoleeRepository roleeRepository, RoleeMapper roleeMapper) {
         this.roleeRepository = roleeRepository;
+        this.roleeMapper = roleeMapper;
     }
 
     /**
@@ -30,9 +39,11 @@ public class RoleeService {
      * @param rolee the entity to save.
      * @return the persisted entity.
      */
-    public Rolee save(Rolee rolee) {
-        log.debug("Request to save Rolee : {}", rolee);
-        return roleeRepository.save(rolee);
+    public RoleeDTO save(RoleeDTO roleeDTO) {
+        log.debug("Request to save Rolee : {}", roleeDTO);
+        Rolee rolee = roleeMapper.toEntity(roleeDTO);
+        rolee = roleeRepository.save(rolee);
+        return roleeMapper.toDto(rolee);
     }
 
     /**
@@ -41,9 +52,11 @@ public class RoleeService {
      * @param rolee the entity to save.
      * @return the persisted entity.
      */
-    public Rolee update(Rolee rolee) {
-        log.debug("Request to update Rolee : {}", rolee);
-        return roleeRepository.save(rolee);
+    public RoleeDTO update(RoleeDTO roleeDTO) {
+        log.debug("Request to update Rolee : {}", roleeDTO);
+        Rolee rolee = roleeMapper.toEntity(roleeDTO);
+        rolee = roleeRepository.save(rolee);
+        return roleeMapper.toDto(rolee);
     }
 
     /**
@@ -52,33 +65,30 @@ public class RoleeService {
      * @param rolee the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Rolee> partialUpdate(Rolee rolee) {
+    public Optional<RoleeDTO> partialUpdate(RoleeDTO rolee) {
         log.debug("Request to partially update Rolee : {}", rolee);
 
         return roleeRepository
             .findById(rolee.getId())
             .map(existingRolee -> {
-                if (rolee.getNom() != null) {
-                    existingRolee.setNom(rolee.getNom());
-                }
-                if (rolee.getDescription() != null) {
-                    existingRolee.setDescription(rolee.getDescription());
-                }
+                roleeMapper.partialUpdate(existingRolee, rolee);
 
                 return existingRolee;
             })
-            .map(roleeRepository::save);
+            .map(roleeRepository::save)
+            .map(roleeMapper::toDto);
     }
 
     /**
      * Get all the rolees.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<Rolee> findAll() {
+    public Page<RoleeDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Rolees");
-        return roleeRepository.findAll();
+        return roleeRepository.findAll(pageable).map(roleeMapper::toDto);
     }
 
     /**
@@ -88,9 +98,9 @@ public class RoleeService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Rolee> findOne(Long id) {
+    public Optional<RoleeDTO> findOne(Long id) {
         log.debug("Request to get Rolee : {}", id);
-        return roleeRepository.findById(id);
+        return roleeRepository.findById(id).map(roleeMapper::toDto);
     }
 
     /**

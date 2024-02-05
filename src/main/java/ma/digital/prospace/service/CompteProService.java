@@ -1,13 +1,18 @@
 package ma.digital.prospace.service;
 
-import java.util.List;
 import java.util.Optional;
-import ma.digital.prospace.domain.ComptePro;
-import ma.digital.prospace.repository.CompteProRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import ma.digital.prospace.domain.ComptePro;
+import ma.digital.prospace.repository.CompteProRepository;
+import ma.digital.prospace.service.mapper.CompteProMapper;
+import ma.digital.prospace.service.dto.*;
 
 /**
  * Service Implementation for managing {@link ComptePro}.
@@ -20,8 +25,11 @@ public class CompteProService {
 
     private final CompteProRepository compteProRepository;
 
-    public CompteProService(CompteProRepository compteProRepository) {
+    private final CompteProMapper compteProMapper;
+
+    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper) {
         this.compteProRepository = compteProRepository;
+        this.compteProMapper = compteProMapper;
     }
 
     /**
@@ -30,9 +38,11 @@ public class CompteProService {
      * @param comptePro the entity to save.
      * @return the persisted entity.
      */
-    public ComptePro save(ComptePro comptePro) {
-        log.debug("Request to save ComptePro : {}", comptePro);
-        return compteProRepository.save(comptePro);
+    public CompteProDTO save(CompteProDTO compteProDTO) {
+        log.debug("Request to save ComptePro : {}", compteProDTO);
+        ComptePro comptePro = compteProMapper.toEntity(compteProDTO);
+        comptePro = compteProRepository.save(comptePro);
+        return compteProMapper.toDto(comptePro);
     }
 
     /**
@@ -41,9 +51,11 @@ public class CompteProService {
      * @param comptePro the entity to save.
      * @return the persisted entity.
      */
-    public ComptePro update(ComptePro comptePro) {
-        log.debug("Request to update ComptePro : {}", comptePro);
-        return compteProRepository.save(comptePro);
+    public CompteProDTO update(CompteProDTO compteProDTO) {
+        log.debug("Request to update ComptePro : {}", compteProDTO);
+        ComptePro comptePro = compteProMapper.toEntity(compteProDTO);
+        comptePro = compteProRepository.save(comptePro);
+        return compteProMapper.toDto(comptePro);
     }
 
     /**
@@ -52,63 +64,30 @@ public class CompteProService {
      * @param comptePro the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<ComptePro> partialUpdate(ComptePro comptePro) {
+    public Optional<CompteProDTO> partialUpdate(CompteProDTO comptePro) {
         log.debug("Request to partially update ComptePro : {}", comptePro);
 
         return compteProRepository
             .findById(comptePro.getId())
             .map(existingComptePro -> {
-                if (comptePro.getIdentifiant() != null) {
-                    existingComptePro.setIdentifiant(comptePro.getIdentifiant());
-                }
-                if (comptePro.getTypeIdentifiant() != null) {
-                    existingComptePro.setTypeIdentifiant(comptePro.getTypeIdentifiant());
-                }
-                if (comptePro.getNomAr() != null) {
-                    existingComptePro.setNomAr(comptePro.getNomAr());
-                }
-                if (comptePro.getNomFr() != null) {
-                    existingComptePro.setNomFr(comptePro.getNomFr());
-                }
-                if (comptePro.getPrenomAr() != null) {
-                    existingComptePro.setPrenomAr(comptePro.getPrenomAr());
-                }
-                if (comptePro.getPrenomFr() != null) {
-                    existingComptePro.setPrenomFr(comptePro.getPrenomFr());
-                }
-                if (comptePro.getAdresse() != null) {
-                    existingComptePro.setAdresse(comptePro.getAdresse());
-                }
-                if (comptePro.getPhoto() != null) {
-                    existingComptePro.setPhoto(comptePro.getPhoto());
-                }
-                if (comptePro.getPhotoContentType() != null) {
-                    existingComptePro.setPhotoContentType(comptePro.getPhotoContentType());
-                }
-                if (comptePro.getMail() != null) {
-                    existingComptePro.setMail(comptePro.getMail());
-                }
-                if (comptePro.getTelephone() != null) {
-                    existingComptePro.setTelephone(comptePro.getTelephone());
-                }
-                if (comptePro.getStatut() != null) {
-                    existingComptePro.setStatut(comptePro.getStatut());
-                }
+                compteProMapper.partialUpdate(existingComptePro, comptePro);
 
                 return existingComptePro;
             })
-            .map(compteProRepository::save);
+            .map(compteProRepository::save)
+            .map(compteProMapper::toDto);
     }
 
     /**
      * Get all the comptePros.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<ComptePro> findAll() {
+    public Page<CompteProDTO> findAll(Pageable pageable) {
         log.debug("Request to get all ComptePros");
-        return compteProRepository.findAll();
+        return compteProRepository.findAll(pageable).map(compteProMapper::toDto);
     }
 
     /**
@@ -118,9 +97,9 @@ public class CompteProService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<ComptePro> findOne(Long id) {
+    public Optional<CompteProDTO> findOne(Long id) {
         log.debug("Request to get ComptePro : {}", id);
-        return compteProRepository.findById(id);
+        return compteProRepository.findById(id).map(compteProMapper::toDto);
     }
 
     /**

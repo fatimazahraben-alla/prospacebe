@@ -5,18 +5,34 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import ma.digital.prospace.domain.ComptePro;
-import ma.digital.prospace.repository.CompteProRepository;
-import ma.digital.prospace.service.CompteProService;
-import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import ma.digital.prospace.repository.CompteProRepository;
+import ma.digital.prospace.service.CompteProService;
+import ma.digital.prospace.service.dto.CompteProDTO;
+import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
 /**
@@ -50,12 +66,12 @@ public class CompteProResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/compte-pros")
-    public ResponseEntity<ComptePro> createComptePro(@Valid @RequestBody ComptePro comptePro) throws URISyntaxException {
-        log.debug("REST request to save ComptePro : {}", comptePro);
+    public ResponseEntity<CompteProDTO> createComptePro(@Valid @RequestBody CompteProDTO comptePro) throws URISyntaxException {
+        log.debug("REST request to save CompteProDTO : {}", comptePro);
         if (comptePro.getId() != null) {
             throw new BadRequestAlertException("A new comptePro cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        ComptePro result = compteProService.save(comptePro);
+        CompteProDTO result = compteProService.save(comptePro);
         return ResponseEntity
             .created(new URI("/api/compte-pros/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,11 +89,11 @@ public class CompteProResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/compte-pros/{id}")
-    public ResponseEntity<ComptePro> updateComptePro(
+    public ResponseEntity<CompteProDTO> updateComptePro(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody ComptePro comptePro
+        @Valid @RequestBody CompteProDTO comptePro
     ) throws URISyntaxException {
-        log.debug("REST request to update ComptePro : {}, {}", id, comptePro);
+        log.debug("REST request to update CompteProDTO : {}, {}", id, comptePro);
         if (comptePro.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -89,7 +105,7 @@ public class CompteProResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        ComptePro result = compteProService.update(comptePro);
+        CompteProDTO result = compteProService.update(comptePro);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, comptePro.getId().toString()))
@@ -108,11 +124,11 @@ public class CompteProResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/compte-pros/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<ComptePro> partialUpdateComptePro(
+    public ResponseEntity<CompteProDTO> partialUpdateComptePro(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody ComptePro comptePro
+        @NotNull @RequestBody CompteProDTO comptePro
     ) throws URISyntaxException {
-        log.debug("REST request to partial update ComptePro partially : {}, {}", id, comptePro);
+        log.debug("REST request to partial update CompteProDTO partially : {}, {}", id, comptePro);
         if (comptePro.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -124,7 +140,7 @@ public class CompteProResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<ComptePro> result = compteProService.partialUpdate(comptePro);
+        Optional<CompteProDTO> result = compteProService.partialUpdate(comptePro);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -135,12 +151,15 @@ public class CompteProResource {
     /**
      * {@code GET  /compte-pros} : get all the comptePros.
      *
+     * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of comptePros in body.
      */
     @GetMapping("/compte-pros")
-    public List<ComptePro> getAllComptePros() {
-        log.debug("REST request to get all ComptePros");
-        return compteProService.findAll();
+    public ResponseEntity<List<CompteProDTO>> getAllComptePros(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        log.debug("REST request to get a page of ComptePros");
+        Page<CompteProDTO> page = compteProService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -150,9 +169,9 @@ public class CompteProResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the comptePro, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/compte-pros/{id}")
-    public ResponseEntity<ComptePro> getComptePro(@PathVariable Long id) {
-        log.debug("REST request to get ComptePro : {}", id);
-        Optional<ComptePro> comptePro = compteProService.findOne(id);
+    public ResponseEntity<CompteProDTO> getComptePro(@PathVariable Long id) {
+        log.debug("REST request to get CompteProDTO : {}", id);
+        Optional<CompteProDTO> comptePro = compteProService.findOne(id);
         return ResponseUtil.wrapOrNotFound(comptePro);
     }
 
@@ -164,7 +183,7 @@ public class CompteProResource {
      */
     @DeleteMapping("/compte-pros/{id}")
     public ResponseEntity<Void> deleteComptePro(@PathVariable Long id) {
-        log.debug("REST request to delete ComptePro : {}", id);
+        log.debug("REST request to delete CompteProDTO : {}", id);
         compteProService.delete(id);
         return ResponseEntity
             .noContent()

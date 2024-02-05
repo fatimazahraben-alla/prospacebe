@@ -1,6 +1,7 @@
 package ma.digital.prospace.service.dto;
 
 import java.io.Serializable;
+
 import ma.digital.prospace.domain.User;
 
 /**

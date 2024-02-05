@@ -1,11 +1,13 @@
 package ma.digital.prospace.service.dto;
 
-import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
-import ma.digital.prospace.config.Constants;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import ma.digital.prospace.domain.Authority;
 import ma.digital.prospace.domain.User;
 
@@ -19,7 +21,7 @@ public class AdminUserDTO implements Serializable {
     private String id;
 
     @NotBlank
-    @Pattern(regexp = Constants.LOGIN_REGEX)
+
     @Size(min = 1, max = 50)
     private String login;
 

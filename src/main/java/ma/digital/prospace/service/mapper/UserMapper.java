@@ -1,15 +1,21 @@
 package ma.digital.prospace.service.mapper;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
-import ma.digital.prospace.domain.Authority;
-import ma.digital.prospace.domain.User;
-import ma.digital.prospace.service.dto.AdminUserDTO;
-import ma.digital.prospace.service.dto.UserDTO;
+
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Service;
+
+import ma.digital.prospace.domain.Authority;
+import ma.digital.prospace.domain.User;
+import ma.digital.prospace.service.dto.AdminUserDTO;
+import ma.digital.prospace.service.dto.UserDTO;
 
 /**
  * Mapper for the entity {@link User} and its DTO called {@link UserDTO}.

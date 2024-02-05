@@ -1,15 +1,17 @@
 package ma.digital.prospace.web.rest;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import ma.digital.prospace.service.UserService;
-import ma.digital.prospace.service.dto.AdminUserDTO;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpServletRequest;
+import ma.digital.prospace.service.UserService;
+import ma.digital.prospace.service.dto.AdminUserDTO;
 
 /**
  * REST controller for managing the current user's account.

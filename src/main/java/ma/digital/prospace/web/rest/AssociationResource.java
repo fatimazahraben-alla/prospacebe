@@ -5,18 +5,34 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import ma.digital.prospace.domain.Association;
-import ma.digital.prospace.repository.AssociationRepository;
-import ma.digital.prospace.service.AssociationService;
-import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import ma.digital.prospace.repository.AssociationRepository;
+import ma.digital.prospace.service.AssociationService;
+import ma.digital.prospace.service.dto.AssociationDTO;
+import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
 /**
@@ -50,12 +66,12 @@ public class AssociationResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/associations")
-    public ResponseEntity<Association> createAssociation(@Valid @RequestBody Association association) throws URISyntaxException {
-        log.debug("REST request to save Association : {}", association);
+    public ResponseEntity<AssociationDTO> createAssociation(@Valid @RequestBody AssociationDTO association) throws URISyntaxException {
+        log.debug("REST request to save AssociationDTO: {}", association);
         if (association.getId() != null) {
             throw new BadRequestAlertException("A new association cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Association result = associationService.save(association);
+        AssociationDTO result = associationService.save(association);
         return ResponseEntity
             .created(new URI("/api/associations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,11 +89,11 @@ public class AssociationResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/associations/{id}")
-    public ResponseEntity<Association> updateAssociation(
+    public ResponseEntity<AssociationDTO> updateAssociation(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Association association
+        @Valid @RequestBody AssociationDTO association
     ) throws URISyntaxException {
-        log.debug("REST request to update Association : {}, {}", id, association);
+        log.debug("REST request to update AssociationDTO: {}, {}", id, association);
         if (association.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -89,7 +105,7 @@ public class AssociationResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Association result = associationService.update(association);
+        AssociationDTO result = associationService.update(association);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, association.getId().toString()))
@@ -108,11 +124,11 @@ public class AssociationResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/associations/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Association> partialUpdateAssociation(
+    public ResponseEntity<AssociationDTO> partialUpdateAssociation(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Association association
+        @NotNull @RequestBody AssociationDTO association
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Association partially : {}, {}", id, association);
+        log.debug("REST request to partial update AssociationDTOpartially : {}, {}", id, association);
         if (association.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -124,7 +140,7 @@ public class AssociationResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Association> result = associationService.partialUpdate(association);
+        Optional<AssociationDTO> result = associationService.partialUpdate(association);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -135,12 +151,15 @@ public class AssociationResource {
     /**
      * {@code GET  /associations} : get all the associations.
      *
+     * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of associations in body.
      */
     @GetMapping("/associations")
-    public List<Association> getAllAssociations() {
-        log.debug("REST request to get all Associations");
-        return associationService.findAll();
+    public ResponseEntity<List<AssociationDTO>> getAllAssociations(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        log.debug("REST request to get a page of Associations");
+        Page<AssociationDTO> page = associationService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -150,9 +169,9 @@ public class AssociationResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the association, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/associations/{id}")
-    public ResponseEntity<Association> getAssociation(@PathVariable Long id) {
-        log.debug("REST request to get Association : {}", id);
-        Optional<Association> association = associationService.findOne(id);
+    public ResponseEntity<AssociationDTO> getAssociation(@PathVariable Long id) {
+        log.debug("REST request to get AssociationDTO: {}", id);
+        Optional<AssociationDTO> association = associationService.findOne(id);
         return ResponseUtil.wrapOrNotFound(association);
     }
 
@@ -164,7 +183,7 @@ public class AssociationResource {
      */
     @DeleteMapping("/associations/{id}")
     public ResponseEntity<Void> deleteAssociation(@PathVariable Long id) {
-        log.debug("REST request to delete Association : {}", id);
+        log.debug("REST request to delete AssociationDTO: {}", id);
         associationService.delete(id);
         return ResponseEntity
             .noContent()

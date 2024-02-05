@@ -1,16 +1,13 @@
 package ma.digital.prospace.service;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import ma.digital.prospace.config.Constants;
-import ma.digital.prospace.domain.Authority;
-import ma.digital.prospace.domain.User;
-import ma.digital.prospace.repository.AuthorityRepository;
-import ma.digital.prospace.repository.UserRepository;
-import ma.digital.prospace.security.SecurityUtils;
-import ma.digital.prospace.service.dto.AdminUserDTO;
-import ma.digital.prospace.service.dto.UserDTO;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
@@ -22,6 +19,15 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import ma.digital.prospace.config.Constants;
+import ma.digital.prospace.domain.Authority;
+import ma.digital.prospace.domain.User;
+import ma.digital.prospace.repository.AuthorityRepository;
+import ma.digital.prospace.repository.UserRepository;
+import ma.digital.prospace.security.SecurityUtils;
+import ma.digital.prospace.service.dto.AdminUserDTO;
+import ma.digital.prospace.service.dto.UserDTO;
 
 /**
  * Service class for managing users.

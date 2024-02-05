@@ -289,7 +289,7 @@
             <artifactId>mysql</artifactId>
             <scope>test</scope>
         </dependency>
-             <dependency>
+       <dependency>
 	<groupId>org.springdoc</groupId>
 	<artifactId>springdoc-openapi-common</artifactId>
 	<version>1.7.0</version>

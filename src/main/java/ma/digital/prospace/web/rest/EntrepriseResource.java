@@ -5,16 +5,31 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import ma.digital.prospace.domain.Entreprise;
-import ma.digital.prospace.repository.EntrepriseRepository;
-import ma.digital.prospace.service.EntrepriseService;
-import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import ma.digital.prospace.repository.EntrepriseRepository;
+import ma.digital.prospace.service.EntrepriseService;
+import ma.digital.prospace.service.dto.EntrepriseDTO;
+import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
 /**
@@ -48,12 +63,12 @@ public class EntrepriseResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/entreprises")
-    public ResponseEntity<Entreprise> createEntreprise(@RequestBody Entreprise entreprise) throws URISyntaxException {
-        log.debug("REST request to save Entreprise : {}", entreprise);
+    public ResponseEntity<EntrepriseDTO> createEntreprise(@RequestBody EntrepriseDTO entreprise) throws URISyntaxException {
+        log.debug("REST request to save EntrepriseDTO : {}", entreprise);
         if (entreprise.getId() != null) {
             throw new BadRequestAlertException("A new entreprise cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Entreprise result = entrepriseService.save(entreprise);
+        EntrepriseDTO result = entrepriseService.save(entreprise);
         return ResponseEntity
             .created(new URI("/api/entreprises/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -71,11 +86,11 @@ public class EntrepriseResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/entreprises/{id}")
-    public ResponseEntity<Entreprise> updateEntreprise(
+    public ResponseEntity<EntrepriseDTO> updateEntreprise(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Entreprise entreprise
+        @RequestBody EntrepriseDTO entreprise
     ) throws URISyntaxException {
-        log.debug("REST request to update Entreprise : {}, {}", id, entreprise);
+        log.debug("REST request to update EntrepriseDTO : {}, {}", id, entreprise);
         if (entreprise.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -87,7 +102,7 @@ public class EntrepriseResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Entreprise result = entrepriseService.update(entreprise);
+        EntrepriseDTO result = entrepriseService.update(entreprise);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, entreprise.getId().toString()))
@@ -106,11 +121,11 @@ public class EntrepriseResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/entreprises/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Entreprise> partialUpdateEntreprise(
+    public ResponseEntity<EntrepriseDTO> partialUpdateEntreprise(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Entreprise entreprise
+        @RequestBody EntrepriseDTO entreprise
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Entreprise partially : {}, {}", id, entreprise);
+        log.debug("REST request to partial update EntrepriseDTO partially : {}, {}", id, entreprise);
         if (entreprise.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -122,7 +137,7 @@ public class EntrepriseResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Entreprise> result = entrepriseService.partialUpdate(entreprise);
+        Optional<EntrepriseDTO> result = entrepriseService.partialUpdate(entreprise);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -133,12 +148,15 @@ public class EntrepriseResource {
     /**
      * {@code GET  /entreprises} : get all the entreprises.
      *
+     * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of entreprises in body.
      */
     @GetMapping("/entreprises")
-    public List<Entreprise> getAllEntreprises() {
-        log.debug("REST request to get all Entreprises");
-        return entrepriseService.findAll();
+    public ResponseEntity<List<EntrepriseDTO>> getAllEntreprises(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        log.debug("REST request to get a page of Entreprises");
+        Page<EntrepriseDTO> page = entrepriseService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -148,9 +166,9 @@ public class EntrepriseResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the entreprise, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/entreprises/{id}")
-    public ResponseEntity<Entreprise> getEntreprise(@PathVariable Long id) {
-        log.debug("REST request to get Entreprise : {}", id);
-        Optional<Entreprise> entreprise = entrepriseService.findOne(id);
+    public ResponseEntity<EntrepriseDTO> getEntreprise(@PathVariable Long id) {
+        log.debug("REST request to get EntrepriseDTO : {}", id);
+        Optional<EntrepriseDTO> entreprise = entrepriseService.findOne(id);
         return ResponseUtil.wrapOrNotFound(entreprise);
     }
 
@@ -162,7 +180,7 @@ public class EntrepriseResource {
      */
     @DeleteMapping("/entreprises/{id}")
     public ResponseEntity<Void> deleteEntreprise(@PathVariable Long id) {
-        log.debug("REST request to delete Entreprise : {}", id);
+        log.debug("REST request to delete EntrepriseDTO : {}", id);
         entrepriseService.delete(id);
         return ResponseEntity
             .noContent()

@@ -3,17 +3,20 @@ package ma.digital.prospace.service.dto;
 import java.io.Serializable;
 import java.util.Objects;
 
+
 /**
- * A DTO for the {@link ma.digital.prospace.domain.FournisseurServiceDTO} entity.
+ * A DTO for the {@link ma.digital.prospace.domain.Rolee} entity.
  */
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class FournisseurServiceDTO	 implements Serializable {
+public class RoleeDTO implements Serializable {
 
     private Long id;
 
     private String nom;
 
     private String description;
+
+    private FournisseurServiceDTO fs;
 
     public Long getId() {
         return id;
@@ -39,20 +42,28 @@ public class FournisseurServiceDTO	 implements Serializable {
         this.description = description;
     }
 
+    public FournisseurServiceDTO getFs() {
+        return fs;
+    }
+
+    public void setFs(FournisseurServiceDTO fs) {
+        this.fs = fs;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof FournisseurServiceDTO)) {
+        if (!(o instanceof RoleeDTO)) {
             return false;
         }
 
-        FournisseurServiceDTO fournisseurService = (FournisseurServiceDTO) o;
+        RoleeDTO rolee = (RoleeDTO) o;
         if (this.id == null) {
             return false;
         }
-        return Objects.equals(this.id, fournisseurService.id);
+        return Objects.equals(this.id, rolee.id);
     }
 
     @Override
@@ -63,11 +74,11 @@ public class FournisseurServiceDTO	 implements Serializable {
     // prettier-ignore
     @Override
     public String toString() {
-        return "FournisseurServiceDTO{" +
+        return "Rolee{" +
             "id=" + getId() +
             ", nom='" + getNom() + "'" +
             ", description='" + getDescription() + "'" +
+            ", fs=" + getFs() +
             "}";
     }
 }
-

@@ -1,13 +1,19 @@
 package ma.digital.prospace.service;
 
-import java.util.List;
 import java.util.Optional;
-import ma.digital.prospace.domain.Procuration;
-import ma.digital.prospace.repository.ProcurationRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import ma.digital.prospace.domain.Procuration;
+import ma.digital.prospace.repository.ProcurationRepository;
+import ma.digital.prospace.service.mapper.ProcurationMapper;
+import ma.digital.prospace.service.dto.*;
+
 
 /**
  * Service Implementation for managing {@link Procuration}.
@@ -20,8 +26,11 @@ public class ProcurationService {
 
     private final ProcurationRepository procurationRepository;
 
-    public ProcurationService(ProcurationRepository procurationRepository) {
+    private final ProcurationMapper procurationMapper;
+
+    public ProcurationService(ProcurationRepository procurationRepository, ProcurationMapper procurationMapper) {
         this.procurationRepository = procurationRepository;
+        this.procurationMapper = procurationMapper;
     }
 
     /**
@@ -30,9 +39,11 @@ public class ProcurationService {
      * @param procuration the entity to save.
      * @return the persisted entity.
      */
-    public Procuration save(Procuration procuration) {
-        log.debug("Request to save Procuration : {}", procuration);
-        return procurationRepository.save(procuration);
+    public ProcurationDTO save(ProcurationDTO procurationDTO) {
+        log.debug("Request to save Procuration : {}", procurationDTO);
+        Procuration procuration = procurationMapper.toEntity(procurationDTO);
+        procuration = procurationRepository.save(procuration);
+        return procurationMapper.toDto(procuration);
     }
 
     /**
@@ -41,9 +52,11 @@ public class ProcurationService {
      * @param procuration the entity to save.
      * @return the persisted entity.
      */
-    public Procuration update(Procuration procuration) {
-        log.debug("Request to update Procuration : {}", procuration);
-        return procurationRepository.save(procuration);
+    public ProcurationDTO update(ProcurationDTO procurationDTO) {
+        log.debug("Request to update Procuration : {}", procurationDTO);
+        Procuration procuration = procurationMapper.toEntity(procurationDTO);
+        procuration = procurationRepository.save(procuration);
+        return procurationMapper.toDto(procuration);
     }
 
     /**
@@ -52,33 +65,30 @@ public class ProcurationService {
      * @param procuration the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Procuration> partialUpdate(Procuration procuration) {
+    public Optional<ProcurationDTO> partialUpdate(ProcurationDTO procuration) {
         log.debug("Request to partially update Procuration : {}", procuration);
 
         return procurationRepository
             .findById(procuration.getId())
             .map(existingProcuration -> {
-                if (procuration.getDateEffet() != null) {
-                    existingProcuration.setDateEffet(procuration.getDateEffet());
-                }
-                if (procuration.getDateFin() != null) {
-                    existingProcuration.setDateFin(procuration.getDateFin());
-                }
+                procurationMapper.partialUpdate(existingProcuration, procuration);
 
                 return existingProcuration;
             })
-            .map(procurationRepository::save);
+            .map(procurationRepository::save)
+            .map(procurationMapper::toDto);
     }
 
     /**
      * Get all the procurations.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<Procuration> findAll() {
+    public Page<ProcurationDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Procurations");
-        return procurationRepository.findAll();
+        return procurationRepository.findAll(pageable).map(procurationMapper::toDto);
     }
 
     /**
@@ -88,9 +98,9 @@ public class ProcurationService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Procuration> findOne(Long id) {
+    public Optional<ProcurationDTO> findOne(Long id) {
         log.debug("Request to get Procuration : {}", id);
-        return procurationRepository.findById(id);
+        return procurationRepository.findById(id).map(procurationMapper::toDto);
     }
 
     /**

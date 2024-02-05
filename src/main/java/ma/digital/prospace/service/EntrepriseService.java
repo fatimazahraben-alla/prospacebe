@@ -1,13 +1,19 @@
 package ma.digital.prospace.service;
 
-import java.util.List;
 import java.util.Optional;
-import ma.digital.prospace.domain.Entreprise;
-import ma.digital.prospace.repository.EntrepriseRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import ma.digital.prospace.domain.Entreprise;
+import ma.digital.prospace.repository.EntrepriseRepository;
+import ma.digital.prospace.service.mapper.EntrepriseMapper;
+import ma.digital.prospace.service.dto.*;
+
 
 /**
  * Service Implementation for managing {@link Entreprise}.
@@ -20,8 +26,11 @@ public class EntrepriseService {
 
     private final EntrepriseRepository entrepriseRepository;
 
-    public EntrepriseService(EntrepriseRepository entrepriseRepository) {
+    private final EntrepriseMapper entrepriseMapper;
+
+    public EntrepriseService(EntrepriseRepository entrepriseRepository, EntrepriseMapper entrepriseMapper) {
         this.entrepriseRepository = entrepriseRepository;
+        this.entrepriseMapper = entrepriseMapper;
     }
 
     /**
@@ -30,9 +39,11 @@ public class EntrepriseService {
      * @param entreprise the entity to save.
      * @return the persisted entity.
      */
-    public Entreprise save(Entreprise entreprise) {
-        log.debug("Request to save Entreprise : {}", entreprise);
-        return entrepriseRepository.save(entreprise);
+    public EntrepriseDTO save(EntrepriseDTO entrepriseDTO) {
+        log.debug("Request to save Entreprise : {}", entrepriseDTO);
+        Entreprise entreprise = entrepriseMapper.toEntity(entrepriseDTO);
+        entreprise = entrepriseRepository.save(entreprise);
+        return entrepriseMapper.toDto(entreprise);
     }
 
     /**
@@ -41,9 +52,11 @@ public class EntrepriseService {
      * @param entreprise the entity to save.
      * @return the persisted entity.
      */
-    public Entreprise update(Entreprise entreprise) {
-        log.debug("Request to update Entreprise : {}", entreprise);
-        return entrepriseRepository.save(entreprise);
+    public EntrepriseDTO update(EntrepriseDTO entrepriseDTO) {
+        log.debug("Request to update Entreprise : {}", entrepriseDTO);
+        Entreprise entreprise = entrepriseMapper.toEntity(entrepriseDTO);
+        entreprise = entrepriseRepository.save(entreprise);
+        return entrepriseMapper.toDto(entreprise);
     }
 
     /**
@@ -52,54 +65,30 @@ public class EntrepriseService {
      * @param entreprise the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Entreprise> partialUpdate(Entreprise entreprise) {
+    public Optional<EntrepriseDTO> partialUpdate(EntrepriseDTO entreprise) {
         log.debug("Request to partially update Entreprise : {}", entreprise);
 
         return entrepriseRepository
             .findById(entreprise.getId())
             .map(existingEntreprise -> {
-                if (entreprise.getDenomination() != null) {
-                    existingEntreprise.setDenomination(entreprise.getDenomination());
-                }
-                if (entreprise.getStatutJuridique() != null) {
-                    existingEntreprise.setStatutJuridique(entreprise.getStatutJuridique());
-                }
-                if (entreprise.getTribunal() != null) {
-                    existingEntreprise.setTribunal(entreprise.getTribunal());
-                }
-                if (entreprise.getNumeroRC() != null) {
-                    existingEntreprise.setNumeroRC(entreprise.getNumeroRC());
-                }
-                if (entreprise.getIce() != null) {
-                    existingEntreprise.setIce(entreprise.getIce());
-                }
-                if (entreprise.getActivite() != null) {
-                    existingEntreprise.setActivite(entreprise.getActivite());
-                }
-                if (entreprise.getFormeJuridique() != null) {
-                    existingEntreprise.setFormeJuridique(entreprise.getFormeJuridique());
-                }
-                if (entreprise.getDateImmatriculation() != null) {
-                    existingEntreprise.setDateImmatriculation(entreprise.getDateImmatriculation());
-                }
-                if (entreprise.getEtat() != null) {
-                    existingEntreprise.setEtat(entreprise.getEtat());
-                }
+                entrepriseMapper.partialUpdate(existingEntreprise, entreprise);
 
                 return existingEntreprise;
             })
-            .map(entrepriseRepository::save);
+            .map(entrepriseRepository::save)
+            .map(entrepriseMapper::toDto);
     }
 
     /**
      * Get all the entreprises.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<Entreprise> findAll() {
+    public Page<EntrepriseDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Entreprises");
-        return entrepriseRepository.findAll();
+        return entrepriseRepository.findAll(pageable).map(entrepriseMapper::toDto);
     }
 
     /**
@@ -109,9 +98,9 @@ public class EntrepriseService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Entreprise> findOne(Long id) {
+    public Optional<EntrepriseDTO> findOne(Long id) {
         log.debug("Request to get Entreprise : {}", id);
-        return entrepriseRepository.findById(id);
+        return entrepriseRepository.findById(id).map(entrepriseMapper::toDto);
     }
 
     /**

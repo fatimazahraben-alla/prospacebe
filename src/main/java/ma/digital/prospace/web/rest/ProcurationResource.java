@@ -5,16 +5,31 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import ma.digital.prospace.domain.Procuration;
-import ma.digital.prospace.repository.ProcurationRepository;
-import ma.digital.prospace.service.ProcurationService;
-import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import ma.digital.prospace.repository.ProcurationRepository;
+import ma.digital.prospace.service.ProcurationService;
+import ma.digital.prospace.service.dto.ProcurationDTO;
+import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
 /**
@@ -48,12 +63,12 @@ public class ProcurationResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/procurations")
-    public ResponseEntity<Procuration> createProcuration(@RequestBody Procuration procuration) throws URISyntaxException {
-        log.debug("REST request to save Procuration : {}", procuration);
+    public ResponseEntity<ProcurationDTO> createProcuration(@RequestBody ProcurationDTO procuration) throws URISyntaxException {
+        log.debug("REST request to save ProcurationDTO : {}", procuration);
         if (procuration.getId() != null) {
             throw new BadRequestAlertException("A new procuration cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Procuration result = procurationService.save(procuration);
+        ProcurationDTO result = procurationService.save(procuration);
         return ResponseEntity
             .created(new URI("/api/procurations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -71,11 +86,11 @@ public class ProcurationResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/procurations/{id}")
-    public ResponseEntity<Procuration> updateProcuration(
+    public ResponseEntity<ProcurationDTO> updateProcuration(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Procuration procuration
+        @RequestBody ProcurationDTO procuration
     ) throws URISyntaxException {
-        log.debug("REST request to update Procuration : {}, {}", id, procuration);
+        log.debug("REST request to update ProcurationDTO : {}, {}", id, procuration);
         if (procuration.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -87,7 +102,7 @@ public class ProcurationResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Procuration result = procurationService.update(procuration);
+        ProcurationDTO result = procurationService.update(procuration);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, procuration.getId().toString()))
@@ -106,11 +121,11 @@ public class ProcurationResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/procurations/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Procuration> partialUpdateProcuration(
+    public ResponseEntity<ProcurationDTO> partialUpdateProcuration(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Procuration procuration
+        @RequestBody ProcurationDTO procuration
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Procuration partially : {}, {}", id, procuration);
+        log.debug("REST request to partial update ProcurationDTO partially : {}, {}", id, procuration);
         if (procuration.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -122,7 +137,7 @@ public class ProcurationResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Procuration> result = procurationService.partialUpdate(procuration);
+        Optional<ProcurationDTO> result = procurationService.partialUpdate(procuration);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -133,12 +148,15 @@ public class ProcurationResource {
     /**
      * {@code GET  /procurations} : get all the procurations.
      *
+     * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of procurations in body.
      */
     @GetMapping("/procurations")
-    public List<Procuration> getAllProcurations() {
-        log.debug("REST request to get all Procurations");
-        return procurationService.findAll();
+    public ResponseEntity<List<ProcurationDTO>> getAllProcurations(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        log.debug("REST request to get a page of Procurations");
+        Page<ProcurationDTO> page = procurationService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -148,9 +166,9 @@ public class ProcurationResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the procuration, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/procurations/{id}")
-    public ResponseEntity<Procuration> getProcuration(@PathVariable Long id) {
-        log.debug("REST request to get Procuration : {}", id);
-        Optional<Procuration> procuration = procurationService.findOne(id);
+    public ResponseEntity<ProcurationDTO> getProcuration(@PathVariable Long id) {
+        log.debug("REST request to get ProcurationDTO : {}", id);
+        Optional<ProcurationDTO> procuration = procurationService.findOne(id);
         return ResponseUtil.wrapOrNotFound(procuration);
     }
 
@@ -162,7 +180,7 @@ public class ProcurationResource {
      */
     @DeleteMapping("/procurations/{id}")
     public ResponseEntity<Void> deleteProcuration(@PathVariable Long id) {
-        log.debug("REST request to delete Procuration : {}", id);
+        log.debug("REST request to delete ProcurationDTO : {}", id);
         procurationService.delete(id);
         return ResponseEntity
             .noContent()
