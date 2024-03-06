@@ -1,0 +1,44 @@
+<component name="libraryTable">
+  <library name="xnx3.doc.javadoc" type="repository">
+    <properties maven-id="com.xnx3.doc.javadoc:javadoc:1.16" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/javadoc-1.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/json-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-beanutils-1.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-logging-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-collections-3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-lang-2.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ezmorph-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/json-lib-2.4-jdk15.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/http-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/xnx3-util-1.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/sqlite-jdbc-3.36.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/com.sun.tools-1.8.0_jdk8u275-b01_linux_x64.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/javadoc-1.16-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/json-1.0-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-beanutils-1.7.0-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-logging-1.0.3-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-collections-3.1-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-lang-2.5-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ezmorph-1.0.3-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/http-1.2-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/xnx3-util-1.16-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/sqlite-jdbc-3.36.0.3-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/com.sun.tools-1.8.0_jdk8u275-b01_linux_x64-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/javadoc-1.16-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/json-1.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-beanutils-1.7.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-collections-3.1-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-lang-2.5-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/ezmorph-1.0.3-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/http-1.2-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/xnx3-util-1.16-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/sqlite-jdbc-3.36.0.3-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/com.sun.tools-1.8.0_jdk8u275-b01_linux_x64-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

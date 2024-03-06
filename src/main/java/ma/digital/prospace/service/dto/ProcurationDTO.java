@@ -1,20 +1,22 @@
 package ma.digital.prospace.service.dto;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
- * A DTO for the {@link ma.digital.prospace.domain.ProcurationDTO} entity.
+ * A DTO for the {@link ma.digital.prospace.domain.Procuration} entity.
  */
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class ProcurationDTO implements Serializable {
 
     private Long id;
 
-    private Instant dateEffet;
+    private String nom;
 
-    private Instant dateFin;
+    private LocalDate dateEffet;
+
+    private LocalDate dateFin;
 
     private CompteProDTO gestionnaireEspacePro;
 
@@ -28,19 +30,27 @@ public class ProcurationDTO implements Serializable {
         this.id = id;
     }
 
-    public Instant getDateEffet() {
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public LocalDate getDateEffet() {
         return dateEffet;
     }
 
-    public void setDateEffet(Instant dateEffet) {
+    public void setDateEffet(LocalDate dateEffet) {
         this.dateEffet = dateEffet;
     }
 
-    public Instant getDateFin() {
+    public LocalDate getDateFin() {
         return dateFin;
     }
 
-    public void setDateFin(Instant dateFin) {
+    public void setDateFin(LocalDate dateFin) {
         this.dateFin = dateFin;
     }
 
@@ -85,11 +95,12 @@ public class ProcurationDTO implements Serializable {
     @Override
     public String toString() {
         return "ProcurationDTO{" +
-            "id=" + getId() +
-            ", dateEffet='" + getDateEffet() + "'" +
-            ", dateFin='" + getDateFin() + "'" +
-            ", gestionnaireEspacePro=" + getGestionnaireEspacePro() +
-            ", utilisateurPro=" + getUtilisateurPro() +
-            "}";
+                "id=" + getId() +
+                ", nom='" + getNom() + "'" +
+                ", dateEffet='" + getDateEffet() + "'" +
+                ", dateFin='" + getDateFin() + "'" +
+                ", gestionnaireEspacePro=" + getGestionnaireEspacePro() +
+                ", utilisateurPro=" + getUtilisateurPro() +
+                "}";
     }
 }

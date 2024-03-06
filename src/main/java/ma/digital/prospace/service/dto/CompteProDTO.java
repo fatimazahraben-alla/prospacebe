@@ -6,7 +6,6 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import jakarta.persistence.Lob;
 import ma.digital.prospace.domain.enumeration.StatutCompte;
 
 /**
@@ -42,19 +41,15 @@ public class CompteProDTO implements Serializable {
     private String prenomFr;
 
     @Size(max = 50)
-    private String adresse;
+    private String address; // Modification du nom de la variable
 
-    @Lob
-    private byte[] photo;
+    private byte[] photo; // Modification du type de la variable
 
-    private String photoContentType;
     private String mail;
 
     private String telephone;
 
     private StatutCompte statut;
-
-    private EntrepriseDTO entrepriseGeree;
 
     public Long getId() {
         return id;
@@ -112,12 +107,12 @@ public class CompteProDTO implements Serializable {
         this.prenomFr = prenomFr;
     }
 
-    public String getAdresse() {
-        return adresse;
+    public String getAddress() {
+        return address;
     }
 
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public byte[] getPhoto() {
@@ -126,14 +121,6 @@ public class CompteProDTO implements Serializable {
 
     public void setPhoto(byte[] photo) {
         this.photo = photo;
-    }
-
-    public String getPhotoContentType() {
-        return photoContentType;
-    }
-
-    public void setPhotoContentType(String photoContentType) {
-        this.photoContentType = photoContentType;
     }
 
     public String getMail() {
@@ -158,14 +145,6 @@ public class CompteProDTO implements Serializable {
 
     public void setStatut(StatutCompte statut) {
         this.statut = statut;
-    }
-
-    public EntrepriseDTO getEntrepriseGeree() {
-        return entrepriseGeree;
-    }
-
-    public void setEntrepriseGeree(EntrepriseDTO entrepriseGeree) {
-        this.entrepriseGeree = entrepriseGeree;
     }
 
     @Override
@@ -193,19 +172,19 @@ public class CompteProDTO implements Serializable {
     @Override
     public String toString() {
         return "ComptePro{" +
-            "id=" + getId() +
-            ", identifiant='" + getIdentifiant() + "'" +
-            ", typeIdentifiant='" + getTypeIdentifiant() + "'" +
-            ", nomAr='" + getNomAr() + "'" +
-            ", nomFr='" + getNomFr() + "'" +
-            ", prenomAr='" + getPrenomAr() + "'" +
-            ", prenomFr='" + getPrenomFr() + "'" +
-            ", adresse='" + getAdresse() + "'" +
-            ", photo='" + getPhoto() + "'" +
-            ", mail='" + getMail() + "'" +
-            ", telephone='" + getTelephone() + "'" +
-            ", statut='" + getStatut() + "'" +
-            ", entrepriseGeree=" + getEntrepriseGeree() +
-            "}";
+                "id=" + getId() +
+                ", identifiant='" + getIdentifiant() + "'" +
+                ", typeIdentifiant='" + getTypeIdentifiant() + "'" +
+                ", nomAr='" + getNomAr() + "'" +
+                ", nomFr='" + getNomFr() + "'" +
+                ", prenomAr='" + getPrenomAr() + "'" +
+                ", prenomFr='" + getPrenomFr() + "'" +
+                ", address='" + getAddress() + "'" +
+                ", photo='" + getPhoto() + "'" +
+                ", mail='" + getMail() + "'" +
+                ", telephone='" + getTelephone() + "'" +
+                ", statut='" + getStatut() + "'" +
+                "}";
     }
 }
+

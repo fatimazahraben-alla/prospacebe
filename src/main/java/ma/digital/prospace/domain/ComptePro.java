@@ -7,22 +7,12 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import ma.digital.prospace.domain.enumeration.StatutCompte;
 
 /**
@@ -93,6 +83,16 @@ public class ComptePro implements Serializable {
     @Column(name = "statut")
     private StatutCompte statut;
 
+    public Contact getContact() {
+        return contact;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
+
+    @OneToOne(mappedBy = "comptePro")
+    private Contact contact;
     @ManyToOne
     @JsonIgnoreProperties(value = { "gerants", "associations" }, allowSetters = true)
     private Entreprise entrepriseGeree;

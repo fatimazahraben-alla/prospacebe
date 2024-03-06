@@ -16,7 +16,7 @@ public class RoleeDTO implements Serializable {
 
     private String description;
 
-    private FournisseurServiceDTO fs;
+    private Long fournisseurID;
 
     public Long getId() {
         return id;
@@ -42,12 +42,12 @@ public class RoleeDTO implements Serializable {
         this.description = description;
     }
 
-    public FournisseurServiceDTO getFs() {
-        return fs;
+    public Long getFournisseurID() {
+        return fournisseurID;
     }
 
-    public void setFs(FournisseurServiceDTO fs) {
-        this.fs = fs;
+    public void setFournisseurID(Long fournisseurID) {
+        this.fournisseurID = fournisseurID;
     }
 
     @Override
@@ -75,10 +75,10 @@ public class RoleeDTO implements Serializable {
     @Override
     public String toString() {
         return "Rolee{" +
-            "id=" + getId() +
-            ", nom='" + getNom() + "'" +
-            ", description='" + getDescription() + "'" +
-            ", fs=" + getFs() +
-            "}";
+                "id=" + getId() +
+                ", nom='" + getNom() + "'" +
+                ", description='" + getDescription() + "'" +
+                ", fournisseurID='" + getFournisseurID() + "'" +
+                "}";
     }
 }

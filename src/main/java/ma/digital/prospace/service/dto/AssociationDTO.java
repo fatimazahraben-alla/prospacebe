@@ -1,7 +1,6 @@
 package ma.digital.prospace.service.dto;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
@@ -10,28 +9,22 @@ import ma.digital.prospace.domain.enumeration.StatutAssociation;
 
 
 /**
- * A DTO for the {@link ma.digital.prospace.domain.AssociationDTO} entity.
+ * A DTO for the {@link ma.digital.prospace.domain.Association} entity.
  */
 public class AssociationDTO implements Serializable {
 
     private Long id;
 
     @NotNull
-    private Instant dateEffet;
+    private Long compteID;
 
-    private Instant dateFin;
+    @NotNull
+    private Long entrepriseID;
 
-    private String mail;
-
-    private String telephone;
+    @NotNull
+    private Long roleID;
 
     private StatutAssociation statut;
-
-    private EntrepriseDTO entreprise;
-
-    private CompteProDTO compte;
-
-    private RoleeDTO role;
 
     public Long getId() {
         return id;
@@ -41,36 +34,28 @@ public class AssociationDTO implements Serializable {
         this.id = id;
     }
 
-    public Instant getDateEffet() {
-        return dateEffet;
+    public Long getCompteID() {
+        return compteID;
     }
 
-    public void setDateEffet(Instant dateEffet) {
-        this.dateEffet = dateEffet;
+    public void setCompteID(Long compteID) {
+        this.compteID = compteID;
     }
 
-    public Instant getDateFin() {
-        return dateFin;
+    public Long getEntrepriseID() {
+        return entrepriseID;
     }
 
-    public void setDateFin(Instant dateFin) {
-        this.dateFin = dateFin;
+    public void setEntrepriseID(Long entrepriseID) {
+        this.entrepriseID = entrepriseID;
     }
 
-    public String getMail() {
-        return mail;
+    public Long getRoleID() {
+        return roleID;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
-
-    public String getTelephone() {
-        return telephone;
-    }
-
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
+    public void setRoleID(Long roleID) {
+        this.roleID = roleID;
     }
 
     public StatutAssociation getStatut() {
@@ -79,30 +64,6 @@ public class AssociationDTO implements Serializable {
 
     public void setStatut(StatutAssociation statut) {
         this.statut = statut;
-    }
-
-    public EntrepriseDTO getEntreprise() {
-        return entreprise;
-    }
-
-    public void setEntreprise(EntrepriseDTO entreprise) {
-        this.entreprise = entreprise;
-    }
-
-    public CompteProDTO getCompte() {
-        return compte;
-    }
-
-    public void setCompte(CompteProDTO compte) {
-        this.compte = compte;
-    }
-
-    public RoleeDTO getRole() {
-        return role;
-    }
-
-    public void setRole(RoleeDTO role) {
-        this.role = role;
     }
 
     @Override
@@ -130,16 +91,11 @@ public class AssociationDTO implements Serializable {
     @Override
     public String toString() {
         return "AssociationDTO{" +
-            "id=" + getId() +
-            ", dateEffet='" + getDateEffet() + "'" +
-            ", dateFin='" + getDateFin() + "'" +
-            ", mail='" + getMail() + "'" +
-            ", telephone='" + getTelephone() + "'" +
-            ", statut='" + getStatut() + "'" +
-            ", entreprise=" + getEntreprise() +
-            ", compte=" + getCompte() +
-            ", role=" + getRole() +
-            "}";
+                "id=" + getId() +
+                ", compteID='" + getCompteID() + "'" +
+                ", entrepriseID='" + getEntrepriseID() + "'" +
+                ", roleID='" + getRoleID() + "'" +
+                ", statut='" + getStatut() + "'" +
+                "}";
     }
 }
-
