@@ -2,16 +2,23 @@ package ma.digital.prospace.domain;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import jakarta.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
 
 /**
@@ -46,9 +53,9 @@ public class Association implements Serializable {
     @Column(name = "statut")
     private StatutAssociation statut;
 
-    @OneToMany
+    @ManyToOne
     @JsonIgnoreProperties(value = { "gerants", "associations" }, allowSetters = true)
-    private List<Entreprise> entreprises;
+    private Entreprise entreprise;
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "entrepriseGeree", "mandataires", "mandants", "associations" }, allowSetters = true)
@@ -138,15 +145,15 @@ public class Association implements Serializable {
         this.statut = statut;
     }
 
-    public List<Entreprise> getEntreprise() {
-        return this.entreprises;
+    public Entreprise getEntreprise() {
+        return this.entreprise;
     }
 
-    public void setEntreprise(List<Entreprise> entreprise) {
-        this.entreprises = entreprise;
+    public void setEntreprise(Entreprise entreprise) {
+        this.entreprise = entreprise;
     }
 
-    public Association entreprise(List<Entreprise> entreprise) {
+    public Association entreprise(Entreprise entreprise) {
         this.setEntreprise(entreprise);
         return this;
     }

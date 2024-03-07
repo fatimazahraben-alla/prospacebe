@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "application",
+      "type": "ma.digital.prospace.config.ApplicationProperties",
+      "sourceType": "ma.digital.prospace.config.ApplicationProperties"
+    }
+  ],
+  "properties": [],
+  "hints": []
+}

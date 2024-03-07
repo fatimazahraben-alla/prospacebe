@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import ma.digital.prospace.service.dto.ResponseauthenticationDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -182,8 +183,9 @@ public class AssociationResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
-    @GetMapping("/processAuthenticationStep2")
+    @GetMapping("/association/processAuthenticationStep2")
     public ResponseEntity<?> processAuthenticationStep2(@RequestParam Long compteID, @RequestParam Long fs) {
         return associationService.processAuthenticationStep2(compteID, fs);
     }
+
 }

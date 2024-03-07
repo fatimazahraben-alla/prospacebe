@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
 import ma.digital.prospace.domain.*;
 import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.repository.ContactRepository;
@@ -86,14 +89,14 @@ public class AssociationService {
         log.debug("Request to partially update Association : {}", association);
 
         return associationRepository
-            .findById(association.getId())
-            .map(existingAssociation -> {
-                associationMapper.partialUpdate(existingAssociation, association);
+                .findById(association.getId())
+                .map(existingAssociation -> {
+                    associationMapper.partialUpdate(existingAssociation, association);
 
-                return existingAssociation;
-            })
-            .map(associationRepository::save)
-            .map(associationMapper::toDto);
+                    return existingAssociation;
+                })
+                .map(associationRepository::save)
+                .map(associationMapper::toDto);
     }
 
     /**
@@ -144,21 +147,44 @@ public class AssociationService {
             ComptePro compte = compteproRepository.getOne(compteID);
             Contact contact = compte.getContact();
             String deviceToken = contact.getDeviceToken();
-            List<Entreprise> entreprises = association.getEntreprise();
-
-                // Envoyer la notification mobile
-                sendMobileNotification(deviceToken, session.getTransactionId(), fs, compteID, entreprises);
-            }
-            return ResponseEntity.ok().build();
+            List<Entreprise> entreprises = associationRepository.getListEntreprisesByCompteAndFs(compteID, fs);
+            ResponseauthenticationDTO responseDTO = new ResponseauthenticationDTO();
+            responseDTO.setCompteID(compteID);
+            responseDTO.setFs(fs);
+            responseDTO.setEntreprises(entreprises);
+            sendMobileNotification(deviceToken, session.getTransactionId(), fs, compteID, entreprises);
+            return ResponseEntity.ok().body(responseDTO);
         } else {
             return ResponseEntity.badRequest().build();
         }
-
-
-
-    private void sendMobileNotification(String deviceToken, String transactionId, String fs, String compteID, List<Entreprise> entreprises) {
-
     }
 
+    private void sendMobileNotification(String deviceToken, String transactionId, String fs, String
+            compteID, List<Entreprise> entreprises) {
+        Message message = Message.builder()
+                .setToken(deviceToken)
+                .putData("transactionId", transactionId)
+                .putData("fs", String.valueOf(fs))
+                .putData("compteID", String.valueOf(compteID))
+                .putData("entreprises", convertEntreprisesListToString(entreprises))
+                .build();
 
+        try {
+            // Envoyez le message à FCM
+            String response = FirebaseMessaging.getInstance().send(message);
+            // Traitez la réponse de FCM si nécessaire
+            System.out.println("Message sent to Firebase: " + response);
+        } catch (FirebaseMessagingException e) {
+            // Gérez les erreurs lors de l'envoi de la notification
+            e.printStackTrace();
+        }
+    }
+
+    private String convertEntreprisesListToString(List<Entreprise> entreprises) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Entreprise entreprise : entreprises) {
+            stringBuilder.append(entreprise.getId()).append(", "); // Ajoutez les détails de l'entreprise que vous souhaitez inclure
+        }
+        return stringBuilder.toString();
+    }
 }

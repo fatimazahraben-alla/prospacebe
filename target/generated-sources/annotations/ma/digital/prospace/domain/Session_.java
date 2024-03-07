@@ -40,18 +40,12 @@ public abstract class Session_ {
 	 * @see ma.digital.prospace.domain.Session#transactionId
 	 **/
 	public static volatile SingularAttribute<Session, String> transactionId;
-	
-	/**
-	 * @see ma.digital.prospace.domain.Session#deviceToken
-	 **/
-	public static volatile SingularAttribute<Session, String> deviceToken;
 
 	public static final String CREATED_AT = "createdAt";
 	public static final String JSON_DATA = "jsonData";
 	public static final String ASSOCIATION = "association";
 	public static final String ID = "id";
 	public static final String TRANSACTION_ID = "transactionId";
-	public static final String DEVICE_TOKEN = "deviceToken";
 
 }
 
