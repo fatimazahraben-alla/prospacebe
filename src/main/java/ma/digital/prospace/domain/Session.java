@@ -1,7 +1,7 @@
 package ma.digital.prospace.domain;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
+import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -9,12 +9,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "session")
+@Data
+@Table(name = "Session")
 public class Session implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
+   @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -27,10 +28,7 @@ public class Session implements Serializable {
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
-    @NotNull
-    @Size(max = 50)
-    @Column(name = "device_token", length = 50, nullable = false)
-    private String deviceToken;
+
 
     @NotNull
     @Size(max = 500)
@@ -41,5 +39,6 @@ public class Session implements Serializable {
     @ManyToOne
     @JoinColumn(name = "association", nullable = false)
     private Association association;
+
 
 }

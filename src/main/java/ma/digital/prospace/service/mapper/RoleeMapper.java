@@ -15,11 +15,13 @@ import ma.digital.prospace.service.dto.RoleeDTO;
  */
 @Mapper(componentModel = "spring")
 public interface RoleeMapper extends EntityMapper<RoleeDTO, Rolee> {
-    @Mapping(target = "fs", source = "fs", qualifiedByName = "fournisseurServiceId")
+
+    @Mapping(target = "fournisseurID", expression = "java(s.getFs() != null ? s.getFs().getId() : null)")
     RoleeDTO toDto(Rolee s);
 
-    @Named("fournisseurServiceId")
-    @BeanMapping(ignoreByDefault = true)
+    @Named("fournisseurServiceIDD")
     @Mapping(target = "id", source = "id")
-    FournisseurServiceDTO toDtoFournisseurServiceId(FournisseurService fournisseurService);
+    FournisseurServiceDTO toDTOFournisseurService(FournisseurService fournisseurService);
+
+
 }

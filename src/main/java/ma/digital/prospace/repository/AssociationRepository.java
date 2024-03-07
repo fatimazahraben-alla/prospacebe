@@ -9,4 +9,7 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface AssociationRepository extends JpaRepository<Association, Long> {}
+public interface AssociationRepository extends JpaRepository<Association, Long> {
+    Association findByFsAndCompteID(Long fs, Long compteID);
+
+}

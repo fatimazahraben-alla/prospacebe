@@ -1,19 +1,29 @@
 package ma.digital.prospace.service;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import ma.digital.prospace.domain.*;
+import ma.digital.prospace.repository.CompteProRepository;
+import ma.digital.prospace.repository.ContactRepository;
+import ma.digital.prospace.repository.SessionRepository;
+import ma.digital.prospace.service.dto.ContactDTO;
+import ma.digital.prospace.service.dto.SessionDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ma.digital.prospace.domain.Association;
 import ma.digital.prospace.repository.AssociationRepository;
 import ma.digital.prospace.service.mapper.AssociationMapper;
 import ma.digital.prospace.service.dto.AssociationDTO;
-
+import ma.digital.prospace.service.dto.ResponseauthenticationDTO;
 /**
  * Service Implementation for managing {@link Association}.
  */
@@ -26,6 +36,14 @@ public class AssociationService {
     private final AssociationRepository associationRepository;
 
     private final AssociationMapper associationMapper;
+    @Autowired
+    private CompteProRepository compteproRepository;
+
+    @Autowired
+    private SessionRepository sessionRepository;
+
+    @Autowired
+    private ContactRepository contactRepository;
 
     public AssociationService(AssociationRepository associationRepository, AssociationMapper associationMapper) {
         this.associationRepository = associationRepository;
@@ -111,4 +129,36 @@ public class AssociationService {
         log.debug("Request to delete Association : {}", id);
         associationRepository.deleteById(id);
     }
+
+    public ResponseEntity<?> processAuthenticationStep2(Long compteID, Long fs) {
+
+        Association association = associationRepository.findByFsAndCompteID(fs, compteID);
+
+        if (association != null) {
+
+            Session session = new Session();
+            session.setTransactionId(UUID.randomUUID().toString());
+            session.setCreatedAt(new Date());
+            session.setJsonData("IN_PROGRESS");
+            sessionRepository.save(session);
+            ComptePro compte = compteproRepository.getOne(compteID);
+            Contact contact = compte.getContact();
+            String deviceToken = contact.getDeviceToken();
+            List<Entreprise> entreprises = association.getEntreprise();
+
+                // Envoyer la notification mobile
+                sendMobileNotification(deviceToken, session.getTransactionId(), fs, compteID, entreprises);
+            }
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+
+
+
+    private void sendMobileNotification(String deviceToken, String transactionId, String fs, String compteID, List<Entreprise> entreprises) {
+
+    }
+
+
 }

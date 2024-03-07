@@ -1,0 +1,2 @@
+org.springframework.test.context.ContextCustomizerFactory = ma.digital.prospace.\
+    config.SqlTestContainersSpringContextCustomizerFactory

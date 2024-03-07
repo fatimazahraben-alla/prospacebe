@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-03-06T11:25:18+0100",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.10 (Oracle Corporation)"
+    date = "2024-03-07T18:00:33+0100",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
 public class RoleeMapperImpl implements RoleeMapper {
@@ -28,7 +28,6 @@ public class RoleeMapperImpl implements RoleeMapper {
         rolee.setId( dto.getId() );
         rolee.setNom( dto.getNom() );
         rolee.setDescription( dto.getDescription() );
-        rolee.fs( fournisseurServiceDTOToFournisseurService( dto.getFs() ) );
 
         return rolee;
     }
@@ -76,12 +75,6 @@ public class RoleeMapperImpl implements RoleeMapper {
         if ( dto.getDescription() != null ) {
             entity.setDescription( dto.getDescription() );
         }
-        if ( dto.getFs() != null ) {
-            if ( entity.getFs() == null ) {
-                entity.fs( new FournisseurService() );
-            }
-            fournisseurServiceDTOToFournisseurService1( dto.getFs(), entity.getFs() );
-        }
     }
 
     @Override
@@ -92,16 +85,17 @@ public class RoleeMapperImpl implements RoleeMapper {
 
         RoleeDTO roleeDTO = new RoleeDTO();
 
-        roleeDTO.setFs( toDtoFournisseurServiceId( s.getFs() ) );
         roleeDTO.setId( s.getId() );
         roleeDTO.setNom( s.getNom() );
         roleeDTO.setDescription( s.getDescription() );
+
+        roleeDTO.setFournisseurID( s.getFs() != null ? s.getFs().getId() : null );
 
         return roleeDTO;
     }
 
     @Override
-    public FournisseurServiceDTO toDtoFournisseurServiceId(FournisseurService fournisseurService) {
+    public FournisseurServiceDTO toDTOFournisseurService(FournisseurService fournisseurService) {
         if ( fournisseurService == null ) {
             return null;
         }
@@ -109,37 +103,9 @@ public class RoleeMapperImpl implements RoleeMapper {
         FournisseurServiceDTO fournisseurServiceDTO = new FournisseurServiceDTO();
 
         fournisseurServiceDTO.setId( fournisseurService.getId() );
+        fournisseurServiceDTO.setNom( fournisseurService.getNom() );
+        fournisseurServiceDTO.setDescription( fournisseurService.getDescription() );
 
         return fournisseurServiceDTO;
-    }
-
-    protected FournisseurService fournisseurServiceDTOToFournisseurService(FournisseurServiceDTO fournisseurServiceDTO) {
-        if ( fournisseurServiceDTO == null ) {
-            return null;
-        }
-
-        FournisseurService fournisseurService = new FournisseurService();
-
-        fournisseurService.setId( fournisseurServiceDTO.getId() );
-        fournisseurService.setNom( fournisseurServiceDTO.getNom() );
-        fournisseurService.setDescription( fournisseurServiceDTO.getDescription() );
-
-        return fournisseurService;
-    }
-
-    protected void fournisseurServiceDTOToFournisseurService1(FournisseurServiceDTO fournisseurServiceDTO, FournisseurService mappingTarget) {
-        if ( fournisseurServiceDTO == null ) {
-            return;
-        }
-
-        if ( fournisseurServiceDTO.getId() != null ) {
-            mappingTarget.setId( fournisseurServiceDTO.getId() );
-        }
-        if ( fournisseurServiceDTO.getNom() != null ) {
-            mappingTarget.setNom( fournisseurServiceDTO.getNom() );
-        }
-        if ( fournisseurServiceDTO.getDescription() != null ) {
-            mappingTarget.setDescription( fournisseurServiceDTO.getDescription() );
-        }
     }
 }

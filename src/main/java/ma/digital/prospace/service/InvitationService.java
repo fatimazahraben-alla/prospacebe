@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class InvitationService {
 
-    @Autowired
-    private InvitationRepository invitationRepository;
+ //   @Autowired
+ //   private InvitationRepository invitationRepository;
 
-    @Autowired
-    private InvitationMapper invitationMapper;
+ //   @Autowired
+ //   private InvitationMapper invitationMapper;
 
 }
 
