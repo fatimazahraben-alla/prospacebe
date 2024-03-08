@@ -12,14 +12,9 @@ public abstract class Session_ {
 
 	
 	/**
-	 * @see ma.digital.prospace.domain.Session#createdAt
+	 * @see ma.digital.prospace.domain.Session#CreatedAt
 	 **/
-	public static volatile SingularAttribute<Session, Date> createdAt;
-	
-	/**
-	 * @see ma.digital.prospace.domain.Session#jsonData
-	 **/
-	public static volatile SingularAttribute<Session, String> jsonData;
+	public static volatile SingularAttribute<Session, Date> CreatedAt;
 	
 	/**
 	 * @see ma.digital.prospace.domain.Session#association
@@ -37,15 +32,20 @@ public abstract class Session_ {
 	public static volatile EntityType<Session> class_;
 	
 	/**
-	 * @see ma.digital.prospace.domain.Session#transactionId
+	 * @see ma.digital.prospace.domain.Session#JsonData
 	 **/
-	public static volatile SingularAttribute<Session, String> transactionId;
+	public static volatile SingularAttribute<Session, String> JsonData;
+	
+	/**
+	 * @see ma.digital.prospace.domain.Session#TransactionId
+	 **/
+	public static volatile SingularAttribute<Session, String> TransactionId;
 
-	public static final String CREATED_AT = "createdAt";
-	public static final String JSON_DATA = "jsonData";
+	public static final String CREATED_AT = "CreatedAt";
 	public static final String ASSOCIATION = "association";
 	public static final String ID = "id";
-	public static final String TRANSACTION_ID = "transactionId";
+	public static final String JSON_DATA = "JsonData";
+	public static final String TRANSACTION_ID = "TransactionId";
 
 }
 

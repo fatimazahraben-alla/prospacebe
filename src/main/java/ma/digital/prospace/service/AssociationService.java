@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -144,14 +145,16 @@ public class AssociationService {
             session.setCreatedAt(new Date());
             session.setJsonData("IN_PROGRESS");
             sessionRepository.save(session);
-            ComptePro compte = compteproRepository.getOne(compteID);
+            ComptePro compte = compteproRepository.getById(compteID);
             Contact contact = compte.getContact();
             String deviceToken = contact.getDeviceToken();
             List<Entreprise> entreprises = associationRepository.getListEntreprisesByCompteAndFs(compteID, fs);
+            List<String> entrepriseStrings = convertEntreprisesToStrings(entreprises);
             ResponseauthenticationDTO responseDTO = new ResponseauthenticationDTO();
             responseDTO.setCompteID(compteID);
             responseDTO.setFs(fs);
-            responseDTO.setEntreprises(entreprises);
+            responseDTO.setEntreprises(entrepriseStrings);
+            //////PUSH NOTIFICATION
             sendMobileNotification(deviceToken, session.getTransactionId(), fs, compteID, entreprises);
             return ResponseEntity.ok().body(responseDTO);
         } else {
@@ -170,9 +173,8 @@ public class AssociationService {
                 .build();
 
         try {
-            // Envoyez le message à FCM
+
             String response = FirebaseMessaging.getInstance().send(message);
-            // Traitez la réponse de FCM si nécessaire
             System.out.println("Message sent to Firebase: " + response);
         } catch (FirebaseMessagingException e) {
             // Gérez les erreurs lors de l'envoi de la notification
@@ -180,11 +182,21 @@ public class AssociationService {
         }
     }
 
-    private String convertEntreprisesListToString(List<Entreprise> entreprises) {
+    public String convertEntreprisesListToString(List<Entreprise> entreprises) {
         StringBuilder stringBuilder = new StringBuilder();
         for (Entreprise entreprise : entreprises) {
             stringBuilder.append(entreprise.getId()).append(", "); // Ajoutez les détails de l'entreprise que vous souhaitez inclure
         }
         return stringBuilder.toString();
     }
+
+    public List<String> convertEntreprisesToStrings(List<Entreprise> entreprises) {
+        return entreprises.stream()
+                .map(Object::toString)
+                .collect(Collectors.toList());
+
+    }
+
+
+
 }

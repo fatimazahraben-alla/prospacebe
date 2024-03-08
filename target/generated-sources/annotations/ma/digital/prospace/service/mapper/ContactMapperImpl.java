@@ -9,11 +9,27 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-03-08T00:27:19+0100",
+    date = "2024-03-08T11:37:15+0100",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
 public class ContactMapperImpl implements ContactMapper {
+
+    @Override
+    public Contact toEntity(ContactDTO dto) {
+        if ( dto == null ) {
+            return null;
+        }
+
+        Contact contact = new Contact();
+
+        contact.setId( dto.getId() );
+        contact.setDeviceToken( dto.getDeviceToken() );
+        contact.setDeviceOS( dto.getDeviceOS() );
+        contact.setDeviceVersion( dto.getDeviceVersion() );
+
+        return contact;
+    }
 
     @Override
     public List<Contact> toEntity(List<ContactDTO> dtoList) {
@@ -49,14 +65,8 @@ public class ContactMapperImpl implements ContactMapper {
             return;
         }
 
-        if ( dto.getTelephone() != null ) {
-            entity.setTelephone( dto.getTelephone() );
-        }
         if ( dto.getId() != null ) {
             entity.setId( dto.getId() );
-        }
-        if ( dto.getMail() != null ) {
-            entity.setMail( dto.getMail() );
         }
         if ( dto.getDeviceToken() != null ) {
             entity.setDeviceToken( dto.getDeviceToken() );
@@ -77,31 +87,25 @@ public class ContactMapperImpl implements ContactMapper {
 
         ContactDTO contactDTO = new ContactDTO();
 
-        contactDTO.setMail( contact.getMail() );
-        contactDTO.setTelephone( contact.getTelephone() );
+        contactDTO.setCOMPID( mapCompteProToId( contact.getComptePro() ) );
+        contactDTO.setId( contact.getId() );
         contactDTO.setDeviceToken( contact.getDeviceToken() );
         contactDTO.setDeviceOS( contact.getDeviceOS() );
         contactDTO.setDeviceVersion( contact.getDeviceVersion() );
-        contactDTO.setId( contact.getId() );
 
         return contactDTO;
     }
 
     @Override
-    public Contact toEntity(ContactDTO contactDTO) {
-        if ( contactDTO == null ) {
+    public ContactDTO toDtoCompteId(Contact Contact) {
+        if ( Contact == null ) {
             return null;
         }
 
-        Contact contact = new Contact();
+        ContactDTO contactDTO = new ContactDTO();
 
-        contact.setMail( contactDTO.getMail() );
-        contact.setTelephone( contactDTO.getTelephone() );
-        contact.setDeviceToken( contactDTO.getDeviceToken() );
-        contact.setDeviceOS( contactDTO.getDeviceOS() );
-        contact.setDeviceVersion( contactDTO.getDeviceVersion() );
-        contact.setId( contactDTO.getId() );
+        contactDTO.setId( Contact.getId() );
 
-        return contact;
+        return contactDTO;
     }
 }

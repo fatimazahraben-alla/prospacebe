@@ -2,6 +2,7 @@ package ma.digital.prospace.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.validation.constraints.NotNull;
@@ -9,6 +10,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
+@Data
 @Table(name = "contact")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Contact implements Serializable {
@@ -21,16 +23,9 @@ public class Contact implements Serializable {
     @NotNull
     @Size(max =50)
     @Column(name = "mail", length = 50, nullable = false)
+
     private String mail;
     private String telephone;
-    public String getTelephone() {
-        return telephone;
-    }
-
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
-
 
     @NotNull
     @Size(max =50)
@@ -51,7 +46,7 @@ public class Contact implements Serializable {
 
 
     @OneToOne
-    @JoinColumn(name = "compte_pro_id", referencedColumnName = "id", nullable = false) // Ajoutez cette annotation pour mapper la relation avec ComptePro
+    @JoinColumn(name = "compte_pro", referencedColumnName = "id", nullable = false) // Ajoutez cette annotation pour mapper la relation avec ComptePro
     @JsonIgnoreProperties(value = { "contact" }, allowSetters = true)
     private ComptePro comptePro;
 
@@ -60,54 +55,55 @@ public class Contact implements Serializable {
         return id;
     }
 
-    public String getMail() {
-        return mail;
-    }
-
-    public String getDeviceToken() {
-        return deviceToken;
-    }
-
-    public String getDeviceOS() {
-        return deviceOS;
-    }
-
-    public String getDeviceVersion() {
-        return deviceVersion;
-    }
-
-
-
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getMail() {
+        return mail;
     }
 
     public void setMail(String mail) {
         this.mail = mail;
     }
 
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
     public void setDeviceToken(String deviceToken) {
         this.deviceToken = deviceToken;
+    }
+
+    public String getDeviceOS() {
+        return deviceOS;
     }
 
     public void setDeviceOS(String deviceOS) {
         this.deviceOS = deviceOS;
     }
 
+    public String getDeviceVersion() {
+        return deviceVersion;
+    }
+
     public void setDeviceVersion(String deviceVersion) {
         this.deviceVersion = deviceVersion;
     }
 
+    public ComptePro getComptePro() {
+        return comptePro;
+    }
 
-
-    @Override
-    public String toString() {
-        return "Contact{" +
-                "id=" + id +
-                ", mail='" + mail + '\'' +
-                ", deviceToken='" + deviceToken + '\'' +
-                ", deviceOS='" + deviceOS + '\'' +
-                ", deviceVersion='" + deviceVersion + '\'' +
-                '}';
+    public void setComptePro(ComptePro comptePro) {
+        this.comptePro = comptePro;
     }
 }

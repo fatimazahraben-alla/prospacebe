@@ -22,23 +22,61 @@ public class Session implements Serializable {
     @NotNull
     @Size(max = 50)
     @Column(name = "transaction_id", length = 50, nullable = false)
-    private String transactionId;
+    private String TransactionId;
 
     @NotNull
     @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    private Date CreatedAt;
 
 
 
     @NotNull
     @Size(max = 500)
     @Column(name = "json_data", length = 500, nullable = false)
-    private String jsonData;
+    private String JsonData;
 
 
     @ManyToOne
     @JoinColumn(name = "association", nullable = false)
     private Association association;
 
+ public Long getId() {
+  return id;
+ }
 
+ public void setId(Long id) {
+  this.id = id;
+ }
+
+ public String getTransactionId() {
+  return TransactionId;
+ }
+
+ public void setTransactionId(String transactionId) {
+  TransactionId = transactionId;
+ }
+
+ public Date getCreatedAt() {
+  return CreatedAt;
+ }
+
+ public void setCreatedAt(Date createdAt) {
+  CreatedAt = createdAt;
+ }
+
+ public String getJsonData() {
+  return JsonData;
+ }
+
+ public void setJsonData(String jsonData) {
+  JsonData = jsonData;
+ }
+
+ public Association getAssociation() {
+  return association;
+ }
+
+ public void setAssociation(Association association) {
+  this.association = association;
+ }
 }

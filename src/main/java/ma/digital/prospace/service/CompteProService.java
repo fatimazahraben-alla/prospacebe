@@ -2,8 +2,11 @@ package ma.digital.prospace.service;
 
 import java.util.Optional;
 
+import ma.digital.prospace.domain.Contact;
+import ma.digital.prospace.repository.ContactRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,9 +30,14 @@ public class CompteProService {
 
     private final CompteProMapper compteProMapper;
 
-    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper) {
+
+    private final ContactRepository contactRepository;
+
+    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository) {
         this.compteProRepository = compteProRepository;
         this.compteProMapper = compteProMapper;
+        this.contactRepository = contactRepository;
+
     }
 
     /**
@@ -110,5 +118,14 @@ public class CompteProService {
     public void delete(Long id) {
         log.debug("Request to delete ComptePro : {}", id);
         compteProRepository.deleteById(id);
+    }
+
+    public void registerContactDTO(ContactDTO contactDTO) {
+        Contact contact = new Contact();
+        contact.setDeviceToken(contactDTO.getDeviceToken());
+        contact.setDeviceOS(contactDTO.getDeviceOS());
+        contact.setDeviceVersion(contactDTO.getDeviceVersion());
+        contact.setComptePro(compteProRepository.getById(contactDTO.getCOMPID()));
+        contactRepository.save(contact);
     }
 }

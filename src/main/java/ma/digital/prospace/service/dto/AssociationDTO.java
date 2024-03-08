@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
+import lombok.Data;
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import org.springframework.stereotype.Component;
 
@@ -13,18 +14,19 @@ import org.springframework.stereotype.Component;
  * A DTO for the {@link ma.digital.prospace.domain.Association} entity.
  */
 @Component
+@Data
 public class AssociationDTO implements Serializable {
 
     private Long id;
 
-    @NotNull
-    private Long compteID;
 
-    @NotNull
-    private Long entrepriseID;
+    private Long COMPTEID;
 
-    @NotNull
-    private Long roleID;
+
+    private Long ENTREPRISEID;
+
+
+    private Long ROLEID;
 
     private StatutAssociation statut;
 
@@ -36,28 +38,28 @@ public class AssociationDTO implements Serializable {
         this.id = id;
     }
 
-    public Long getCompteID() {
-        return compteID;
+    public Long getCOMPTEID() {
+        return COMPTEID;
     }
 
-    public void setCompteID(Long compteID) {
-        this.compteID = compteID;
+    public void setCOMPTEID(Long COMPTEID) {
+        this.COMPTEID = COMPTEID;
     }
 
-    public Long getEntrepriseID() {
-        return entrepriseID;
+    public Long getENTREPRISEID() {
+        return ENTREPRISEID;
     }
 
-    public void setEntrepriseID(Long entrepriseID) {
-        this.entrepriseID = entrepriseID;
+    public void setENTREPRISEID(Long ENTREPRISEID) {
+        this.ENTREPRISEID = ENTREPRISEID;
     }
 
-    public Long getRoleID() {
-        return roleID;
+    public Long getROLEID() {
+        return ROLEID;
     }
 
-    public void setRoleID(Long roleID) {
-        this.roleID = roleID;
+    public void setROLEID(Long ROLEID) {
+        this.ROLEID = ROLEID;
     }
 
     public StatutAssociation getStatut() {
@@ -66,38 +68,5 @@ public class AssociationDTO implements Serializable {
 
     public void setStatut(StatutAssociation statut) {
         this.statut = statut;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AssociationDTO)) {
-            return false;
-        }
-
-        AssociationDTO association = (AssociationDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, association.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.id);
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "AssociationDTO{" +
-                "id=" + getId() +
-                ", compteID='" + getCompteID() + "'" +
-                ", entrepriseID='" + getEntrepriseID() + "'" +
-                ", roleID='" + getRoleID() + "'" +
-                ", statut='" + getStatut() + "'" +
-                "}";
     }
 }

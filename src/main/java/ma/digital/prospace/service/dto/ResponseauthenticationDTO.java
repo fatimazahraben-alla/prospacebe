@@ -22,6 +22,27 @@ public class ResponseauthenticationDTO {
     @NotNull
     private List<String> entreprises;
 
+    public Long getCompteID() {
+        return compteID;
+    }
 
+    public void setCompteID(Long compteID) {
+        this.compteID = compteID;
+    }
 
+    public Long getFs() {
+        return fs;
+    }
+
+    public void setFs(Long fs) {
+        this.fs = fs;
+    }
+
+    public List<String> getEntreprises() {
+        return entreprises;
+    }
+
+    public void setEntreprises(List<String> entreprises) {
+        this.entreprises = entreprises;
+    }
 }

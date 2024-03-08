@@ -1,5 +1,6 @@
 package ma.digital.prospace.service;
 
+import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.repository.ContactRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ public class ContactService {
 
     private final ContactRepository contactRepository;
 
+    private  final CompteProRepository compteRepository
     private final ContactMapper contactMapper;
 
     public ContactService(ContactRepository contactRepository, ContactMapper contactMapper) {
@@ -98,8 +100,6 @@ public class ContactService {
         contactRepository.deleteById(id);
     }
 
-    public Optional<ContactDTO> partialUpdate(ContactDTO contactDTO) {
-        return null;
-    }
+
 }
 

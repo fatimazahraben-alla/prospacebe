@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-03-08T00:27:18+0100",
+    date = "2024-03-08T11:37:15+0100",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -83,9 +83,9 @@ public class AssociationMapperImpl implements AssociationMapper {
 
         AssociationDTO associationDTO = new AssociationDTO();
 
-        associationDTO.setEntrepriseID( mapEntrepriseToId( s.getEntreprise() ) );
-        associationDTO.setCompteID( mapCompteToId( s.getCompte() ) );
-        associationDTO.setRoleID( mapRoleToId( s.getRole() ) );
+        associationDTO.setENTREPRISEID( mapEntrepriseToId( s.getEntreprise() ) );
+        associationDTO.setCOMPTEID( mapCompteToId( s.getCompte() ) );
+        associationDTO.setROLEID( mapRoleToId( s.getRole() ) );
         associationDTO.setId( s.getId() );
         associationDTO.setStatut( s.getStatut() );
 
