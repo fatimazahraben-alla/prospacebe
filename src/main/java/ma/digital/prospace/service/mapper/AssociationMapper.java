@@ -16,6 +16,10 @@ import ma.digital.prospace.service.dto.RoleeDTO;
 
 @Mapper(componentModel = "spring")
 public interface AssociationMapper extends EntityMapper<AssociationDTO, Association> {
+    @Mapping(target = "entrepriseID", source = "entreprise", qualifiedByName = "entrepriseId")
+    @Mapping(target = "compteID", source = "compte", qualifiedByName = "compteProId")
+    @Mapping(target = "roleID", source = "role", qualifiedByName = "roleeId")
+    AssociationDTO toDto(Association s);
 
 
     @Named("entrepriseId")

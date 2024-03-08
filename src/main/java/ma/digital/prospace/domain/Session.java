@@ -15,7 +15,7 @@ public class Session implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
+   @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -111,7 +111,4 @@ public class Session implements Serializable {
     private Association association;
 
 
-
 }
-
-

@@ -1,21 +1,38 @@
 package ma.digital.prospace.service;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import ma.digital.prospace.domain.*;
 import ma.digital.prospace.repository.*;
 import ma.digital.prospace.service.dto.*;
+import ma.digital.prospace.domain.*;
+import ma.digital.prospace.repository.CompteProRepository;
+import ma.digital.prospace.repository.ContactRepository;
+import ma.digital.prospace.repository.SessionRepository;
+import ma.digital.prospace.service.dto.ContactDTO;
+import ma.digital.prospace.service.dto.SessionDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ma.digital.prospace.repository.AssociationRepository;
 import ma.digital.prospace.service.mapper.AssociationMapper;
 
+import ma.digital.prospace.service.dto.AssociationDTO;
+import ma.digital.prospace.service.dto.ResponseauthenticationDTO;
+/**
+ * Service Implementation for managing {@link Association}.
+ */
 @Service
 @Transactional
 public class AssociationService {
@@ -28,6 +45,14 @@ public class AssociationService {
     private final EntrepriseRepository entrepriseRepository;
     private final CompteProRepository compteProRepository;
     private final RoleeRepository roleeRepository;
+    @Autowired
+    private CompteProRepository compteproRepository;
+
+    @Autowired
+    private SessionRepository sessionRepository;
+
+    @Autowired
+    private ContactRepository contactRepository;
 
     // Constructor
     public AssociationService(SessionRepository sessionRepository, CompteProRepository compteProRepository,
@@ -153,6 +178,38 @@ public class AssociationService {
     private EntrepriseDTO mapEntrepriseToDTO(Entreprise entreprise) {
         EntrepriseDTO entrepriseDTO = new EntrepriseDTO();
         return entrepriseDTO;
+    }
+
+
+
+    public ResponseEntity<?> processAuthenticationStep2(Long compteID, Long fs) {
+
+        Association association = associationRepository.findByFsAndCompteID(fs, compteID);
+
+        if (association != null) {
+
+            Session session = new Session();
+            session.setTransactionId(UUID.randomUUID().toString());
+            session.setCreatedAt(new Date());
+            session.setJsonData("IN_PROGRESS");
+            sessionRepository.save(session);
+            ComptePro compte = compteproRepository.getOne(compteID);
+            Contact contact = compte.getContact();
+            String deviceToken = contact.getDeviceToken();
+            List<Entreprise> entreprises = association.getEntreprise();
+
+                // Envoyer la notification mobile
+                sendMobileNotification(deviceToken, session.getTransactionId(), fs, compteID, entreprises);
+            }
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+
+
+
+    private void sendMobileNotification(String deviceToken, String transactionId, String fs, String compteID, List<Entreprise> entreprises) {
+
     }
 
 
