@@ -53,6 +53,11 @@ public abstract class Association_ {
 	public static volatile EntityType<Association> class_;
 	
 	/**
+	 * @see ma.digital.prospace.domain.Association#fs
+	 **/
+	public static volatile SingularAttribute<Association, Long> fs;
+	
+	/**
 	 * @see ma.digital.prospace.domain.Association#statut
 	 **/
 	public static volatile SingularAttribute<Association, StatutAssociation> statut;
@@ -69,6 +74,7 @@ public abstract class Association_ {
 	public static final String TELEPHONE = "telephone";
 	public static final String ID = "id";
 	public static final String DATE_FIN = "dateFin";
+	public static final String FS = "fs";
 	public static final String STATUT = "statut";
 	public static final String COMPTE = "compte";
 

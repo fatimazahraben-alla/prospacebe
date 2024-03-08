@@ -51,7 +51,7 @@ public class Contact implements Serializable {
 
 
     @OneToOne
-    @JoinColumn(name = "compte_pro_id", referencedColumnName = "id", nullable = false) // Ajoutez cette annotation pour mapper la relation avec ComptePro
+    @JoinColumn(name = "compteProId", referencedColumnName = "id", nullable = false) // Ajoutez cette annotation pour mapper la relation avec ComptePro
     @JsonIgnoreProperties(value = { "contact" }, allowSetters = true)
     private ComptePro comptePro;
 

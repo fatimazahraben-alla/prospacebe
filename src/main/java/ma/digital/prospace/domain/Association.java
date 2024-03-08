@@ -2,14 +2,10 @@ package ma.digital.prospace.domain;
 
 import java.io.Serializable;
 import java.time.Instant;
-
 import javax.validation.constraints.NotNull;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -36,6 +32,15 @@ public class Association implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    public Long getFs() {
+        return fs;
+    }
+
+    public void setFs(Long fs) {
+        this.fs = fs;
+    }
+
+    private Long fs;
     @NotNull
     @Column(name = "date_effet", nullable = false)
     private Instant dateEffet;
@@ -65,15 +70,9 @@ public class Association implements Serializable {
     @JsonIgnoreProperties(value = { "fs" }, allowSetters = true)
     private Rolee role;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
-
+    // Getters and Setters
     public Long getId() {
         return this.id;
-    }
-
-    public Association id(Long id) {
-        this.setId(id);
-        return this;
     }
 
     public void setId(Long id) {
@@ -84,22 +83,12 @@ public class Association implements Serializable {
         return this.dateEffet;
     }
 
-    public Association dateEffet(Instant dateEffet) {
-        this.setDateEffet(dateEffet);
-        return this;
-    }
-
     public void setDateEffet(Instant dateEffet) {
         this.dateEffet = dateEffet;
     }
 
     public Instant getDateFin() {
         return this.dateFin;
-    }
-
-    public Association dateFin(Instant dateFin) {
-        this.setDateFin(dateFin);
-        return this;
     }
 
     public void setDateFin(Instant dateFin) {
@@ -110,11 +99,6 @@ public class Association implements Serializable {
         return this.mail;
     }
 
-    public Association mail(String mail) {
-        this.setMail(mail);
-        return this;
-    }
-
     public void setMail(String mail) {
         this.mail = mail;
     }
@@ -123,22 +107,12 @@ public class Association implements Serializable {
         return this.telephone;
     }
 
-    public Association telephone(String telephone) {
-        this.setTelephone(telephone);
-        return this;
-    }
-
     public void setTelephone(String telephone) {
         this.telephone = telephone;
     }
 
     public StatutAssociation getStatut() {
         return this.statut;
-    }
-
-    public Association statut(StatutAssociation statut) {
-        this.setStatut(statut);
-        return this;
     }
 
     public void setStatut(StatutAssociation statut) {
@@ -153,66 +127,44 @@ public class Association implements Serializable {
         this.entreprise = entreprise;
     }
 
-    public Association entreprise(Entreprise entreprise) {
-        this.setEntreprise(entreprise);
-        return this;
-    }
-
     public ComptePro getCompte() {
         return this.compte;
     }
 
-    public void setCompte(ComptePro comptePro) {
-        this.compte = comptePro;
-    }
-
-    public Association compte(ComptePro comptePro) {
-        this.setCompte(comptePro);
-        return this;
+    public void setCompte(ComptePro compte) {
+        this.compte = compte;
     }
 
     public Rolee getRole() {
         return this.role;
     }
 
-    public void setRole(Rolee rolee) {
-        this.role = rolee;
+    public void setRole(Rolee role) {
+        this.role = role;
     }
 
-    public Association role(Rolee rolee) {
-        this.setRole(rolee);
-        return this;
-    }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
-
+    // Overridden methods from Object class
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Association)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof Association)) return false;
         return id != null && id.equals(((Association) o).id);
     }
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "Association{" +
-            "id=" + getId() +
-            ", dateEffet='" + getDateEffet() + "'" +
-            ", dateFin='" + getDateFin() + "'" +
-            ", mail='" + getMail() + "'" +
-            ", telephone='" + getTelephone() + "'" +
-            ", statut='" + getStatut() + "'" +
-            "}";
+                "id=" + getId() +
+                ", dateEffet='" + getDateEffet() + "'" +
+                ", dateFin='" + getDateFin() + "'" +
+                ", mail='" + getMail() + "'" +
+                ", telephone='" + getTelephone() + "'" +
+                ", statut='" + getStatut() + "'" +
+                "}";
     }
 }

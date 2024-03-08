@@ -123,4 +123,8 @@ public class Rolee implements Serializable {
             ", description='" + getDescription() + "'" +
             "}";
     }
+
+    public Object getName() {
+        return nom;
+    }
 }

@@ -29,7 +29,7 @@
             <column name="statut" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="entreprise_id" type="bigint">
+            <column name="entrepriseId" type="bigint">
                 <constraints nullable="true" />
             </column>
             <column name="compte_id" type="bigint">

@@ -16,6 +16,16 @@ public class RoleeDTO implements Serializable {
 
     private String description;
 
+    public String getFs() {
+        return fs;
+    }
+
+    public void setFs(String fs) {
+        this.fs = fs;
+    }
+
+    private String fs;
+
     private Long fournisseurID;
 
     public Long getId() {
