@@ -2,7 +2,11 @@ package ma.digital.prospace.domain;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
+
+import jakarta.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -15,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
 
 /**
@@ -58,9 +63,9 @@ public class Association implements Serializable {
     @Column(name = "statut")
     private StatutAssociation statut;
 
-    @ManyToOne
+    @OneToMany
     @JsonIgnoreProperties(value = { "gerants", "associations" }, allowSetters = true)
-    private Entreprise entreprise;
+    private List<Entreprise> entreprises;
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "entrepriseGeree", "mandataires", "mandants", "associations" }, allowSetters = true)
@@ -119,12 +124,17 @@ public class Association implements Serializable {
         this.statut = statut;
     }
 
-    public Entreprise getEntreprise() {
-        return this.entreprise;
+    public List<Entreprise> getEntreprise() {
+        return this.entreprises;
     }
 
-    public void setEntreprise(Entreprise entreprise) {
-        this.entreprise = entreprise;
+    public void setEntreprise(List<Entreprise> entreprise) {
+        this.entreprises = entreprise;
+    }
+
+    public Association entreprise(List<Entreprise> entreprise) {
+        this.setEntreprise(entreprise);
+        return this;
     }
 
     public ComptePro getCompte() {

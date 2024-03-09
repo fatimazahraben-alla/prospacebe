@@ -64,37 +64,25 @@ public class ProcurationMapperImpl implements ProcurationMapper {
     }
 
     @Override
-    public void partialUpdate(Procuration entity, ProcurationDTO dto) {
+    public Procuration toEntity(ProcurationDTO dto) {
         if ( dto == null ) {
-            return;
+            return null;
         }
 
-        if ( dto.getId() != null ) {
-            entity.setId( dto.getId() );
-        }
-        if ( dto.getDateEffet() != null ) {
-            entity.setDateEffet( map( dto.getDateEffet() ) );
-        }
-        if ( dto.getDateFin() != null ) {
-            entity.setDateFin( map( dto.getDateFin() ) );
-        }
-        if ( dto.getGestionnaireEspacePro() != null ) {
-            if ( entity.getGestionnaireEspacePro() == null ) {
-                entity.gestionnaireEspacePro( new ComptePro() );
-            }
-            compteProDTOToComptePro1( dto.getGestionnaireEspacePro(), entity.getGestionnaireEspacePro() );
-        }
-        if ( dto.getUtilisateurPro() != null ) {
-            if ( entity.getUtilisateurPro() == null ) {
-                entity.utilisateurPro( new ComptePro() );
-            }
-            compteProDTOToComptePro1( dto.getUtilisateurPro(), entity.getUtilisateurPro() );
-        }
+        Procuration procuration = new Procuration();
+
+        procuration.setDateEffet( mapLocalDateToInstant( dto.getDateEffet() ) );
+        procuration.setDateFin( mapLocalDateToInstant( dto.getDateFin() ) );
+        procuration.setId( dto.getId() );
+        procuration.gestionnaireEspacePro( compteProDTOToComptePro( dto.getGestionnaireEspacePro() ) );
+        procuration.utilisateurPro( compteProDTOToComptePro( dto.getUtilisateurPro() ) );
+
+        return procuration;
     }
 
     @Override
-    public ProcurationDTO toDto(Procuration s) {
-        if ( s == null ) {
+    public ProcurationDTO toDto(Procuration entity) {
+        if ( entity == null ) {
             return null;
         }
 
@@ -147,44 +135,28 @@ public class ProcurationMapperImpl implements ProcurationMapper {
         return comptePro;
     }
 
-    protected void compteProDTOToComptePro1(CompteProDTO compteProDTO, ComptePro mappingTarget) {
-        if ( compteProDTO == null ) {
-            return;
+    protected CompteProDTO compteProToCompteProDTO(ComptePro comptePro) {
+        if ( comptePro == null ) {
+            return null;
         }
 
-        if ( compteProDTO.getId() != null ) {
-            mappingTarget.setId( compteProDTO.getId() );
-        }
-        if ( compteProDTO.getIdentifiant() != null ) {
-            mappingTarget.setIdentifiant( compteProDTO.getIdentifiant() );
-        }
-        if ( compteProDTO.getTypeIdentifiant() != null ) {
-            mappingTarget.setTypeIdentifiant( compteProDTO.getTypeIdentifiant() );
-        }
-        if ( compteProDTO.getNomAr() != null ) {
-            mappingTarget.setNomAr( compteProDTO.getNomAr() );
-        }
-        if ( compteProDTO.getNomFr() != null ) {
-            mappingTarget.setNomFr( compteProDTO.getNomFr() );
-        }
-        if ( compteProDTO.getPrenomAr() != null ) {
-            mappingTarget.setPrenomAr( compteProDTO.getPrenomAr() );
-        }
-        if ( compteProDTO.getPrenomFr() != null ) {
-            mappingTarget.setPrenomFr( compteProDTO.getPrenomFr() );
-        }
-        byte[] photo = compteProDTO.getPhoto();
+        CompteProDTO compteProDTO = new CompteProDTO();
+
+        compteProDTO.setId( comptePro.getId() );
+        compteProDTO.setIdentifiant( comptePro.getIdentifiant() );
+        compteProDTO.setTypeIdentifiant( comptePro.getTypeIdentifiant() );
+        compteProDTO.setNomAr( comptePro.getNomAr() );
+        compteProDTO.setNomFr( comptePro.getNomFr() );
+        compteProDTO.setPrenomAr( comptePro.getPrenomAr() );
+        compteProDTO.setPrenomFr( comptePro.getPrenomFr() );
+        byte[] photo = comptePro.getPhoto();
         if ( photo != null ) {
-            mappingTarget.setPhoto( Arrays.copyOf( photo, photo.length ) );
+            compteProDTO.setPhoto( Arrays.copyOf( photo, photo.length ) );
         }
-        if ( compteProDTO.getMail() != null ) {
-            mappingTarget.setMail( compteProDTO.getMail() );
-        }
-        if ( compteProDTO.getTelephone() != null ) {
-            mappingTarget.setTelephone( compteProDTO.getTelephone() );
-        }
-        if ( compteProDTO.getStatut() != null ) {
-            mappingTarget.setStatut( compteProDTO.getStatut() );
-        }
+        compteProDTO.setMail( comptePro.getMail() );
+        compteProDTO.setTelephone( comptePro.getTelephone() );
+        compteProDTO.setStatut( comptePro.getStatut() );
+
+        return compteProDTO;
     }
 }

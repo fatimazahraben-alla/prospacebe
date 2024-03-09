@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api")
@@ -88,5 +90,9 @@ public class AssociationResource {
         }
     }
 
+    @GetMapping("/processAuthenticationStep2")
+    public ResponseEntity<?> processAuthenticationStep2(@RequestParam Long compteID, @RequestParam Long fs) {
+        return associationService.processAuthenticationStep2(compteID, fs);
+    }
 }
 

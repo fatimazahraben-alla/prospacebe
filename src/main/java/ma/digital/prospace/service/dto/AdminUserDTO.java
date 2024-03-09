@@ -10,10 +10,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import ma.digital.prospace.domain.Authority;
 import ma.digital.prospace.domain.User;
+import org.springframework.stereotype.Component;
 
 /**
  * A DTO representing a user, with his authorities.
  */
+@Component
 public class AdminUserDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;

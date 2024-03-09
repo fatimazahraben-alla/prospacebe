@@ -6,11 +6,13 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
+import org.springframework.stereotype.Component;
 
 
 /**
  * A DTO for the {@link ma.digital.prospace.domain.Association} entity.
  */
+@Component
 public class AssociationDTO implements Serializable {
 
     private Long id;
