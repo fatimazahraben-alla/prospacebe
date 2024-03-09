@@ -54,12 +54,7 @@ public class AssociationService {
         this.associationMapper = associationMapper;
     }
 
-    /**
-     * Save a association.
-     *
-     * @param association the entity to save.
-     * @return the persisted entity.
-     */
+
     public AssociationDTO save(AssociationDTO associationDTO) {
         log.debug("Request to save Association : {}", associationDTO);
         Association association = associationMapper.toEntity(associationDTO);
@@ -67,12 +62,6 @@ public class AssociationService {
         return associationMapper.toDto(association);
     }
 
-    /**
-     * Update a association.
-     *
-     * @param association the entity to save.
-     * @return the persisted entity.
-     */
     public AssociationDTO update(AssociationDTO associationDTO) {
         log.debug("Request to update Association : {}", associationDTO);
         Association association = associationMapper.toEntity(associationDTO);
@@ -134,14 +123,14 @@ public class AssociationService {
         associationRepository.deleteById(id);
     }
 
-    public ResponseEntity<?> processAuthenticationStep2(Long compteID, Long fs) {
+    public ResponseEntity<ResponseauthenticationDTO> processAuthenticationStep2(Long compteID, Long fs) {
 
         Association association = associationRepository.findByFsAndCompteID(fs, compteID);
 
         if (association != null) {
 
             Session session = new Session();
-            session.setTransactionId(UUID.randomUUID().toString());
+            session.setTransactionId(UUID.fromString(UUID.randomUUID().toString()).getMostSignificantBits());
             session.setCreatedAt(new Date());
             session.setJsonData("IN_PROGRESS");
             sessionRepository.save(session);
@@ -162,11 +151,11 @@ public class AssociationService {
         }
     }
 
-    private void sendMobileNotification(String deviceToken, String transactionId, String fs, String
+    private void sendMobileNotification(String deviceToken, Long transactionId, Long fs, Long
             compteID, List<Entreprise> entreprises) {
         Message message = Message.builder()
                 .setToken(deviceToken)
-                .putData("transactionId", transactionId)
+                .putData("transactionId", String.valueOf(transactionId))
                 .putData("fs", String.valueOf(fs))
                 .putData("compteID", String.valueOf(compteID))
                 .putData("entreprises", convertEntreprisesListToString(entreprises))

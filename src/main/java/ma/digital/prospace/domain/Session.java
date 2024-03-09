@@ -22,7 +22,7 @@ public class Session implements Serializable {
     @NotNull
     @Size(max = 50)
     @Column(name = "transaction_id", length = 50, nullable = false)
-    private String TransactionId;
+    private Long TransactionId;
 
     @NotNull
     @Column(name = "created_at", nullable = false)
@@ -48,11 +48,11 @@ public class Session implements Serializable {
   this.id = id;
  }
 
- public String getTransactionId() {
+ public Long getTransactionId() {
   return TransactionId;
  }
 
- public void setTransactionId(String transactionId) {
+ public void setTransactionId(Long transactionId) {
   TransactionId = transactionId;
  }
 

@@ -23,8 +23,10 @@ public class Contact implements Serializable {
     @NotNull
     @Size(max =50)
     @Column(name = "mail", length = 50, nullable = false)
-
     private String mail;
+    @NotNull
+    @Size(max =50)
+    @Column(name = "telephone", length = 50, nullable = false)
     private String telephone;
 
     @NotNull

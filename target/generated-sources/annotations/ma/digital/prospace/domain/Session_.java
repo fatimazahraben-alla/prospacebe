@@ -39,7 +39,7 @@ public abstract class Session_ {
 	/**
 	 * @see ma.digital.prospace.domain.Session#TransactionId
 	 **/
-	public static volatile SingularAttribute<Session, String> TransactionId;
+	public static volatile SingularAttribute<Session, Long> TransactionId;
 
 	public static final String CREATED_AT = "CreatedAt";
 	public static final String ASSOCIATION = "association";

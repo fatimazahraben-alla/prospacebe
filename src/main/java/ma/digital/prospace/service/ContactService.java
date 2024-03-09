@@ -26,12 +26,13 @@ public class ContactService {
 
     private final ContactRepository contactRepository;
 
-    private  final CompteProRepository compteRepository
+    private  final CompteProRepository compteRepository;
     private final ContactMapper contactMapper;
 
-    public ContactService(ContactRepository contactRepository, ContactMapper contactMapper) {
+    public ContactService(ContactRepository contactRepository, ContactMapper contactMapper, CompteProRepository compteRepository) {
         this.contactRepository = contactRepository;
         this.contactMapper = contactMapper;
+        this.compteRepository =  compteRepository;
     }
 
     /**
@@ -101,5 +102,8 @@ public class ContactService {
     }
 
 
-}
+    public Optional<ContactDTO> partialUpdate(ContactDTO contactDTO) {
+        return null;
+    }
 
+}

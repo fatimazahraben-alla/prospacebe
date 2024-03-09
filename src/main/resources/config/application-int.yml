@@ -28,27 +28,22 @@ management:
 spring:
   devtools:
     restart:
-      enabled: false
+      enabled: true
     livereload:
-      enabled: false
+      enabled: true
+
   datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://localhost:3306/prospace?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-    username: root
-    password:
-    hikari:
-      poolName: Hikari
-      auto-commit: false
-      data-source-properties:
-        cachePrepStmts: true
-        prepStmtCacheSize: 250
-        prepStmtCacheSqlLimit: 2048
-        useServerPrepStmts: true
+      url: jdbc:postgresql://localhost:5432/prospace
+      username: postgres
+      password: admin
+      driver-class-name: org.postgresql.Driver
+  jpa:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        ddl-auto: create
+      show-sql: true
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
-  liquibase:
-    contexts: prod
-  thymeleaf:
-    cache: true
+
 
 # ===================================================================
 # To enable TLS in production, generate a certificate using:

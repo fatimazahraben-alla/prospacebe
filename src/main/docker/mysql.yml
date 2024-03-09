@@ -6,13 +6,15 @@ services:
     volumes:
       - ./config/mysql:/etc/mysql/conf.d
     #   - ~/volumes/jhipster/prospace/mysql/:/var/lib/mysql/
+    ports:
+      - 127.0.0.1:3307:3306
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_DATABASE=prospace
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=Boutaib1999@
+      - MYSQL_DATABASE=prospase
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
-    ports:
-      - 127.0.0.1:3306:3306
+
     command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
     healthcheck:
       test: ['CMD', 'mysql', '-e', 'SHOW DATABASES;']

@@ -43,6 +43,7 @@ import tech.jhipster.web.util.ResponseUtil;
 @RequestMapping("/api")
 public class CompteProResource {
 
+
     private final Logger log = LoggerFactory.getLogger(CompteProResource.class);
 
     private static final String ENTITY_NAME = "comptePro";

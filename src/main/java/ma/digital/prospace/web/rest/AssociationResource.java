@@ -184,7 +184,7 @@ public class AssociationResource {
             .build();
     }
     @GetMapping("/association/processAuthenticationStep2")
-    public ResponseEntity<?> processAuthenticationStep2(@RequestParam Long compteID, @RequestParam Long fs) {
+    public ResponseEntity<ResponseauthenticationDTO> processAuthenticationStep2(@RequestParam Long compteID, @RequestParam Long fs) {
         return associationService.processAuthenticationStep2(compteID, fs);
     }
 

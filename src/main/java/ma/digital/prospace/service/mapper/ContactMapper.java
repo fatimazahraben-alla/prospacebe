@@ -28,5 +28,5 @@ public interface ContactMapper extends EntityMapper<ContactDTO, Contact> {
     @Mapping(target = "id", source = "id")
     ContactDTO toDtoCompteId(Contact Contact);
 
-   // Contact toEntity(ContactDTO contactDTO);
+    // Contact toEntity(ContactDTO contactDTO);
 }
