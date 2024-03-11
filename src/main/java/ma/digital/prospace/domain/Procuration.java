@@ -2,6 +2,7 @@ package ma.digital.prospace.domain;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -18,18 +19,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Table(name = "procuration")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Procuration implements Serializable {
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
     @Column(name = "date_effet")
-    private Instant dateEffet;
+    private Date dateEffet;
 
     @Column(name = "date_fin")
-    private Instant dateFin;
+    private Date dateFin;
 
     @Transient
     @ManyToOne

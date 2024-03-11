@@ -53,12 +53,15 @@ public class Association implements Serializable {
     private StatutAssociation statut;
 
     @ManyToOne
+    @Column(name = "entreprise")
     private Entreprise entreprise;
 
     @ManyToOne
+    @Column(name = "compte")
     private ComptePro compte;
 
     @ManyToOne
+    @Column(name = "role")
     private Rolee role;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

@@ -53,8 +53,6 @@ public class ProcurationMapperImpl implements ProcurationMapper {
 
         Procuration procuration = new Procuration();
 
-        procuration.setDateEffet( mapLocalDateToInstant( dto.getDateEffet() ) );
-        procuration.setDateFin( mapLocalDateToInstant( dto.getDateFin() ) );
         procuration.setId( dto.getId() );
         procuration.gestionnaireEspacePro( compteProDTOToComptePro( dto.getGestionnaireEspacePro() ) );
         procuration.utilisateurPro( compteProDTOToComptePro( dto.getUtilisateurPro() ) );

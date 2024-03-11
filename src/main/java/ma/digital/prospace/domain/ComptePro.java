@@ -103,22 +103,24 @@ public class ComptePro implements Serializable {
     @Column(name = "deleted")
     private  Boolean deleted;
 
-    @ManyToOne
-    @JoinColumn(name = "entrepriseGeree_id")
-    private Entreprise entrepriseGeree;
+ @ManyToOne
+ @JsonIgnoreProperties(value = { "gerants", "associations" }, allowSetters = true)
+ private Entreprise entrepriseGeree;
 
-    @Transient
-    @OneToMany(mappedBy = "gestionnaireEspacePro")
-    private Set<Procuration> mandataires = new HashSet<>();
+ @OneToMany(mappedBy = "gestionnaireEspacePro")
+ @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+ @JsonIgnoreProperties(value = { "gestionnaireEspacePro", "utilisateurPro" }, allowSetters = true)
+ private Set<Procuration> mandataires = new HashSet<>();
 
-    @Transient
-    @OneToMany(mappedBy = "utilisateurPro")
-    private Set<Procuration> mandants = new HashSet<>();
+ @OneToMany(mappedBy = "utilisateurPro")
+ @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+ @JsonIgnoreProperties(value = { "gestionnaireEspacePro", "utilisateurPro" }, allowSetters = true)
+ private Set<Procuration> mandants = new HashSet<>();
 
-    @OneToMany
-    @JoinColumn(name = "association_id")
-    private Set<Association> associations = new HashSet<>();
-
+ @OneToMany(mappedBy = "compte")
+ @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+ @JsonIgnoreProperties(value = { "entreprise", "compte", "role" }, allowSetters = true)
+ private Set<Association> associations = new HashSet<>();
 
 
  public Long getId() {

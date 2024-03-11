@@ -21,32 +21,14 @@ import java.time.ZoneOffset;
  */
 @Mapper(componentModel = "spring")
 public interface ProcurationMapper extends EntityMapper<ProcurationDTO, Procuration> {
+    @Mapping(target = "gestionnaireEspacePro", source = "gestionnaireEspacePro", qualifiedByName = "compteProId")
+    @Mapping(target = "utilisateurPro", source = "utilisateurPro", qualifiedByName = "compteProId")
+    ProcurationDTO toDto(Procuration s);
 
-
-    @Mapping(target = "dateEffet", qualifiedByName = "localDateToInstant")
-    @Mapping(target = "dateFin", qualifiedByName = "localDateToInstant")
-    Procuration toEntity(ProcurationDTO dto);
-
-    @Mapping(target = "dateEffet", qualifiedByName = "instantToLocalDate")
-    @Mapping(target = "dateFin", qualifiedByName = "instantToLocalDate")
-    ProcurationDTO toDto(Procuration entity);
-
-    @Named("localDateToInstant")
-    default Instant mapLocalDateToInstant(LocalDate localDate) {
-        return localDate != null ? localDate.atStartOfDay().toInstant(ZoneOffset.UTC) : null;
-    }
-
-    @Named("instantToLocalDate")
-    default LocalDate mapInstantToLocalDate(Instant instant) {
-        return instant != null ? instant.atZone(ZoneOffset.UTC).toLocalDate() : null;
-    }
-
-    default void partialUpdate(Procuration entity, ProcurationDTO dto) {
-        if (dto.getDateEffet() != null) {
-            entity.setDateEffet(mapLocalDateToInstant(dto.getDateEffet()));
-        }
-        // Autres mises à jour partielles si nécessaire
-    }
+    @Named("compteProId")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    CompteProDTO toDtoCompteProId(ComptePro comptePro);
 
 
 }

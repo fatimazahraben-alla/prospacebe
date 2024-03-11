@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 /**
  * A DTO for the {@link ma.digital.prospace.domain.ComptePro} entity.
  */
-
+@Component
 @Getter@Setter@NoArgsConstructor@AllArgsConstructor
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class CompteProDTO implements Serializable {

@@ -16,11 +16,5 @@ import ma.digital.prospace.service.dto.EntrepriseDTO;
 @Mapper(componentModel = "spring")
 public interface CompteProMapper extends EntityMapper<CompteProDTO, ComptePro> {
 
-    @Mapping(target = "entrepriseGeree", source = "entrepriseGeree", qualifiedByName = "entrepriseId")
-    CompteProDTO toDto(ComptePro s);
 
-    @Named("entrepriseId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    EntrepriseDTO toDtoEntrepriseId(Entreprise entreprise);
 }

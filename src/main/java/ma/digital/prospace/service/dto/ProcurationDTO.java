@@ -1,15 +1,21 @@
 package ma.digital.prospace.service.dto;
 
+import lombok.*;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Objects;
 
 /**
  * A DTO for the {@link ma.digital.prospace.domain.Procuration} entity.
  */
 @Component
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class ProcurationDTO implements Serializable {
 
@@ -17,9 +23,9 @@ public class ProcurationDTO implements Serializable {
 
     private String nom;
 
-    private LocalDate dateEffet;
+    private Date dateEffet;
 
-    private LocalDate dateFin;
+    private Date dateFin;
 
     private CompteProDTO gestionnaireEspacePro;
 
@@ -41,19 +47,19 @@ public class ProcurationDTO implements Serializable {
         this.nom = nom;
     }
 
-    public LocalDate getDateEffet() {
+    public Date getDateEffet() {
         return dateEffet;
     }
 
-    public void setDateEffet(LocalDate dateEffet) {
+    public void setDateEffet(Date dateEffet) {
         this.dateEffet = dateEffet;
     }
 
-    public LocalDate getDateFin() {
+    public Date getDateFin() {
         return dateFin;
     }
 
-    public void setDateFin(LocalDate dateFin) {
+    public void setDateFin(Date dateFin) {
         this.dateFin = dateFin;
     }
 
@@ -71,39 +77,5 @@ public class ProcurationDTO implements Serializable {
 
     public void setUtilisateurPro(CompteProDTO utilisateurPro) {
         this.utilisateurPro = utilisateurPro;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ProcurationDTO)) {
-            return false;
-        }
-
-        ProcurationDTO procuration = (ProcurationDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, procuration.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.id);
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "ProcurationDTO{" +
-                "id=" + getId() +
-                ", nom='" + getNom() + "'" +
-                ", dateEffet='" + getDateEffet() + "'" +
-                ", dateFin='" + getDateFin() + "'" +
-                ", gestionnaireEspacePro=" + getGestionnaireEspacePro() +
-                ", utilisateurPro=" + getUtilisateurPro() +
-                "}";
     }
 }

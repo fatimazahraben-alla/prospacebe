@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Component
 @Data
-public class CompteFSAssociation {
+public class CompteFSAssociationDTO {
     @NotNull
     private Long compteID;
     @NotNull

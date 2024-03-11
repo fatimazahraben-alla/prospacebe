@@ -4,7 +4,7 @@ import jakarta.annotation.Generated;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
-import java.time.Instant;
+import java.util.Date;
 
 @StaticMetamodel(Procuration.class)
 @Generated("org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
@@ -14,7 +14,7 @@ public abstract class Procuration_ {
 	/**
 	 * @see ma.digital.prospace.domain.Procuration#dateEffet
 	 **/
-	public static volatile SingularAttribute<Procuration, Instant> dateEffet;
+	public static volatile SingularAttribute<Procuration, Date> dateEffet;
 	
 	/**
 	 * @see ma.digital.prospace.domain.Procuration#id
@@ -24,7 +24,7 @@ public abstract class Procuration_ {
 	/**
 	 * @see ma.digital.prospace.domain.Procuration#dateFin
 	 **/
-	public static volatile SingularAttribute<Procuration, Instant> dateFin;
+	public static volatile SingularAttribute<Procuration, Date> dateFin;
 	
 	/**
 	 * @see ma.digital.prospace.domain.Procuration

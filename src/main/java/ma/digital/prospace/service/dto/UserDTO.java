@@ -2,6 +2,10 @@ package ma.digital.prospace.service.dto;
 
 import java.io.Serializable;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ma.digital.prospace.domain.User;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +13,9 @@ import org.springframework.stereotype.Component;
  * A DTO representing a user, with only the public attributes.
  */
 @Component
+@Getter
+@Setter
+@AllArgsConstructor
 public class UserDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -28,6 +28,16 @@ public abstract class ComptePro_ {
 	public static volatile SingularAttribute<ComptePro, Boolean> deleted;
 	
 	/**
+	 * @see ma.digital.prospace.domain.ComptePro#mandataires
+	 **/
+	public static volatile SetAttribute<ComptePro, Procuration> mandataires;
+	
+	/**
+	 * @see ma.digital.prospace.domain.ComptePro#mandants
+	 **/
+	public static volatile SetAttribute<ComptePro, Procuration> mandants;
+	
+	/**
 	 * @see ma.digital.prospace.domain.ComptePro#id
 	 **/
 	public static volatile SingularAttribute<ComptePro, Long> id;
@@ -50,6 +60,8 @@ public abstract class ComptePro_ {
 	public static final String ASSOCIATIONS = "associations";
 	public static final String CREATED_AT = "createdAt";
 	public static final String DELETED = "deleted";
+	public static final String MANDATAIRES = "mandataires";
+	public static final String MANDANTS = "mandants";
 	public static final String ID = "id";
 	public static final String ENTREPRISE_GEREE = "entrepriseGeree";
 	public static final String UPDATED_AT = "updatedAt";

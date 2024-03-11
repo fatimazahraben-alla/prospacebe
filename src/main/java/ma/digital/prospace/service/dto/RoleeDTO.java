@@ -1,6 +1,6 @@
 package ma.digital.prospace.service.dto;
 
-import lombok.Data;
+import lombok.*;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -11,7 +11,10 @@ import java.util.Objects;
  * A DTO for the {@link ma.digital.prospace.domain.Rolee} entity.
  */
 @Component
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class RoleeDTO implements Serializable {
 

@@ -19,54 +19,18 @@ public class AssociationDTO implements Serializable {
 
     private Long id;
 
+    private String mail;
 
-    private Long COMPTEID;
-
-
-    private Long ENTREPRISEID;
-
-
-    private Long ROLEID;
+    private String telephone;
 
     private StatutAssociation statut;
 
-    public Long getId() {
-        return id;
-    }
+    private EntrepriseDTO entreprise;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private CompteProDTO compte;
 
-    public Long getCOMPTEID() {
-        return COMPTEID;
-    }
+    private RoleeDTO role;
 
-    public void setCOMPTEID(Long COMPTEID) {
-        this.COMPTEID = COMPTEID;
-    }
 
-    public Long getENTREPRISEID() {
-        return ENTREPRISEID;
-    }
 
-    public void setENTREPRISEID(Long ENTREPRISEID) {
-        this.ENTREPRISEID = ENTREPRISEID;
-    }
-
-    public Long getROLEID() {
-        return ROLEID;
-    }
-
-    public void setROLEID(Long ROLEID) {
-        this.ROLEID = ROLEID;
-    }
-
-    public StatutAssociation getStatut() {
-        return statut;
-    }
-
-    public void setStatut(StatutAssociation statut) {
-        this.statut = statut;
-    }
 }

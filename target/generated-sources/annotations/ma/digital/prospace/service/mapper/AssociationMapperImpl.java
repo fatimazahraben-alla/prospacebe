@@ -81,11 +81,9 @@ public class AssociationMapperImpl implements AssociationMapper {
 
         AssociationDTO associationDTO = new AssociationDTO();
 
-        associationDTO.setENTREPRISEID( mapEntrepriseToId( s.getEntreprise() ) );
-        associationDTO.setCOMPTEID( mapCompteToId( s.getCompte() ) );
-        associationDTO.setROLEID( mapRoleToId( s.getRole() ) );
-        associationDTO.setId( s.getId() );
-        associationDTO.setStatut( s.getStatut() );
+
+        associationDTO.setId(s.getId());
+        associationDTO.setStatut(s.getStatut());
 
         return associationDTO;
     }

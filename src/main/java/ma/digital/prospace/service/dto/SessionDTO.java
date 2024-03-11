@@ -1,11 +1,14 @@
 package ma.digital.prospace.service.dto;
 
-import lombok.Data;
+import lombok.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 @Component
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SessionDTO {
     private String transactionId;
     private Date createdAt;
