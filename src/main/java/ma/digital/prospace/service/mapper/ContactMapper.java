@@ -12,21 +12,20 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = CompteProMapper.class)
 public interface ContactMapper extends EntityMapper<ContactDTO, Contact> {
 
-    @Mapping(target = "COMPID", source = "comptePro", qualifiedByName = "compteId")
-    ContactDTO toDto(Contact contact);
 
     @Named("compteId")
     default Long mapCompteProToId(ComptePro compte) {
         return compte != null ? compte.getId() : null;
     }
 
-    @Named("compteId")
+    // Utilisez un autre nom pour cette méthode, car le nom "compteId" est déjà utilisé.
+    @Named("toDtoCompteId")
     @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    ContactDTO toDtoCompteId(Contact Contact);
+    @Mapping(target = "COMPID", source = "comptePro", qualifiedByName = "compteId")
+    ContactDTO toDtoCompteId(Contact contact);
 
     // Contact toEntity(ContactDTO contactDTO);
 }

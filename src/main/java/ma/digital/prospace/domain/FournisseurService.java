@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -21,12 +22,9 @@ import jakarta.persistence.Table;
  * A FournisseurService.
  */
 @Entity
+@Data
 @Table(name = "fournisseur_service")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class FournisseurService implements Serializable {
-
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,8 +38,6 @@ public class FournisseurService implements Serializable {
     private String description;
 
     @OneToMany(mappedBy = "fs")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "fs" }, allowSetters = true)
     private Set<Rolee> roles = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

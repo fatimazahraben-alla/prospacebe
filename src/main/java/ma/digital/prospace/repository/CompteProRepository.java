@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface CompteProRepository extends JpaRepository<ComptePro, Long> {
+public interface CompteProRepository extends JpaRepository<ComptePro,Long> {
 
     ComptePro getById(Long id);
 }

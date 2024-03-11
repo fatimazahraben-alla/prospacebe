@@ -5,6 +5,7 @@ import java.time.Instant;
 
 import javax.validation.constraints.NotNull;
 
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -25,11 +26,9 @@ import ma.digital.prospace.domain.enumeration.StatutAssociation;
  * A Association.
  */
 @Entity
+@Data
 @Table(name = "association")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Association implements Serializable {
-
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,30 +38,27 @@ public class Association implements Serializable {
     @NotNull
     @Column(name = "date_effet", nullable = false)
     private Instant dateEffet;
-
+    @NotNull
     @Column(name = "date_fin")
     private Instant dateFin;
-
+    @NotNull
     @Column(name = "mail")
     private String mail;
-
+    @NotNull
     @Column(name = "telephone")
     private String telephone;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "statut")
     private StatutAssociation statut;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "gerants", "associations" }, allowSetters = true)
     private Entreprise entreprise;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "entrepriseGeree", "mandataires", "mandants", "associations" }, allowSetters = true)
     private ComptePro compte;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "fs" }, allowSetters = true)
     private Rolee role;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

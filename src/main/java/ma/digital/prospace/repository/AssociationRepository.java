@@ -16,11 +16,12 @@ import java.util.List;
 @Repository
 public interface AssociationRepository extends JpaRepository<Association, Long> {
     @Query("SELECT a FROM Association a WHERE a.role.fs.id = :fsId AND a.compte.id = :compteId")
-    Association findByFsAndCompteID(@Param("fsId") Long fsId, @Param("compteId") Long compteId);
+    List<Association> findAllByFsAndCompteID(@Param("fsId") Long fsId, @Param("compteId") Long compteId);
 
 
-    @Query("SELECT e FROM Entreprise e JOIN e.associations a JOIN a.compte c WHERE c.id = :compteID AND a.role.fs.id = :fsId")
-    List<Entreprise> getListEntreprisesByCompteAndFs(@Param("fsId") Long fsId, @Param("compteID") Long compteID);
+
+    @Query("SELECT DISTINCT e FROM Entreprise e JOIN e.associations a WHERE a.compte.id = :compteID AND a.role.fs.id = :fsId")
+    List<Entreprise> findAllDistinctByCompteIdAndRoleFsId(@Param("fsId") Long fsId, @Param("compteID") Long compteID);
 
 
 

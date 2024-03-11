@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-03-09T18:46:16+0100",
+    date = "2024-03-11T11:34:04+0000",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -23,12 +23,26 @@ public class ContactMapperImpl implements ContactMapper {
 
         Contact contact = new Contact();
 
-        contact.setId( dto.getId() );
         contact.setDeviceToken( dto.getDeviceToken() );
         contact.setDeviceOS( dto.getDeviceOS() );
         contact.setDeviceVersion( dto.getDeviceVersion() );
 
         return contact;
+    }
+
+    @Override
+    public ContactDTO toDto(Contact entity) {
+        if ( entity == null ) {
+            return null;
+        }
+
+        ContactDTO contactDTO = new ContactDTO();
+
+        contactDTO.setDeviceToken( entity.getDeviceToken() );
+        contactDTO.setDeviceOS( entity.getDeviceOS() );
+        contactDTO.setDeviceVersion( entity.getDeviceVersion() );
+
+        return contactDTO;
     }
 
     @Override
@@ -65,9 +79,6 @@ public class ContactMapperImpl implements ContactMapper {
             return;
         }
 
-        if ( dto.getId() != null ) {
-            entity.setId( dto.getId() );
-        }
         if ( dto.getDeviceToken() != null ) {
             entity.setDeviceToken( dto.getDeviceToken() );
         }
@@ -80,7 +91,7 @@ public class ContactMapperImpl implements ContactMapper {
     }
 
     @Override
-    public ContactDTO toDto(Contact contact) {
+    public ContactDTO toDtoCompteId(Contact contact) {
         if ( contact == null ) {
             return null;
         }
@@ -88,23 +99,6 @@ public class ContactMapperImpl implements ContactMapper {
         ContactDTO contactDTO = new ContactDTO();
 
         contactDTO.setCOMPID( mapCompteProToId( contact.getComptePro() ) );
-        contactDTO.setId( contact.getId() );
-        contactDTO.setDeviceToken( contact.getDeviceToken() );
-        contactDTO.setDeviceOS( contact.getDeviceOS() );
-        contactDTO.setDeviceVersion( contact.getDeviceVersion() );
-
-        return contactDTO;
-    }
-
-    @Override
-    public ContactDTO toDtoCompteId(Contact Contact) {
-        if ( Contact == null ) {
-            return null;
-        }
-
-        ContactDTO contactDTO = new ContactDTO();
-
-        contactDTO.setId( Contact.getId() );
 
         return contactDTO;
     }

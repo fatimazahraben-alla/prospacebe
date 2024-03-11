@@ -1,7 +1,6 @@
 package ma.digital.prospace.service.mapper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.annotation.processing.Generated;
 import ma.digital.prospace.domain.ComptePro;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-03-09T18:46:16+0100",
+    date = "2024-03-10T19:12:02+0000",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -80,19 +79,6 @@ public class ProcurationMapperImpl implements ProcurationMapper {
         return procurationDTO;
     }
 
-    @Override
-    public CompteProDTO toDtoCompteProId(ComptePro comptePro) {
-        if ( comptePro == null ) {
-            return null;
-        }
-
-        CompteProDTO compteProDTO = new CompteProDTO();
-
-        compteProDTO.setId( comptePro.getId() );
-
-        return compteProDTO;
-    }
-
     protected ComptePro compteProDTOToComptePro(CompteProDTO compteProDTO) {
         if ( compteProDTO == null ) {
             return null;
@@ -101,19 +87,6 @@ public class ProcurationMapperImpl implements ProcurationMapper {
         ComptePro comptePro = new ComptePro();
 
         comptePro.setId( compteProDTO.getId() );
-        comptePro.setIdentifiant( compteProDTO.getIdentifiant() );
-        comptePro.setTypeIdentifiant( compteProDTO.getTypeIdentifiant() );
-        comptePro.setNomAr( compteProDTO.getNomAr() );
-        comptePro.setNomFr( compteProDTO.getNomFr() );
-        comptePro.setPrenomAr( compteProDTO.getPrenomAr() );
-        comptePro.setPrenomFr( compteProDTO.getPrenomFr() );
-        byte[] photo = compteProDTO.getPhoto();
-        if ( photo != null ) {
-            comptePro.setPhoto( Arrays.copyOf( photo, photo.length ) );
-        }
-        comptePro.setMail( compteProDTO.getMail() );
-        comptePro.setTelephone( compteProDTO.getTelephone() );
-        comptePro.setStatut( compteProDTO.getStatut() );
 
         return comptePro;
     }
@@ -126,19 +99,6 @@ public class ProcurationMapperImpl implements ProcurationMapper {
         CompteProDTO compteProDTO = new CompteProDTO();
 
         compteProDTO.setId( comptePro.getId() );
-        compteProDTO.setIdentifiant( comptePro.getIdentifiant() );
-        compteProDTO.setTypeIdentifiant( comptePro.getTypeIdentifiant() );
-        compteProDTO.setNomAr( comptePro.getNomAr() );
-        compteProDTO.setNomFr( comptePro.getNomFr() );
-        compteProDTO.setPrenomAr( comptePro.getPrenomAr() );
-        compteProDTO.setPrenomFr( comptePro.getPrenomFr() );
-        byte[] photo = comptePro.getPhoto();
-        if ( photo != null ) {
-            compteProDTO.setPhoto( Arrays.copyOf( photo, photo.length ) );
-        }
-        compteProDTO.setMail( comptePro.getMail() );
-        compteProDTO.setTelephone( comptePro.getTelephone() );
-        compteProDTO.setStatut( comptePro.getStatut() );
 
         return compteProDTO;
     }

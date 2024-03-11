@@ -13,9 +13,14 @@ import java.util.Date;
 @Table(name = "Session")
 public class Session implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
-   @Id
+    public enum Status {
+        IN_PROGRESS,
+        COMPLETED,
+        FAILED
+    }
+
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -28,55 +33,28 @@ public class Session implements Serializable {
     @Column(name = "created_at", nullable = false)
     private Date CreatedAt;
 
-
-
+    @Enumerated(EnumType.STRING) // Spécifie que le champ sera stocké en tant que chaîne de caractères représentant l'énumération
     @NotNull
-    @Size(max = 500)
-    @Column(name = "json_data", length = 500, nullable = false)
-    private String JsonData;
-
+    @Column(name = "status", nullable = false)
+    private Status status;
 
     @ManyToOne
     @JoinColumn(name = "association", nullable = false)
     private Association association;
 
- public Long getId() {
-  return id;
- }
+    public Long getId() {
+        return id;
+    }
 
- public void setId(Long id) {
-  this.id = id;
- }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
- public Long getTransactionId() {
-  return TransactionId;
- }
+    public Status getStatus() {
+        return status;
+    }
 
- public void setTransactionId(Long transactionId) {
-  TransactionId = transactionId;
- }
-
- public Date getCreatedAt() {
-  return CreatedAt;
- }
-
- public void setCreatedAt(Date createdAt) {
-  CreatedAt = createdAt;
- }
-
- public String getJsonData() {
-  return JsonData;
- }
-
- public void setJsonData(String jsonData) {
-  JsonData = jsonData;
- }
-
- public Association getAssociation() {
-  return association;
- }
-
- public void setAssociation(Association association) {
-  this.association = association;
- }
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }

@@ -4,16 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
 import ma.digital.prospace.domain.Association;
-import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.Rolee;
 import ma.digital.prospace.service.dto.AssociationDTO;
-import ma.digital.prospace.service.dto.CompteProDTO;
 import ma.digital.prospace.service.dto.RoleeDTO;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-03-09T18:46:16+0100",
+    date = "2024-03-11T00:12:15+0000",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -90,19 +88,6 @@ public class AssociationMapperImpl implements AssociationMapper {
         associationDTO.setStatut( s.getStatut() );
 
         return associationDTO;
-    }
-
-    @Override
-    public CompteProDTO toDtoCompteProId(ComptePro comptePro) {
-        if ( comptePro == null ) {
-            return null;
-        }
-
-        CompteProDTO compteProDTO = new CompteProDTO();
-
-        compteProDTO.setId( comptePro.getId() );
-
-        return compteProDTO;
     }
 
     @Override

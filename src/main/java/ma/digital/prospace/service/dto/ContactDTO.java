@@ -1,5 +1,6 @@
 package ma.digital.prospace.service.dto;
 
+import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -10,8 +11,9 @@ import javax.validation.constraints.Size;
 @Data
 public class ContactDTO {
 
-   @Transient
-    private Long id;
+ @NotNull
+ @Size(max = 50, message = "Le champ 'deviceVersion' ne peut pas dépasser {max} caractères")
+ private Long COMPID;
 
     @NotNull(message = "Le champ 'deviceToken' ne peut pas être nul")
     @Size(max = 255, message = "Le champ 'deviceToken' ne peut pas dépasser {max} caractères")
@@ -26,17 +28,9 @@ public class ContactDTO {
     private String deviceVersion;
 
 
-   @NotNull
-    @Size(max = 50, message = "Le champ 'deviceVersion' ne peut pas dépasser {max} caractères")
-    private Long COMPID;
 
- public Long getId() {
-  return id;
- }
 
- public void setId(Long id) {
-  this.id = id;
- }
+
 
  public String getDeviceToken() {
   return deviceToken;

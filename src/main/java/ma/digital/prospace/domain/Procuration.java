@@ -3,29 +3,22 @@ package ma.digital.prospace.domain;
 import java.io.Serializable;
 import java.time.Instant;
 
+import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-
 /**
  * A Procuration.
  */
 @Entity
+@Data
 @Table(name = "procuration")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Procuration implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,12 +31,11 @@ public class Procuration implements Serializable {
     @Column(name = "date_fin")
     private Instant dateFin;
 
+    @Transient
     @ManyToOne
-    @JsonIgnoreProperties(value = { "entrepriseGeree", "mandataires", "mandants", "associations" }, allowSetters = true)
     private ComptePro gestionnaireEspacePro;
-
+@Transient
     @ManyToOne
-    @JsonIgnoreProperties(value = { "entrepriseGeree", "mandataires", "mandants", "associations" }, allowSetters = true)
     private ComptePro utilisateurPro;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

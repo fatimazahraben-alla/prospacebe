@@ -22,7 +22,6 @@ import java.time.ZoneOffset;
 @Mapper(componentModel = "spring")
 public interface ProcurationMapper extends EntityMapper<ProcurationDTO, Procuration> {
 
-    ProcurationMapper INSTANCE = Mappers.getMapper(ProcurationMapper.class);
 
     @Mapping(target = "dateEffet", qualifiedByName = "localDateToInstant")
     @Mapping(target = "dateFin", qualifiedByName = "localDateToInstant")
@@ -48,8 +47,6 @@ public interface ProcurationMapper extends EntityMapper<ProcurationDTO, Procurat
         }
         // Autres mises à jour partielles si nécessaire
     }
-    @Named("compteProId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    CompteProDTO toDtoCompteProId(ComptePro comptePro);
+
+
 }

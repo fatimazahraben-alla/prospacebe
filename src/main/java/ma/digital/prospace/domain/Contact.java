@@ -12,7 +12,6 @@ import java.io.Serializable;
 @Entity
 @Data
 @Table(name = "contact")
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Contact implements Serializable {
 
     @Id
@@ -24,6 +23,7 @@ public class Contact implements Serializable {
     @Size(max =50)
     @Column(name = "mail", length = 50, nullable = false)
     private String mail;
+
     @NotNull
     @Size(max =50)
     @Column(name = "telephone", length = 50, nullable = false)

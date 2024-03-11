@@ -66,13 +66,13 @@ public class ContactResource {
     @PostMapping("/contacts")
     public ResponseEntity<ContactDTO> createContact(@Valid @RequestBody ContactDTO contactDTO) throws URISyntaxException {
         log.debug("REST request to save ContactDTO : {}", contactDTO);
-        if (contactDTO.getId() != null) {
+        if (contactDTO.getDeviceOS() != null) {
             throw new BadRequestAlertException("A new contact cannot already have an ID", ENTITY_NAME, "idexists");
         }
         ContactDTO result = contactService.save(contactDTO);
         return ResponseEntity
-                .created(new URI("/api/contacts/" + result.getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+                .created(new URI("/api/contacts/" + result.getDeviceOS()))
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getDeviceOS().toString()))
                 .body(result);
     }
 
@@ -92,17 +92,17 @@ public class ContactResource {
             @Valid @RequestBody ContactDTO contactDTO
     ) throws URISyntaxException {
         log.debug("REST request to update ContactDTO : {}, {}", id, contactDTO);
-        if (contactDTO.getId() == null) {
+        if (contactDTO.getDeviceOS() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, contactDTO.getId())) {
+        if (!Objects.equals(id, contactDTO.getDeviceOS())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
         ContactDTO result = contactService.update(contactDTO);
         return ResponseEntity
                 .ok()
-                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, contactDTO.getId().toString()))
+                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, contactDTO.getDeviceOS().toString()))
                 .body(result);
     }
 
@@ -123,10 +123,10 @@ public class ContactResource {
             @NotNull @RequestBody ContactDTO contactDTO
     ) throws URISyntaxException {
         log.debug("REST request to partial update ContactDTO partially : {}, {}", id, contactDTO);
-        if (contactDTO.getId() == null) {
+        if (contactDTO.getDeviceOS() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, contactDTO.getId())) {
+        if (!Objects.equals(id, contactDTO.getDeviceOS())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 

@@ -9,7 +9,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import ma.digital.prospace.service.dto.ResponseauthenticationDTO;
+import ma.digital.prospace.service.dto.CompteFSAssociation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -184,8 +184,14 @@ public class AssociationResource {
             .build();
     }
     @GetMapping("/association/processAuthenticationStep2")
-    public ResponseEntity<ResponseauthenticationDTO> processAuthenticationStep2(@RequestParam Long compteID, @RequestParam Long fs) {
-        return associationService.processAuthenticationStep2(compteID, fs);
+    public ResponseEntity<CompteFSAssociation> processAuthenticationStep2(@RequestParam Long compteID, @RequestParam Long fs) {
+        CompteFSAssociation responseDTO = associationService.processAuthenticationStep2(compteID, fs);
+        if (responseDTO != null) {
+            return ResponseEntity.ok().body(responseDTO);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
+
 
 }

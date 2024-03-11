@@ -1,7 +1,11 @@
 package ma.digital.prospace.service;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Optional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import ma.digital.prospace.domain.Contact;
 import ma.digital.prospace.repository.ContactRepository;
 import org.slf4j.Logger;
@@ -10,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import ma.digital.prospace.domain.ComptePro;
@@ -21,7 +26,8 @@ import ma.digital.prospace.service.dto.*;
  * Service Implementation for managing {@link ComptePro}.
  */
 @Service
-@Transactional
+@Transactional(propagation = Propagation.REQUIRED)
+
 public class CompteProService {
 
     private final Logger log = LoggerFactory.getLogger(CompteProService.class);
@@ -30,22 +36,18 @@ public class CompteProService {
 
     private final CompteProMapper compteProMapper;
 
-
+    @PersistenceContext
+    private EntityManager entityManager;
     private final ContactRepository contactRepository;
 
-    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository) {
+    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper, ContactRepository contactRepository) {
         this.compteProRepository = compteProRepository;
         this.compteProMapper = compteProMapper;
         this.contactRepository = contactRepository;
 
     }
 
-    /**
-     * Save a comptePro.
-     *
-     * @param comptePro the entity to save.
-     * @return the persisted entity.
-     */
+
     public CompteProDTO save(CompteProDTO compteProDTO) {
         log.debug("Request to save ComptePro : {}", compteProDTO);
         ComptePro comptePro = compteProMapper.toEntity(compteProDTO);
@@ -53,12 +55,7 @@ public class CompteProService {
         return compteProMapper.toDto(comptePro);
     }
 
-    /**
-     * Update a comptePro.
-     *
-     * @param comptePro the entity to save.
-     * @return the persisted entity.
-     */
+
     public CompteProDTO update(CompteProDTO compteProDTO) {
         log.debug("Request to update ComptePro : {}", compteProDTO);
         ComptePro comptePro = compteProMapper.toEntity(compteProDTO);
@@ -76,14 +73,14 @@ public class CompteProService {
         log.debug("Request to partially update ComptePro : {}", comptePro);
 
         return compteProRepository
-            .findById(comptePro.getId())
-            .map(existingComptePro -> {
-                compteProMapper.partialUpdate(existingComptePro, comptePro);
+                .findById(comptePro.getId())
+                .map(existingComptePro -> {
+                    compteProMapper.partialUpdate(existingComptePro, comptePro);
 
-                return existingComptePro;
-            })
-            .map(compteProRepository::save)
-            .map(compteProMapper::toDto);
+                    return existingComptePro;
+                })
+                .map(compteProRepository::save)
+                .map(compteProMapper::toDto);
     }
 
     /**

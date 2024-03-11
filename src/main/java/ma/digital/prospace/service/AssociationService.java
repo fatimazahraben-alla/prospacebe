@@ -1,20 +1,12 @@
 package ma.digital.prospace.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
 import ma.digital.prospace.domain.*;
 import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.repository.ContactRepository;
 import ma.digital.prospace.repository.SessionRepository;
-import ma.digital.prospace.service.dto.ContactDTO;
-import ma.digital.prospace.service.dto.SessionDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ma.digital.prospace.repository.AssociationRepository;
 import ma.digital.prospace.service.mapper.AssociationMapper;
 import ma.digital.prospace.service.dto.AssociationDTO;
-import ma.digital.prospace.service.dto.ResponseauthenticationDTO;
+import ma.digital.prospace.service.dto.CompteFSAssociation;
 /**
  * Service Implementation for managing {@link Association}.
  */
@@ -123,69 +115,49 @@ public class AssociationService {
         associationRepository.deleteById(id);
     }
 
-    public ResponseEntity<ResponseauthenticationDTO> processAuthenticationStep2(Long compteID, Long fs) {
 
-        Association association = associationRepository.findByFsAndCompteID(fs, compteID);
+    /**
+     *
+     * @param compteID
+     * @param fs
+     * @return
+     */
+    public List<Association> processAuthenticationStep2(Long compteID, Long fs) {
+        List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteID);
 
-        if (association != null) {
+        List<Association> responses = new ArrayList<>();
 
-            Session session = new Session();
-            session.setTransactionId(UUID.fromString(UUID.randomUUID().toString()).getMostSignificantBits());
-            session.setCreatedAt(new Date());
-            session.setJsonData("IN_PROGRESS");
-            sessionRepository.save(session);
-            ComptePro compte = compteproRepository.getById(compteID);
-            Contact contact = compte.getContact();
-            String deviceToken = contact.getDeviceToken();
-            List<Entreprise> entreprises = associationRepository.getListEntreprisesByCompteAndFs(compteID, fs);
-            List<String> entrepriseStrings = convertEntreprisesToStrings(entreprises);
-            ResponseauthenticationDTO responseDTO = new ResponseauthenticationDTO();
-            responseDTO.setCompteID(compteID);
-            responseDTO.setFs(fs);
-            responseDTO.setEntreprises(entrepriseStrings);
-            //////PUSH NOTIFICATION
-            sendMobileNotification(deviceToken, session.getTransactionId(), fs, compteID, entreprises);
-            return ResponseEntity.ok().body(responseDTO);
-        } else {
-            return ResponseEntity.badRequest().build();
+        if (associations != null && !associations.isEmpty()) {
+            for (Association association : associations) {
+                Session session = new Session();
+                session.setTransactionId(UUID.fromString(UUID.randomUUID().toString()).getMostSignificantBits());
+                session.setCreatedAt(new Date());
+                session.setStatus(Session.Status.IN_PROGRESS);
+                sessionRepository.save(session);
+
+                Contact contact = contactRepository.findByCompteProId(compteID);
+                String deviceToken = contact.getDeviceToken();
+                List<Entreprise> entreprises = associationRepository.findAllDistinctByCompteIdAndRoleFsId(compteID, fs);
+                List<String> entrepriseStrings = entreprises.stream()
+                        .map(Object::toString)
+                        .collect(Collectors.toList());
+
+                CompteFSAssociation responseDTO = new CompteFSAssociation();
+                responseDTO.setCompteID(compteID);
+                responseDTO.setFs(fs);
+                responseDTO.setEntreprises(entrepriseStrings);
+
+                sendMobileNotification(deviceToken, session.getTransactionId(), fs, compteID, entreprises);
+
+                responses.add(association);
+            }
         }
-    }
 
-    private void sendMobileNotification(String deviceToken, Long transactionId, Long fs, Long
-            compteID, List<Entreprise> entreprises) {
-        Message message = Message.builder()
-                .setToken(deviceToken)
-                .putData("transactionId", String.valueOf(transactionId))
-                .putData("fs", String.valueOf(fs))
-                .putData("compteID", String.valueOf(compteID))
-                .putData("entreprises", convertEntreprisesListToString(entreprises))
-                .build();
-
-        try {
-
-            String response = FirebaseMessaging.getInstance().send(message);
-            System.out.println("Message sent to Firebase: " + response);
-        } catch (FirebaseMessagingException e) {
-            // Gérez les erreurs lors de l'envoi de la notification
-            e.printStackTrace();
-        }
-    }
-
-    public String convertEntreprisesListToString(List<Entreprise> entreprises) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Entreprise entreprise : entreprises) {
-            stringBuilder.append(entreprise.getId()).append(", "); // Ajoutez les détails de l'entreprise que vous souhaitez inclure
-        }
-        return stringBuilder.toString();
-    }
-
-    public List<String> convertEntreprisesToStrings(List<Entreprise> entreprises) {
-        return entreprises.stream()
-                .map(Object::toString)
-                .collect(Collectors.toList());
-
+        return responses;
     }
 
 
+    private void sendMobileNotification(String deviceToken, Long transactionId, Long fs, Long compteID, List<Entreprise> entreprises) {
+    }
 
 }

@@ -2,6 +2,7 @@ package ma.digital.prospace.domain;
 
 import java.io.Serializable;
 
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -19,12 +20,11 @@ import jakarta.persistence.Table;
  * A Rolee.
  */
 @Entity
+@Data
 @Table(name = "rolee")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Rolee implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +38,6 @@ public class Rolee implements Serializable {
     private String description;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "roles" }, allowSetters = true)
     private FournisseurService fs;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

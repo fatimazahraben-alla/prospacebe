@@ -27,25 +27,13 @@ public abstract class Procuration_ {
 	public static volatile SingularAttribute<Procuration, Instant> dateFin;
 	
 	/**
-	 * @see ma.digital.prospace.domain.Procuration#gestionnaireEspacePro
-	 **/
-	public static volatile SingularAttribute<Procuration, ComptePro> gestionnaireEspacePro;
-	
-	/**
 	 * @see ma.digital.prospace.domain.Procuration
 	 **/
 	public static volatile EntityType<Procuration> class_;
-	
-	/**
-	 * @see ma.digital.prospace.domain.Procuration#utilisateurPro
-	 **/
-	public static volatile SingularAttribute<Procuration, ComptePro> utilisateurPro;
 
 	public static final String DATE_EFFET = "dateEffet";
 	public static final String ID = "id";
 	public static final String DATE_FIN = "dateFin";
-	public static final String GESTIONNAIRE_ESPACE_PRO = "gestionnaireEspacePro";
-	public static final String UTILISATEUR_PRO = "utilisateurPro";
 
 }
 

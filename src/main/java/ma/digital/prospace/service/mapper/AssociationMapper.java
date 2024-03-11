@@ -19,23 +19,16 @@ import ma.digital.prospace.service.dto.RoleeDTO;
  */
 @Mapper(componentModel = "spring")
 public interface AssociationMapper extends EntityMapper<AssociationDTO, Association> {
-    @Mapping(target = "ENTREPRISEID", source = "entreprise", qualifiedByName = "entrepriseId")
-    @Mapping(target = "COMPTEID", source = "compte", qualifiedByName = "compteProId")
-    @Mapping(target = "ROLEID", source = "role", qualifiedByName = "roleeId")
+    @Mapping(target = "entreprise", source = "entreprise", qualifiedByName = "entrepriseId")
+    @Mapping(target = "compte", source = "compte", qualifiedByName = "compteProId")
+    @Mapping(target = "role", source = "role", qualifiedByName = "roleeId")
     AssociationDTO toDto(Association s);
 
     @Named("entrepriseId")
-    default Long mapEntrepriseToId(Entreprise entreprise) {
-        return entreprise != null ? entreprise.getId() : null;
-    }
-    @Named("compteProId")
-    default Long mapCompteToId(ComptePro compte) {
-        return compte != null ? compte.getId() : null;
-    }
-    @Named("roleeId")
-    default Long mapRoleToId(Rolee role) {
-        return role != null ? role.getId() : null;
-    }
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    EntrepriseDTO toDtoEntrepriseId(Entreprise entreprise);
+
     @Named("compteProId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
