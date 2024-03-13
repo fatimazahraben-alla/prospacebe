@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!-- Added the constraints for entity Association. -->
+    <changeSet id="20240130231409-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="entreprise_id"
+                                 baseTableName="association"
+                                 constraintName="fk_association__entreprise_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="entreprise"/>
+
+        <addForeignKeyConstraint baseColumnNames="compte_id"
+                                 baseTableName="association"
+                                 constraintName="fk_association__compte_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="compte_pro"/>
+
+        <addForeignKeyConstraint baseColumnNames="role_id"
+                                 baseTableName="association"
+                                 constraintName="fk_association__role_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="rolee"/>
+    </changeSet>
+</databaseChangeLog>
