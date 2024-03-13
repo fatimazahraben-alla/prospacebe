@@ -1,18 +1,25 @@
 package ma.digital.prospace.service;
 
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.persistence.EntityNotFoundException;
+import ma.digital.prospace.service.mapper.AssociationMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ma.digital.prospace.domain.Association;
-import ma.digital.prospace.repository.AssociationRepository;
-import ma.digital.prospace.service.mapper.AssociationMapper;
-import ma.digital.prospace.service.dto.AssociationDTO;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ma.digital.prospace.domain.*;
+import ma.digital.prospace.repository.*;
+import ma.digital.prospace.service.dto.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 /**
  * Service Implementation for managing {@link Association}.
@@ -20,24 +27,44 @@ import ma.digital.prospace.service.dto.AssociationDTO;
 @Service
 @Transactional
 public class AssociationService {
-
+    @Autowired
+    private ContactRepository contactRepository;
     private final Logger log = LoggerFactory.getLogger(AssociationService.class);
+    @Autowired
+    private AssociationRepository associationRepository;
+    @Autowired
+    private AssociationMapper associationMapper;
+    @Autowired
+    private SessionRepository sessionRepository;
+    @Autowired
+    private CompteProRepository compteProRepository;
+    @Autowired
+    private EntrepriseRepository entrepriseRepository;
+    @Autowired
+    private RoleeRepository roleeRepository;
+    @Autowired
+    private NotificationService notificationService;
+    private final ObjectMapper objectMapper;
 
-    private final AssociationRepository associationRepository;
-
-    private final AssociationMapper associationMapper;
-
-    public AssociationService(AssociationRepository associationRepository, AssociationMapper associationMapper) {
+    // Constructor
+    public AssociationService(AssociationRepository associationRepository,
+                              AssociationMapper associationMapper,
+                              SessionRepository sessionRepository,
+                              CompteProRepository compteProRepository,
+                              EntrepriseRepository entrepriseRepository,
+                              RoleeRepository roleeRepository,
+                              NotificationService notificationService,
+                              ObjectMapper objectMapper) { // Add ObjectMapper to the constructor
         this.associationRepository = associationRepository;
         this.associationMapper = associationMapper;
+        this.sessionRepository = sessionRepository;
+        this.compteProRepository = compteProRepository;
+        this.entrepriseRepository = entrepriseRepository;
+        this.roleeRepository = roleeRepository;
+        this.notificationService = notificationService;
+        this.objectMapper = objectMapper; // Initialize ObjectMapper
     }
 
-    /**
-     * Save a association.
-     *
-     * @param association the entity to save.
-     * @return the persisted entity.
-     */
     public AssociationDTO save(AssociationDTO associationDTO) {
         log.debug("Request to save Association : {}", associationDTO);
         Association association = associationMapper.toEntity(associationDTO);
@@ -45,12 +72,6 @@ public class AssociationService {
         return associationMapper.toDto(association);
     }
 
-    /**
-     * Update a association.
-     *
-     * @param association the entity to save.
-     * @return the persisted entity.
-     */
     public AssociationDTO update(AssociationDTO associationDTO) {
         log.debug("Request to update Association : {}", associationDTO);
         Association association = associationMapper.toEntity(associationDTO);
@@ -58,57 +79,102 @@ public class AssociationService {
         return associationMapper.toDto(association);
     }
 
-    /**
-     * Partially update a association.
-     *
-     * @param association the entity to update partially.
-     * @return the persisted entity.
-     */
     public Optional<AssociationDTO> partialUpdate(AssociationDTO association) {
         log.debug("Request to partially update Association : {}", association);
 
         return associationRepository
-            .findById(association.getId())
-            .map(existingAssociation -> {
-                associationMapper.partialUpdate(existingAssociation, association);
+                .findById(association.getId())
+                .map(existingAssociation -> {
+                    associationMapper.partialUpdate(existingAssociation, association);
 
-                return existingAssociation;
-            })
-            .map(associationRepository::save)
-            .map(associationMapper::toDto);
+                    return existingAssociation;
+                })
+                .map(associationRepository::save)
+                .map(associationMapper::toDto);
     }
 
-    /**
-     * Get all the associations.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
     @Transactional(readOnly = true)
     public Page<AssociationDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Associations");
         return associationRepository.findAll(pageable).map(associationMapper::toDto);
     }
 
-    /**
-     * Get one association by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
     @Transactional(readOnly = true)
     public Optional<AssociationDTO> findOne(Long id) {
         log.debug("Request to get Association : {}", id);
         return associationRepository.findById(id).map(associationMapper::toDto);
     }
 
-    /**
-     * Delete the association by id.
-     *
-     * @param id the id of the entity.
-     */
     public void delete(Long id) {
         log.debug("Request to delete Association : {}", id);
         associationRepository.deleteById(id);
     }
+
+    public List<CompteFSAssociationDTO> processAuthenticationStep2(Long compteID, Long fs) {
+        List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteID);
+
+        List<CompteFSAssociationDTO> responses = new ArrayList<>();
+
+        if (associations != null && !associations.isEmpty()) {
+            // Créer une session pour toutes les associations qui correspondent aux critères de recherche
+            Session session = new Session();
+            session.setTransactionId(String.valueOf(UUID.fromString(UUID.randomUUID().toString()).getMostSignificantBits()));
+            session.setCreatedAt(new Date());
+            session.setStatus(Session.Status.IN_PROGRESS);
+            sessionRepository.save(session);
+
+            Contact contact = contactRepository.findByCompteProId(compteID);
+            String deviceToken = contact.getDeviceToken();
+
+            // Créer les DTOs pour toutes les associations
+            for (Association association : associations) {
+                Entreprise entreprise = association.getEntreprise();
+                String entrepriseString = Objects.toString(entreprise, null);
+
+                CompteFSAssociationDTO responseDTO = new CompteFSAssociationDTO();
+                responseDTO.setCompteID(compteID);
+                responseDTO.setFs(fs);
+                responseDTO.setEntreprises(Collections.singletonList(entrepriseString));
+
+                responses.add(responseDTO);
+            }
+        }
+
+        return responses;
+    }
+    public void pushCompteEntreprise(CompteEntrepriseDTO compteEntrepriseDTO) throws JsonProcessingException {
+        CompteProDTO compteProDTO = compteEntrepriseDTO.getComptePro();
+        EntrepriseDTO entrepriseDTO = compteEntrepriseDTO.getEntreprise();
+        List<String> roleNames = associationRepository.findRoleNamesByCompteProIdAndEntrepriseId(
+                compteProDTO.getId(),
+                entrepriseDTO.getId());
+
+        // Create a data map containing the information from DTOs and the roles list
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("comptePro", compteProDTO);
+        dataMap.put("entreprise", entrepriseDTO);
+        dataMap.put("roles", roleNames);
+
+        // Serialize the map to JSON
+        String jsonData = objectMapper.writeValueAsString(dataMap);
+
+        // Update the session
+        Session session = sessionRepository.findByTransactionId(compteEntrepriseDTO.getTransactionId())
+                .orElseThrow(() -> new EntityNotFoundException("Session not found with transaction ID: " + compteEntrepriseDTO.getTransactionId()));
+
+        session.setJsonData(jsonData);
+        session.setStatus(Session.Status.COMPLETED);
+        sessionRepository.save(session);
+    }
+
+
+    public CompteEntrepriseDTO checkAuthenticationStep2(String transactionId) throws JsonProcessingException {
+        Session session = sessionRepository.findByTransactionId(transactionId)
+                .filter(s -> s.getStatus() != Session.Status.COMPLETED)
+                .orElseThrow(() -> new EntityNotFoundException("Session not completed or not found."));
+
+        CompteEntrepriseDTO compteEntrepriseDTO = objectMapper.readValue(session.getJsonData(), CompteEntrepriseDTO.class);
+        return compteEntrepriseDTO;
+    }
+
 }

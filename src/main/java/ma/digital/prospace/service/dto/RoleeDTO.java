@@ -3,11 +3,6 @@ package ma.digital.prospace.service.dto;
 import java.io.Serializable;
 import java.util.Objects;
 
-
-/**
- * A DTO for the {@link ma.digital.prospace.domain.Rolee} entity.
- */
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class RoleeDTO implements Serializable {
 
     private Long id;
@@ -16,7 +11,9 @@ public class RoleeDTO implements Serializable {
 
     private String description;
 
-    private FournisseurServiceDTO fs;
+    private Long fournisseurServiceId;
+
+    // Getters and setters
 
     public Long getId() {
         return id;
@@ -42,43 +39,36 @@ public class RoleeDTO implements Serializable {
         this.description = description;
     }
 
-    public FournisseurServiceDTO getFs() {
-        return fs;
+    public Long getFournisseurServiceId() {
+        return fournisseurServiceId;
     }
 
-    public void setFs(FournisseurServiceDTO fs) {
-        this.fs = fs;
+    public void setFournisseurServiceId(Long fournisseurServiceId) {
+        this.fournisseurServiceId = fournisseurServiceId;
     }
+
+    // Equals, hashCode, and toString methods
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof RoleeDTO)) {
-            return false;
-        }
-
-        RoleeDTO rolee = (RoleeDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, rolee.id);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RoleeDTO roleeDTO = (RoleeDTO) o;
+        return Objects.equals(id, roleeDTO.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id);
+        return Objects.hash(id);
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "Rolee{" +
-            "id=" + getId() +
-            ", nom='" + getNom() + "'" +
-            ", description='" + getDescription() + "'" +
-            ", fs=" + getFs() +
-            "}";
+        return "RoleeDTO{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", description='" + description + '\'' +
+                ", fournisseurServiceId=" + fournisseurServiceId +
+                '}';
     }
 }

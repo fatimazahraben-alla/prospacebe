@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ma.digital.prospace.domain.Rolee;
 import ma.digital.prospace.repository.RoleeRepository;
 import ma.digital.prospace.service.mapper.RoleeMapper;
-import ma.digital.prospace.service.dto.*;
+import ma.digital.prospace.service.dto.RoleeDTO;
 
 
 /**
@@ -36,7 +36,7 @@ public class RoleeService {
     /**
      * Save a rolee.
      *
-     * @param rolee the entity to save.
+     * @param roleeDTO the entity to save.
      * @return the persisted entity.
      */
     public RoleeDTO save(RoleeDTO roleeDTO) {
@@ -49,8 +49,8 @@ public class RoleeService {
     /**
      * Update a rolee.
      *
-     * @param rolee the entity to save.
-     * @return the persisted entity.
+     * @param roleeDTO the entity to update.
+     * @return the updated entity.
      */
     public RoleeDTO update(RoleeDTO roleeDTO) {
         log.debug("Request to update Rolee : {}", roleeDTO);
@@ -62,21 +62,18 @@ public class RoleeService {
     /**
      * Partially update a rolee.
      *
-     * @param rolee the entity to update partially.
+     * @param roleeDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<RoleeDTO> partialUpdate(RoleeDTO rolee) {
-        log.debug("Request to partially update Rolee : {}", rolee);
+    public Optional<RoleeDTO> partialUpdate(RoleeDTO roleeDTO) {
+        log.debug("Request to partially update Rolee : {}", roleeDTO);
 
-        return roleeRepository
-            .findById(rolee.getId())
-            .map(existingRolee -> {
-                roleeMapper.partialUpdate(existingRolee, rolee);
-
-                return existingRolee;
-            })
-            .map(roleeRepository::save)
-            .map(roleeMapper::toDto);
+        return roleeRepository.findById(roleeDTO.getId())
+                .map(existingRolee -> {
+                    roleeMapper.partialUpdate(existingRolee, roleeDTO);
+                    Rolee updatedRolee = roleeRepository.save(existingRolee);
+                    return roleeMapper.toDto(updatedRolee);
+                });
     }
 
     /**

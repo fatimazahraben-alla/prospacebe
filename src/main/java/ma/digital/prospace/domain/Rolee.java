@@ -1,27 +1,12 @@
 package ma.digital.prospace.domain;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
+import java.util.Objects;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-
-/**
- * A Rolee.
- */
 @Entity
 @Table(name = "rolee")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@SuppressWarnings("common-java:DuplicatedBlocks")
 public class Rolee implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -36,20 +21,14 @@ public class Rolee implements Serializable {
 
     @Column(name = "description")
     private String description;
-
     @ManyToOne
-    @JsonIgnoreProperties(value = { "roles" }, allowSetters = true)
+    @JoinColumn(name = "fs_id")
     private FournisseurService fs;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
+    // Getters and setters
 
     public Long getId() {
-        return this.id;
-    }
-
-    public Rolee id(Long id) {
-        this.setId(id);
-        return this;
+        return id;
     }
 
     public void setId(Long id) {
@@ -57,12 +36,7 @@ public class Rolee implements Serializable {
     }
 
     public String getNom() {
-        return this.nom;
-    }
-
-    public Rolee nom(String nom) {
-        this.setNom(nom);
-        return this;
+        return nom;
     }
 
     public void setNom(String nom) {
@@ -70,12 +44,7 @@ public class Rolee implements Serializable {
     }
 
     public String getDescription() {
-        return this.description;
-    }
-
-    public Rolee description(String description) {
-        this.setDescription(description);
-        return this;
+        return description;
     }
 
     public void setDescription(String description) {
@@ -83,44 +52,35 @@ public class Rolee implements Serializable {
     }
 
     public FournisseurService getFs() {
-        return this.fs;
+        return fs;
     }
 
-    public void setFs(FournisseurService fournisseurService) {
-        this.fs = fournisseurService;
+    public void setFs(FournisseurService fs) {
+        this.fs = fs;
     }
 
-    public Rolee fs(FournisseurService fournisseurService) {
-        this.setFs(fournisseurService);
-        return this;
-    }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    // Equals, hashCode, and toString methods
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Rolee)) {
-            return false;
-        }
-        return id != null && id.equals(((Rolee) o).id);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Rolee rolee = (Rolee) o;
+        return Objects.equals(id, rolee.id);
     }
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
+        return Objects.hash(id);
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "Rolee{" +
-            "id=" + getId() +
-            ", nom='" + getNom() + "'" +
-            ", description='" + getDescription() + "'" +
-            "}";
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", description='" + description + '\'' +
+                ", fs=" + fs +
+                '}';
     }
 }

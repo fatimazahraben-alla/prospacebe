@@ -1,11 +1,14 @@
 package ma.digital.prospace.service.dto;
 
+import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * A DTO for the {@link ma.digital.prospace.domain.FournisseurServiceDTO} entity.
  */
+@Component
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class FournisseurServiceDTO	 implements Serializable {
 

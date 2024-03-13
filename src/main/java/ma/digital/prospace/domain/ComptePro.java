@@ -1,28 +1,19 @@
 package ma.digital.prospace.domain;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import ma.digital.prospace.domain.enumeration.StatutCompte;
 
 /**
@@ -41,57 +32,77 @@ public class ComptePro implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
     @Size(max = 10)
-    @Column(name = "identifiant", length = 10, nullable = false)
+    @Column(name = "identifiant", length = 10)
     private String identifiant;
 
-    @NotNull
-    @Size(max = 25)
-    @Column(name = "type_identifiant", length = 25, nullable = false)
-    private String typeIdentifiant;
 
+    @Transient
     @NotNull
     @Size(max = 50)
-    @Column(name = "nom_ar", length = 50, nullable = false)
+    @Column(name = "nom_ar", length = 50, nullable = true)
     private String nomAr;
 
+    @Transient
     @NotNull
     @Size(max = 50)
-    @Column(name = "nom_fr", length = 50, nullable = false)
+    @Column(name = "nom_fr", length = 50, nullable = true)
     private String nomFr;
 
+    @Transient
     @NotNull
     @Size(max = 50)
-    @Column(name = "prenom_ar", length = 50, nullable = false)
+    @Column(name = "prenom_ar", length = 50, nullable = true)
     private String prenomAr;
 
+    @Transient
     @NotNull
     @Size(max = 50)
-    @Column(name = "prenom_fr", length = 50, nullable = false)
+    @Column(name = "prenom_fr", length = 50, nullable = true)
     private String prenomFr;
 
+    @Transient
     @Size(max = 50)
     @Column(name = "adresse", length = 50)
     private String adresse;
 
+    @Transient
     @Lob
-    @Column(name = "photo", nullable = false)
+    @Column(name = "photo", nullable = true)
     private byte[] photo;
 
-    @NotNull
-    @Column(name = "photo_content_type", nullable = false)
-    private String photoContentType;
-
+    @Transient
     @Column(name = "mail")
     private String mail;
 
+    @Transient
     @Column(name = "telephone")
     private String telephone;
 
+
+    @Column(name = "created_at")
+    private Instant createdAt;
+
+
+    @Column(name = "updated_at")
+    private Instant updatedAt;
+
+    @Column(name = "deleted")
+    private boolean deleted;
     @Enumerated(EnumType.STRING)
     @Column(name = "statut")
     private StatutCompte statut;
+
+
+
+    private String deviceToken;
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "gerants", "associations" }, allowSetters = true)
@@ -135,23 +146,36 @@ public class ComptePro implements Serializable {
         this.setIdentifiant(identifiant);
         return this;
     }
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 
     public void setIdentifiant(String identifiant) {
         this.identifiant = identifiant;
     }
 
-    public String getTypeIdentifiant() {
-        return this.typeIdentifiant;
-    }
 
-    public ComptePro typeIdentifiant(String typeIdentifiant) {
-        this.setTypeIdentifiant(typeIdentifiant);
-        return this;
-    }
 
-    public void setTypeIdentifiant(String typeIdentifiant) {
-        this.typeIdentifiant = typeIdentifiant;
-    }
 
     public String getNomAr() {
         return this.nomAr;
@@ -229,19 +253,6 @@ public class ComptePro implements Serializable {
 
     public void setPhoto(byte[] photo) {
         this.photo = photo;
-    }
-
-    public String getPhotoContentType() {
-        return this.photoContentType;
-    }
-
-    public ComptePro photoContentType(String photoContentType) {
-        this.photoContentType = photoContentType;
-        return this;
-    }
-
-    public void setPhotoContentType(String photoContentType) {
-        this.photoContentType = photoContentType;
     }
 
     public String getMail() {
@@ -414,16 +425,17 @@ public class ComptePro implements Serializable {
         return "ComptePro{" +
             "id=" + getId() +
             ", identifiant='" + getIdentifiant() + "'" +
-            ", typeIdentifiant='" + getTypeIdentifiant() + "'" +
             ", nomAr='" + getNomAr() + "'" +
             ", nomFr='" + getNomFr() + "'" +
             ", prenomAr='" + getPrenomAr() + "'" +
             ", prenomFr='" + getPrenomFr() + "'" +
             ", adresse='" + getAdresse() + "'" +
             ", photo='" + getPhoto() + "'" +
-            ", photoContentType='" + getPhotoContentType() + "'" +
             ", mail='" + getMail() + "'" +
             ", telephone='" + getTelephone() + "'" +
+            ", created_at='" + getCreatedAt() + "'" +
+            ", update_at='" + getUpdatedAt() + "'" +
+            ", deleted='" + isDeleted() + "'" +
             ", statut='" + getStatut() + "'" +
             "}";
     }

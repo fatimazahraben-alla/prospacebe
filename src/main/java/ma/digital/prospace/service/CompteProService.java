@@ -2,6 +2,8 @@ package ma.digital.prospace.service;
 
 import java.util.Optional;
 
+import ma.digital.prospace.domain.Contact;
+import ma.digital.prospace.repository.ContactRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -27,15 +29,18 @@ public class CompteProService {
 
     private final CompteProMapper compteProMapper;
 
-    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper) {
+    private final ContactRepository contactRepository;
+
+    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository) {
         this.compteProRepository = compteProRepository;
         this.compteProMapper = compteProMapper;
+        this.contactRepository = contactRepository;
     }
 
     /**
      * Save a comptePro.
      *
-     * @param comptePro the entity to save.
+     * @param compteProDTO the entity to save.
      * @return the persisted entity.
      */
     public CompteProDTO save(CompteProDTO compteProDTO) {
@@ -48,7 +53,7 @@ public class CompteProService {
     /**
      * Update a comptePro.
      *
-     * @param comptePro the entity to save.
+     * @param compteProDTO the entity to save.
      * @return the persisted entity.
      */
     public CompteProDTO update(CompteProDTO compteProDTO) {
@@ -77,6 +82,10 @@ public class CompteProService {
             .map(compteProRepository::save)
             .map(compteProMapper::toDto);
     }
+
+
+
+
 
     /**
      * Get all the comptePros.
@@ -110,5 +119,14 @@ public class CompteProService {
     public void delete(Long id) {
         log.debug("Request to delete ComptePro : {}", id);
         compteProRepository.deleteById(id);
+    }
+
+    public void registerContactDTO(MobileRegistrationDTO mobileRegistrationDTO) {
+        Contact contact = new Contact();
+        contact.setDeviceToken(mobileRegistrationDTO.getDeviceToken());
+        contact.setDeviceOS(mobileRegistrationDTO.getDeviceOS());
+        contact.setDeviceVersion(mobileRegistrationDTO.getDeviceVersion());
+        contact.setComptePro(compteProRepository.getById(mobileRegistrationDTO.getCompteId()));
+        contactRepository.save(contact);
     }
 }

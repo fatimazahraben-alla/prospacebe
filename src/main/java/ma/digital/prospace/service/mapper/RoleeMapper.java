@@ -1,25 +1,34 @@
 package ma.digital.prospace.service.mapper;
 
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-
 import ma.digital.prospace.domain.FournisseurService;
 import ma.digital.prospace.domain.Rolee;
-import ma.digital.prospace.service.dto.FournisseurServiceDTO;
 import ma.digital.prospace.service.dto.RoleeDTO;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
-/**
- * Mapper for the entity {@link Rolee} and its DTO {@link Rolee}.
- */
 @Mapper(componentModel = "spring")
-public interface RoleeMapper extends EntityMapper<RoleeDTO, Rolee> {
-    @Mapping(target = "fs", source = "fs", qualifiedByName = "fournisseurServiceId")
-    RoleeDTO toDto(Rolee s);
+public interface RoleeMapper {
 
-    @Named("fournisseurServiceId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    FournisseurServiceDTO toDtoFournisseurServiceId(FournisseurService fournisseurService);
+    @Mapping(target = "fournisseurServiceId", source = "fs.id")
+    RoleeDTO toDto(Rolee rolee);
+
+    @Mapping(target = "fs", source = "fournisseurServiceId")
+    Rolee toEntity(RoleeDTO roleeDTO);
+
+    default void partialUpdate(@MappingTarget Rolee target, RoleeDTO source) {
+        if (source.getFournisseurServiceId() != null) {
+            target.setFs(map(source.getFournisseurServiceId()));
+        }
+        
+    }
+
+    default FournisseurService map(Long value) {
+        if (value == null) {
+            return null;
+        }
+        FournisseurService fournisseurService = new FournisseurService();
+        fournisseurService.setId(value);
+        return fournisseurService;
+    }
 }

@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.liquibase.LiquibaseDataSource;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 import tech.jhipster.config.JHipsterConstants;
@@ -29,6 +30,7 @@ public class LiquibaseConfiguration {
     }
 
     @Bean
+    //@Profile("clear-checksums")
     public SpringLiquibase liquibase(
         @Qualifier("taskExecutor") Executor executor,
         LiquibaseProperties liquibaseProperties,

@@ -9,6 +9,8 @@ import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import ma.digital.prospace.service.dto.ContactDTO;
+import ma.digital.prospace.service.dto.MobileRegistrationDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -189,5 +191,10 @@ public class CompteProResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+    @PostMapping("/compte-pros/registerMobile")
+    public ResponseEntity<MobileRegistrationDTO> registerMobile(@Valid @RequestBody MobileRegistrationDTO mobileRegistrationDTO) {
+        compteProService.registerContactDTO(mobileRegistrationDTO);
+        return ResponseEntity.ok().build();
     }
 }

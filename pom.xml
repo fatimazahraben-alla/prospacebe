@@ -88,11 +88,14 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>tech.jhipster</groupId>
             <artifactId>jhipster-framework</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -107,15 +110,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-     <!-- JSR 303 - Bean Validation API -->
-<dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-      <version>2.0.1.Final</version>
-  </dependency>
+        <!-- JSR 303 - Bean Validation API -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
 
-  <!-- Bean Validation API Reference Implementation -->
-  
+        <!-- Bean Validation API Reference Implementation -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
@@ -289,11 +292,25 @@
             <artifactId>mysql</artifactId>
             <scope>test</scope>
         </dependency>
-       <dependency>
-	<groupId>org.springdoc</groupId>
-	<artifactId>springdoc-openapi-common</artifactId>
-	<version>1.7.0</version>
-</dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-common</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>3.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -551,7 +568,6 @@
                     <version>${maven-eclipse-plugin.version}</version>
                     <configuration>
                         <downloadSources>true</downloadSources>
-                        <downloadJavadocs>true</downloadJavadocs>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -733,23 +749,23 @@
                         </execution>
                     </executions>
                 </plugin>
-                <plugin>
-                    <groupId>org.gaul</groupId>
-                    <artifactId>modernizer-maven-plugin</artifactId>
-                    <version>${modernizer-maven-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>modernizer</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>modernizer</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <javaVersion>${java.version}</javaVersion>
-                    </configuration>
-                </plugin>
+                <!--<plugin>
+                   <groupId>org.gaul</groupId>
+                   <artifactId>modernizer-maven-plugin</artifactId>
+                   <version>${modernizer-maven-plugin.version}</version>
+                   <executions>
+                       <execution>
+                           <id>modernizer</id>
+                           <phase>package</phase>
+                           <goals>
+                               <goal>modernizer</goal>
+                           </goals>
+                       </execution>
+                   </executions>
+                   <configuration>
+                       <javaVersion>${java.version}</javaVersion>
+                   </configuration>
+               </plugin>-->
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
@@ -807,11 +823,6 @@
                         <dependency>
                             <groupId>org.liquibase</groupId>
                             <artifactId>liquibase-core</artifactId>
-                            <version>${liquibase.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.liquibase.ext</groupId>
-                            <artifactId>liquibase-hibernate6</artifactId>
                             <version>${liquibase.version}</version>
                         </dependency>
                         <dependency>
@@ -996,6 +1007,12 @@
                 <dependency>
                     <groupId>org.hibernate.orm</groupId>
                     <artifactId>hibernate-jpamodelgen</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                    <version>1.18.22</version>
+                    <scope>compile</scope>
                 </dependency>
             </dependencies>
         </profile>

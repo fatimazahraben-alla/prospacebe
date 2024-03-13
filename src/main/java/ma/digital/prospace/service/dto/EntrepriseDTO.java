@@ -1,12 +1,14 @@
 package ma.digital.prospace.service.dto;
 
+import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.Objects;
 
 /**
- * A DTO for the {@link ma.digital.prospace.domain.EntrepriseDTO} entity.
+ * A DTO for the {@link ma.digital.prospace.domain.Entreprise} entity.
  */
+@Component
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class EntrepriseDTO implements Serializable {
 
@@ -26,7 +28,7 @@ public class EntrepriseDTO implements Serializable {
 
     private String formeJuridique;
 
-    private Instant dateImmatriculation;
+    private String dateImmatriculation;
 
     private String etat;
 
@@ -94,11 +96,11 @@ public class EntrepriseDTO implements Serializable {
         this.formeJuridique = formeJuridique;
     }
 
-    public Instant getDateImmatriculation() {
+    public String getDateImmatriculation() {
         return dateImmatriculation;
     }
 
-    public void setDateImmatriculation(Instant dateImmatriculation) {
+    public void setDateImmatriculation(String dateImmatriculation) {
         this.dateImmatriculation = dateImmatriculation;
     }
 
@@ -135,17 +137,16 @@ public class EntrepriseDTO implements Serializable {
     @Override
     public String toString() {
         return "EntrepriseDTO{" +
-            "id=" + getId() +
-            ", denomination='" + getDenomination() + "'" +
-            ", statutJuridique='" + getStatutJuridique() + "'" +
-            ", tribunal='" + getTribunal() + "'" +
-            ", numeroRC='" + getNumeroRC() + "'" +
-            ", ice='" + getIce() + "'" +
-            ", activite='" + getActivite() + "'" +
-            ", formeJuridique='" + getFormeJuridique() + "'" +
-            ", dateImmatriculation='" + getDateImmatriculation() + "'" +
-            ", etat='" + getEtat() + "'" +
-            "}";
+                "id=" + getId() +
+                ", denomination='" + getDenomination() + "'" +
+                ", statutJuridique='" + getStatutJuridique() + "'" +
+                ", tribunal='" + getTribunal() + "'" +
+                ", numeroRC='" + getNumeroRC() + "'" +
+                ", ice='" + getIce() + "'" +
+                ", activite='" + getActivite() + "'" +
+                ", formeJuridique='" + getFormeJuridique() + "'" +
+                ", dateImmatriculation='" + getDateImmatriculation() + "'" +
+                ", etat='" + getEtat() + "'" +
+                "}";
     }
 }
-

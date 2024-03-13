@@ -7,31 +7,36 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
-
+import org.springframework.stereotype.Component;
 
 /**
- * A DTO for the {@link ma.digital.prospace.domain.AssociationDTO} entity.
+ * A DTO for the {@link ma.digital.prospace.domain.Association} entity.
  */
+@Component
 public class AssociationDTO implements Serializable {
 
     private Long id;
 
     @NotNull
-    private Instant dateEffet;
+    private Long compteID;
 
-    private Instant dateFin;
+    @NotNull
+    private Long entrepriseID;
 
-    private String mail;
+    @NotNull
+    private Long roleID;
 
     private String telephone;
 
+    private String mail;
+
+    private Instant dateFin;
+
+    private Instant dateEffet;
+
+    private Long fs;
+
     private StatutAssociation statut;
-
-    private EntrepriseDTO entreprise;
-
-    private CompteProDTO compte;
-
-    private RoleeDTO role;
 
     public Long getId() {
         return id;
@@ -41,28 +46,28 @@ public class AssociationDTO implements Serializable {
         this.id = id;
     }
 
-    public Instant getDateEffet() {
-        return dateEffet;
+    public Long getCompteID() {
+        return compteID;
     }
 
-    public void setDateEffet(Instant dateEffet) {
-        this.dateEffet = dateEffet;
+    public void setCompteID(Long compteID) {
+        this.compteID = compteID;
     }
 
-    public Instant getDateFin() {
-        return dateFin;
+    public Long getEntrepriseID() {
+        return entrepriseID;
     }
 
-    public void setDateFin(Instant dateFin) {
-        this.dateFin = dateFin;
+    public void setEntrepriseID(Long entrepriseID) {
+        this.entrepriseID = entrepriseID;
     }
 
-    public String getMail() {
-        return mail;
+    public Long getRoleID() {
+        return roleID;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setRoleID(Long roleID) {
+        this.roleID = roleID;
     }
 
     public String getTelephone() {
@@ -73,6 +78,38 @@ public class AssociationDTO implements Serializable {
         this.telephone = telephone;
     }
 
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    public Instant getDateFin() {
+        return dateFin;
+    }
+
+    public void setDateFin(Instant dateFin) {
+        this.dateFin = dateFin;
+    }
+
+    public Instant getDateEffet() {
+        return dateEffet;
+    }
+
+    public void setDateEffet(Instant dateEffet) {
+        this.dateEffet = dateEffet;
+    }
+
+    public Long getFs() {
+        return fs;
+    }
+
+    public void setFs(Long fs) {
+        this.fs = fs;
+    }
+
     public StatutAssociation getStatut() {
         return statut;
     }
@@ -81,65 +118,32 @@ public class AssociationDTO implements Serializable {
         this.statut = statut;
     }
 
-    public EntrepriseDTO getEntreprise() {
-        return entreprise;
-    }
-
-    public void setEntreprise(EntrepriseDTO entreprise) {
-        this.entreprise = entreprise;
-    }
-
-    public CompteProDTO getCompte() {
-        return compte;
-    }
-
-    public void setCompte(CompteProDTO compte) {
-        this.compte = compte;
-    }
-
-    public RoleeDTO getRole() {
-        return role;
-    }
-
-    public void setRole(RoleeDTO role) {
-        this.role = role;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AssociationDTO)) {
-            return false;
-        }
-
-        AssociationDTO association = (AssociationDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, association.id);
+        if (this == o) return true;
+        if (!(o instanceof AssociationDTO)) return false;
+        AssociationDTO that = (AssociationDTO) o;
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id);
+        return Objects.hash(id);
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "AssociationDTO{" +
-            "id=" + getId() +
-            ", dateEffet='" + getDateEffet() + "'" +
-            ", dateFin='" + getDateFin() + "'" +
-            ", mail='" + getMail() + "'" +
-            ", telephone='" + getTelephone() + "'" +
-            ", statut='" + getStatut() + "'" +
-            ", entreprise=" + getEntreprise() +
-            ", compte=" + getCompte() +
-            ", role=" + getRole() +
-            "}";
+                "id=" + id +
+                ", compteID=" + compteID +
+                ", entrepriseID=" + entrepriseID +
+                ", roleID=" + roleID +
+                ", telephone='" + telephone + '\'' +
+                ", mail='" + mail + '\'' +
+                ", dateFin=" + dateFin +
+                ", dateEffet=" + dateEffet +
+                ", fs=" + fs +
+                ", statut=" + statut +
+                '}';
     }
 }
-
