@@ -28,6 +28,8 @@
     <include file="config/liquibase/changelog/20240130231409_added_entity_constraints_Association.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240130231405_added_entity_constraints_ComptePro.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240201104647_added_entity_constraints_Procuration.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240501123456_added_entity_Session.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240501123456_added_constraints_Session.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>
