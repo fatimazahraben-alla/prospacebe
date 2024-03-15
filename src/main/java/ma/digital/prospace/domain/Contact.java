@@ -34,11 +34,11 @@ public class Contact implements Serializable {
 
 
     @Size(max =50)
-    @Column(name = "deviceOS", length = 50, nullable = false)
+    @Column(name = "deviceOS")
     private String deviceOS;
 
     @Size(max =50)
-    @Column(name = "deviceVersion", length = 50, nullable = false)
+    @Column(name = "device_version")
     private String deviceVersion;
 
 

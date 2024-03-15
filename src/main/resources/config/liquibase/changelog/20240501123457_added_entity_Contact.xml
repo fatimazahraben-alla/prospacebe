@@ -15,7 +15,7 @@
             <column name="telephone" type="varchar(50)"/>
             <column name="device_token" type="varchar(50)"/>
             <column name="deviceOS" type="varchar(50)"/>
-            <column name="deviceVersion" type="varchar(50)"/>
+            <column name="device_version" type="varchar(50)"/>
             <column name="compte_pro_id" type="bigint">
                 <constraints nullable="false" foreignKeyName="fk_contact_comptePro" referencedTableName="compte_pro" referencedColumnNames="id"/>
             </column>
@@ -33,7 +33,7 @@
             <column name="telephone" type="STRING"/>
             <column name="device_token" type="STRING"/>
             <column name="deviceOS" type="STRING"/>
-            <column name="deviceVersion" type="STRING"/>
+            <column name="device_version" type="STRING"/>
             <column name="compte_pro_id" type="NUMERIC"/>
         </loadData>
     </changeSet>
