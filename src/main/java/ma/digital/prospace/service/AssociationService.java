@@ -1,5 +1,6 @@
 package ma.digital.prospace.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.service.mapper.AssociationMapper;
 import org.springframework.data.domain.Page;
@@ -123,8 +124,8 @@ public class AssociationService {
             session.setStatus(Session.Status.IN_PROGRESS);
             sessionRepository.save(session);
 
-            Contact contact = contactRepository.findByCompteProId(compteID);
-            String deviceToken = contact.getDeviceToken();
+            //Contact contact = contactRepository.findByCompteProId(compteID);
+            //String deviceToken = contact.getDeviceToken();
 
             // Créer les DTOs pour toutes les associations
             for (Association association : associations) {
@@ -173,7 +174,19 @@ public class AssociationService {
                 .filter(s -> s.getStatus() != Session.Status.COMPLETED)
                 .orElseThrow(() -> new EntityNotFoundException("Session not completed or not found."));
 
-        CompteEntrepriseDTO compteEntrepriseDTO = objectMapper.readValue(session.getJsonData(), CompteEntrepriseDTO.class);
+        // Convertir la chaîne JSON en objet Map<String, Object>
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> dataMap = objectMapper.readValue(session.getJsonData(), new TypeReference<Map<String, Object>>() {});
+        // Extraire les données de la map et les convertir en objets DTO
+        EntrepriseDTO entrepriseDTO = objectMapper.convertValue(dataMap.get("entreprise"), EntrepriseDTO.class);
+        CompteProDTO compteProDTO = objectMapper.convertValue(dataMap.get("comptePro"), CompteProDTO.class);
+        List<String> roles = objectMapper.convertValue(dataMap.get("roles"), new TypeReference<List<String>>() {});
+        // Créer un objet CompteEntrepriseDTO à partir des objets DTO obtenus
+        CompteEntrepriseDTO compteEntrepriseDTO = new CompteEntrepriseDTO();
+        compteEntrepriseDTO.setEntreprise(entrepriseDTO);
+        compteEntrepriseDTO.setComptePro(compteProDTO);
+        compteEntrepriseDTO.setRoles(roles);
+
         return compteEntrepriseDTO;
     }
 

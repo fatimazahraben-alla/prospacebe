@@ -7,4 +7,7 @@ public enum StatutAssociation {
     EN_COURS,
     ACCEPTE,
     ANNULE,
+    IN_PROGRESS,
+    COMPLETED,
+    ACTIVE,
 }

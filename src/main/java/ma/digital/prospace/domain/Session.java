@@ -79,17 +79,7 @@ public class Session implements Serializable {
         this.status = status;
     }
 
-    public Association getAssociation() {
-        return association;
-    }
-
-    public void setAssociation(Association association) {
-        this.association = association;
-    }
 
 
-    @ManyToOne
-    @JoinColumn(name = "association_id", nullable = false)
-    private Association association;
 }
 

@@ -20,32 +20,30 @@ public class Contact implements Serializable {
     @Column(name = "id")
     private Long id ;
 
-    @NotNull
     @Size(max =50)
     @Column(name = "mail", length = 50, nullable = false)
     private String mail;
+
+    @Size(max =50)
+    @Column(name = "telephone", length = 50, nullable = false)
     private String telephone;
 
-    @NotNull
     @Size(max =50)
-    @Column(name = "deviceToken", length = 50, nullable = false)
+    @Column(name = "device_token")
     private String deviceToken;
 
 
-    @NotNull
     @Size(max =50)
     @Column(name = "deviceOS", length = 50, nullable = false)
     private String deviceOS;
 
-
-    @NotNull
     @Size(max =50)
     @Column(name = "deviceVersion", length = 50, nullable = false)
     private String deviceVersion;
 
 
     @OneToOne
-    @JoinColumn(name = "compteProId", referencedColumnName = "id", nullable = false) // Ajoutez cette annotation pour mapper la relation avec ComptePro
+    @JoinColumn(name = "compte_pro_id", referencedColumnName = "id", nullable = false) // Ajoutez cette annotation pour mapper la relation avec ComptePro
     @JsonIgnoreProperties(value = { "contact" }, allowSetters = true)
     private ComptePro comptePro;
 

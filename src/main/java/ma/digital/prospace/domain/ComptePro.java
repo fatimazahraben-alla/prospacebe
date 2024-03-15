@@ -69,7 +69,7 @@ public class ComptePro implements Serializable {
     @Transient
     @Lob
     @Column(name = "photo", nullable = true)
-    private byte[] photo;
+    private String photo;
 
     @Transient
     @Column(name = "mail")
@@ -94,14 +94,6 @@ public class ComptePro implements Serializable {
     private StatutCompte statut;
 
 
-
-    private String deviceToken;
-    public String getDeviceToken() {
-        return deviceToken;
-    }
-    public void setDeviceToken(String deviceToken) {
-        this.deviceToken = deviceToken;
-    }
 
 
     @ManyToOne
@@ -242,16 +234,16 @@ public class ComptePro implements Serializable {
         this.adresse = adresse;
     }
 
-    public byte[] getPhoto() {
+    public String getPhoto() {
         return this.photo;
     }
 
-    public ComptePro photo(byte[] photo) {
+    public ComptePro photo(String photo) {
         this.setPhoto(photo);
         return this;
     }
 
-    public void setPhoto(byte[] photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 

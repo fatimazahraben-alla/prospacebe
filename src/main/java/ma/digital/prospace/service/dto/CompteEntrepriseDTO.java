@@ -16,17 +16,9 @@ import javax.validation.constraints.Size;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class CompteEntrepriseDTO implements Serializable {
 
-    private Long id;
     private CompteProDTO comptePro;
     private EntrepriseDTO entreprise;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public CompteProDTO getComptePro() {
         return comptePro;
@@ -66,32 +58,13 @@ public class CompteEntrepriseDTO implements Serializable {
 
     private List<String> roles;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof CompteEntrepriseDTO)) {
-            return false;
-        }
 
-        CompteEntrepriseDTO compteEntrepriseDTO = (CompteEntrepriseDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, compteEntrepriseDTO.id);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.id);
-    }
 
     // prettier-ignore
     @Override
     public String toString() {
         return "CompteEntreprise{" +
-                "id=" + getId() +
                 ", entreprise='" + getEntreprise() + "'" +
                 ", compte='" + getComptePro() + "'" +
                 ", roles='" + getRoles() + "'" +

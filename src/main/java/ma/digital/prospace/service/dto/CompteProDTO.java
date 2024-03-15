@@ -45,7 +45,7 @@ public class CompteProDTO implements Serializable {
     @Size(max = 50)
     private String address; // Modification du nom de la variable
 
-    private byte[] photo; // Modification du type de la variable
+    private String photo; // Modification du type de la variable
 
     private String mail;
 
@@ -117,11 +117,11 @@ public class CompteProDTO implements Serializable {
         this.address = address;
     }
 
-    public byte[] getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(byte[] photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 

@@ -1,3 +1,0 @@
-id;identifiant;nom_ar;nom_fr;prenom_ar;prenom_fr;adresse;photo;mail;telephone;created_at;updated_at;deleted;statut;entreprise_geree_id
-1;ID123;test;Nom Français;test;Prenom Français;Street Name;test;email@example.com;1234567890;2021-01-01T00:00:00;2021-01-02T00:00:00;true;VALIDE;1
-2;ID456;test2;Nom Français2;test2;Prenom Français2;Another St;test;aemail@example.com;0987654321;2021-02-01T00:00:00;2021-02-02T00:00:00;false;VALIDE;1

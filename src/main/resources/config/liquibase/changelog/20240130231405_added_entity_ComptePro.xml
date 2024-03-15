@@ -27,7 +27,7 @@
             <column name="adresse" type="varchar(50)">
                 <constraints nullable="true" />
             </column>
-            <column name="photo" type="blob">
+            <column name="photo" type="varchar(50)">
                 <constraints nullable="true" />
             </column>
             <column name="mail" type="varchar(255)">
@@ -76,7 +76,7 @@
             <column name="prenom_ar" type="STRING"/>
             <column name="prenom_fr" type="STRING"/>
             <column name="adresse" type="STRING"/>
-            <column name="photo" type="BLOB"/>
+            <column name="photo" type="STRING"/>
             <column name="mail" type="STRING"/>
             <column name="telephone" type="STRING"/>
             <column name="created_at" type="TIMESTAMP"/>

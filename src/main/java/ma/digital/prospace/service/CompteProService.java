@@ -2,6 +2,7 @@ package ma.digital.prospace.service;
 
 import java.util.Optional;
 
+import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.Contact;
 import ma.digital.prospace.repository.ContactRepository;
 import org.slf4j.Logger;
@@ -121,12 +122,33 @@ public class CompteProService {
         compteProRepository.deleteById(id);
     }
 
-    public void registerContactDTO(MobileRegistrationDTO mobileRegistrationDTO) {
-        Contact contact = new Contact();
-        contact.setDeviceToken(mobileRegistrationDTO.getDeviceToken());
-        contact.setDeviceOS(mobileRegistrationDTO.getDeviceOS());
-        contact.setDeviceVersion(mobileRegistrationDTO.getDeviceVersion());
-        contact.setComptePro(compteProRepository.getById(mobileRegistrationDTO.getCompteId()));
+    public void registerContactDTO(MobileRegistrationDTO requestDTO) {
+
+        ComptePro comptePro = compteProRepository.findById(requestDTO.getCompteId())
+
+                .orElseThrow(() -> new EntityNotFoundException("ComptePro not found"));
+
+        Contact contact = contactRepository.findByCompteProId(requestDTO.getCompteId());
+
+        if (contact == null) {
+
+            // Contact doesn't exist, create a new one
+
+            contact = new Contact();
+
+            contact.setComptePro(comptePro);
+
+        }
+        // Update contact fields
+
+        contact.setDeviceToken(requestDTO.getDeviceToken());
+
+        contact.setDeviceOS(requestDTO.getDeviceOS());
+
+        contact.setDeviceVersion(requestDTO.getDeviceVersion());
+        // Save or update the contact
+
         contactRepository.save(contact);
+
     }
 }

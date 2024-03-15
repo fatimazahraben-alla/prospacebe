@@ -19,9 +19,6 @@
             <column name="status" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="association_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
     </changeSet>
 </databaseChangeLog>
