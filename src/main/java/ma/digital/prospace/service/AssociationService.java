@@ -111,36 +111,30 @@ public class AssociationService {
         associationRepository.deleteById(id);
     }
 
-    public List<CompteFSAssociationDTO> processAuthenticationStep2(Long compteID, Long fs) {
+    public List<CompteFSAssociationDTO> processAuthenticationStep2(Long compteID, Long fs, String transactionID) {
         List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteID);
-
         List<CompteFSAssociationDTO> responses = new ArrayList<>();
-
         if (associations != null && !associations.isEmpty()) {
             // Créer une session pour toutes les associations qui correspondent aux critères de recherche
             Session session = new Session();
-            session.setTransactionId(String.valueOf(UUID.fromString(UUID.randomUUID().toString()).getMostSignificantBits()));
+            // mock transaction
+            session.setTransactionId(transactionID);
             session.setCreatedAt(new Date());
             session.setStatus(Session.Status.IN_PROGRESS);
             sessionRepository.save(session);
-
             //Contact contact = contactRepository.findByCompteProId(compteID);
             //String deviceToken = contact.getDeviceToken();
-
             // Créer les DTOs pour toutes les associations
             for (Association association : associations) {
                 Entreprise entreprise = association.getEntreprise();
                 String entrepriseString = Objects.toString(entreprise, null);
-
                 CompteFSAssociationDTO responseDTO = new CompteFSAssociationDTO();
                 responseDTO.setCompteID(compteID);
                 responseDTO.setFs(fs);
                 responseDTO.setEntreprises(Collections.singletonList(entrepriseString));
-
                 responses.add(responseDTO);
             }
         }
-
         return responses;
     }
     public void pushCompteEntreprise(CompteEntrepriseDTO compteEntrepriseDTO) throws JsonProcessingException {
@@ -171,7 +165,7 @@ public class AssociationService {
 
     public CompteEntrepriseDTO checkAuthenticationStep2(String transactionId) throws JsonProcessingException {
         Session session = sessionRepository.findByTransactionId(transactionId)
-                .filter(s -> s.getStatus() != Session.Status.COMPLETED)
+                .filter(s -> s.getStatus() == Session.Status.COMPLETED)
                 .orElseThrow(() -> new EntityNotFoundException("Session not completed or not found."));
 
         // Convertir la chaîne JSON en objet Map<String, Object>

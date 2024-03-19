@@ -86,8 +86,9 @@ public class AssociationResource {
     }
 
     @GetMapping("/association/processAuthenticationStep2")
-    public ResponseEntity<List<CompteFSAssociationDTO>> processAuthenticationStep2(@RequestParam Long compteID, @RequestParam Long fs) {
-        List<CompteFSAssociationDTO> responseDTOs = associationService.processAuthenticationStep2(compteID, fs);
+    public ResponseEntity<List<CompteFSAssociationDTO>> processAuthenticationStep2(@RequestParam Long compteID, @RequestParam Long fs,
+                                                                                   @RequestParam String transactionID) {
+        List<CompteFSAssociationDTO> responseDTOs = associationService.processAuthenticationStep2(compteID, fs, transactionID);
         if (!responseDTOs.isEmpty()) {
             return ResponseEntity.ok().body(responseDTOs);
         } else {
