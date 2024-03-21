@@ -34,9 +34,7 @@ public class AssociationDTO implements Serializable {
 
     private Instant dateEffet;
 
-    private Long fs;
-
-    private StatutAssociation statut;
+    private StatutAssociation statut = StatutAssociation.PENDING;
 
     public Long getId() {
         return id;
@@ -102,13 +100,6 @@ public class AssociationDTO implements Serializable {
         this.dateEffet = dateEffet;
     }
 
-    public Long getFs() {
-        return fs;
-    }
-
-    public void setFs(Long fs) {
-        this.fs = fs;
-    }
 
     public StatutAssociation getStatut() {
         return statut;
@@ -142,7 +133,6 @@ public class AssociationDTO implements Serializable {
                 ", mail='" + mail + '\'' +
                 ", dateFin=" + dateFin +
                 ", dateEffet=" + dateEffet +
-                ", fs=" + fs +
                 ", statut=" + statut +
                 '}';
     }

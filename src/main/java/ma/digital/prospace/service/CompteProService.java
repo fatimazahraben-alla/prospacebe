@@ -4,11 +4,13 @@ import java.util.Optional;
 
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.Contact;
+import ma.digital.prospace.domain.enumeration.StatutCompte;
 import ma.digital.prospace.repository.ContactRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.service.mapper.CompteProMapper;
 import ma.digital.prospace.service.dto.*;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Service Implementation for managing {@link ComptePro}.
@@ -126,7 +129,7 @@ public class CompteProService {
 
         ComptePro comptePro = compteProRepository.findById(requestDTO.getCompteId())
 
-                .orElseThrow(() -> new EntityNotFoundException("ComptePro not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Compte not found"));
 
         Contact contact = contactRepository.findByCompteProId(requestDTO.getCompteId());
 
@@ -151,4 +154,11 @@ public class CompteProService {
         contactRepository.save(contact);
 
     }
+    public CompteProDTO createCompte(CompteProDTO compteDTO) {
+        ComptePro comptePro = compteProMapper.toEntity(compteDTO);
+        comptePro.setStatut(StatutCompte.VALIDE);
+        comptePro = compteProRepository.save(comptePro);
+        return compteProMapper.toDto(comptePro);
+    }
+
 }

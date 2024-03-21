@@ -3,12 +3,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
+import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import ma.digital.prospace.repository.*;
 import ma.digital.prospace.service.AssociationService;
 import ma.digital.prospace.service.dto.AssociationDTO;
 import ma.digital.prospace.service.dto.CompteEntrepriseDTO;
 import ma.digital.prospace.service.dto.CompteFSAssociationDTO;
 import ma.digital.prospace.service.mapper.AssociationMapper;
+import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,7 +42,7 @@ public class AssociationResource {
         this.associationService = associationService;
     }
 
-    @PostMapping("/associations")
+    /*@PostMapping("/associations")
     public ResponseEntity<AssociationDTO> createAssociation(@Valid @RequestBody AssociationDTO associationDTO) throws URISyntaxException {
         log.debug("REST request to save Association : {}", associationDTO);
         if (associationDTO.getId() != null) {
@@ -47,7 +51,7 @@ public class AssociationResource {
         AssociationDTO result = associationService.save(associationDTO);
         return ResponseEntity.created(new URI("/api/associations/" + result.getId()))
                 .body(result);
-    }
+    }*/
 
     @PutMapping("/associations")
     public ResponseEntity<AssociationDTO> updateAssociation(@Valid @RequestBody AssociationDTO associationDTO) {
@@ -117,5 +121,24 @@ public class AssociationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+    @PostMapping("/associations")
+    public ResponseEntity<AssociationDTO> createAssociation(@RequestBody AssociationDTO dto) {
+        AssociationDTO createdDto = associationService.createAssociation(dto);
+        return new ResponseEntity<>(createdDto, HttpStatus.CREATED);
+    }
+    @PutMapping("/update-associations")
+    public ResponseEntity<AssociationDTO> updateAssociationStatut(@RequestParam Long id, @RequestBody String statut) {
+        StatutAssociation nouveauStatut;
+        try {
+            nouveauStatut = StatutAssociation.valueOf(statut);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid statut value");
+        }
+
+        AssociationDTO updatedAssociation = associationService.updateStatut(id, nouveauStatut);
+        return ResponseEntity.ok(updatedAssociation);
+    }
+
+
 }
 

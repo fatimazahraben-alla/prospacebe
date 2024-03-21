@@ -1,7 +1,14 @@
 package ma.digital.prospace.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import jakarta.persistence.EntityNotFoundException;
+import ma.digital.prospace.domain.ComptePro;
+import ma.digital.prospace.domain.Invitation;
+import ma.digital.prospace.domain.enumeration.StatutInvitation;
+import ma.digital.prospace.repository.InvitationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -27,16 +34,18 @@ public class ProcurationService {
     private final ProcurationRepository procurationRepository;
 
     private final ProcurationMapper procurationMapper;
+    private final InvitationRepository invitationRepository;
 
-    public ProcurationService(ProcurationRepository procurationRepository, ProcurationMapper procurationMapper) {
+    public ProcurationService(ProcurationRepository procurationRepository, ProcurationMapper procurationMapper, InvitationRepository invitationRepository) {
         this.procurationRepository = procurationRepository;
         this.procurationMapper = procurationMapper;
+        this.invitationRepository = invitationRepository;
     }
 
     /**
      * Save a procuration.
      *
-     * @param procuration the entity to save.
+     * @param procurationDTO the entity to save.
      * @return the persisted entity.
      */
     public ProcurationDTO save(ProcurationDTO procurationDTO) {
@@ -49,7 +58,7 @@ public class ProcurationService {
     /**
      * Update a procuration.
      *
-     * @param procuration the entity to save.
+     * @param procurationDTO the entity to save.
      * @return the persisted entity.
      */
     public ProcurationDTO update(ProcurationDTO procurationDTO) {
@@ -112,4 +121,22 @@ public class ProcurationService {
         log.debug("Request to delete Procuration : {}", id);
         procurationRepository.deleteById(id);
     }
+    public ProcurationDTO createProcuration(ProcurationDTO procurationDTO, Long invitationId) {
+        Procuration procuration = procurationMapper.toEntity(procurationDTO);
+        procuration = procurationRepository.save(procuration);
+        updateInvitationStatus(procuration.getGestionnaireEspacePro(), StatutInvitation.ACCEPTED);
+        updateInvitationStatus(procuration.getUtilisateurPro(), StatutInvitation.ACCEPTED);
+        return procurationMapper.toDto(procuration);
+    }
+
+    private void updateInvitationStatus(ComptePro comptePro, StatutInvitation statut) {
+        Set<Invitation> invitations = comptePro.getInvitations();
+        if (invitations != null) {
+            invitations.forEach(invitation -> {
+                invitation.setStatut(statut);
+                invitationRepository.save(invitation);
+            });
+        }
+    }
+
 }

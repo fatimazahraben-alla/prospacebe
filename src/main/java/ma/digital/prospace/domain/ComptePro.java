@@ -94,6 +94,10 @@ public class ComptePro implements Serializable {
     private StatutCompte statut;
 
 
+    @OneToMany(mappedBy = "comptePro", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "comptePro" }, allowSetters = true)
+    private Set<Invitation> invitations = new HashSet<>();
 
 
     @ManyToOne
@@ -166,6 +170,13 @@ public class ComptePro implements Serializable {
         this.identifiant = identifiant;
     }
 
+    public Set<Invitation> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(Set<Invitation> invitations) {
+        this.invitations = invitations;
+    }
 
 
 

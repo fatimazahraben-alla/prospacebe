@@ -1,19 +1,20 @@
 package ma.digital.prospace.service.dto;
 
+import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 @Component
 public class InvitationDTO {
     private Long id;
-    private String token;
-    private String typeIdentifiantTo;
-    private String identifiantTo;
-    private String object;
-    private Date dateCreation;
-    private Date dateFin;
-    private String status;
-
+    private String typePiece;
+    private String numeroPiece;
+    private String mail;
+    private String tel;
+    private StatutInvitation statut;
+    private Long compteProId;
 
     public Long getId() {
         return id;
@@ -23,63 +24,54 @@ public class InvitationDTO {
         this.id = id;
     }
 
-    public String getToken() {
-        return token;
+    public String getTypePiece() {
+        return typePiece;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setTypePiece(String typePiece) {
+        this.typePiece = typePiece;
     }
 
-    public String getTypeIdentifiantTo() {
-        return typeIdentifiantTo;
+    public String getNumeroPiece() {
+        return numeroPiece;
     }
 
-    public void setTypeIdentifiantTo(String typeIdentifiantTo) {
-        this.typeIdentifiantTo = typeIdentifiantTo;
+    public void setNumeroPiece(String numeroPiece) {
+        this.numeroPiece = numeroPiece;
     }
 
-    public String getIdentifiantTo() {
-        return identifiantTo;
+    public String getMail() {
+        return mail;
     }
 
-    public void setIdentifiantTo(String identifiantTo) {
-        this.identifiantTo = identifiantTo;
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
-    public String getObject() {
-        return object;
+    public String getTel() {
+        return tel;
     }
 
-    public void setObject(String object) {
-        this.object = object;
-    }
-
-    public Date getDateCreation() {
-        return dateCreation;
-    }
-
-    public void setDateCreation(Date dateCreation) {
-        this.dateCreation = dateCreation;
-    }
-
-    public Date getDateFin() {
-        return dateFin;
-    }
-
-    public void setDateFin(Date dateFin) {
-        this.dateFin = dateFin;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setTel(String tel) {
+        this.tel = tel;
     }
 
 
-    // Getters and Setters
+    public StatutInvitation getStatut() {
+        return statut;
+    }
+
+    public void setStatut(StatutInvitation statut) {
+        this.statut = statut;
+    }
+
+    public Long getCompteProId() {
+        return compteProId;
+    }
+
+    public void setCompteProId(Long compteProId) {
+        this.compteProId = compteProId;
+    }
 }
+
 

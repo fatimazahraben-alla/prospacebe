@@ -197,4 +197,15 @@ public class CompteProResource {
         compteProService.registerContactDTO(mobileRegistrationDTO);
         return ResponseEntity.ok().build();
     }
+    @PostMapping("/compte")
+    public ResponseEntity<CompteProDTO> createCompte(@RequestBody CompteProDTO compteProDTO) {
+        CompteProDTO result = compteProService.createCompte(compteProDTO);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(result.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(result);
+    }
+
 }

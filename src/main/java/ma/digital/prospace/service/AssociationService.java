@@ -2,6 +2,7 @@ package ma.digital.prospace.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.persistence.EntityNotFoundException;
+import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import ma.digital.prospace.service.mapper.AssociationMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -111,6 +112,9 @@ public class AssociationService {
         associationRepository.deleteById(id);
     }
 
+    /**
+     *  check that there is an association between the FS and the account and create a session for the current transaction (see header) and create a new session object (transactionID, status = IN_PROGRESS).
+     */
     public List<CompteFSAssociationDTO> processAuthenticationStep2(Long compteID, Long fs, String transactionID) {
         List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteID);
         List<CompteFSAssociationDTO> responses = new ArrayList<>();
@@ -137,6 +141,9 @@ public class AssociationService {
         }
         return responses;
     }
+    /**
+     * push CompteEntreprise object and update session object (transactionID, jsonData).
+     */
     public void pushCompteEntreprise(CompteEntrepriseDTO compteEntrepriseDTO) throws JsonProcessingException {
         CompteProDTO compteProDTO = compteEntrepriseDTO.getComptePro();
         EntrepriseDTO entrepriseDTO = compteEntrepriseDTO.getEntreprise();
@@ -162,7 +169,9 @@ public class AssociationService {
         sessionRepository.save(session);
     }
 
-
+    /**
+     * check if the session is finished and if ok (see transactionID header), return the account data plus the company data and associated roles, parameter a transactionID as data header.
+     */
     public CompteEntrepriseDTO checkAuthenticationStep2(String transactionId) throws JsonProcessingException {
         Session session = sessionRepository.findByTransactionId(transactionId)
                 .filter(s -> s.getStatus() == Session.Status.COMPLETED)
@@ -183,5 +192,29 @@ public class AssociationService {
 
         return compteEntrepriseDTO;
     }
+    public AssociationDTO createAssociation(AssociationDTO dto) {
+        Association association = associationMapper.toEntity(dto);
+        association.setCompte(compteProRepository.findById(dto.getCompteID())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Compte not found")));
+        association.setEntreprise(entrepriseRepository.findById(dto.getEntrepriseID())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Entreprise not found")));
+        association.setStatut(StatutAssociation.PENDING);
+        association = associationRepository.save(association);
+        return associationMapper.toDto(association);
+    }
+    public AssociationDTO updateStatut(Long associationId, StatutAssociation nouveauStatut) {
+        Association association = associationRepository.findById(associationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Association not found with id " + associationId));
+
+        if (nouveauStatut != StatutAssociation.ACCEPTED && nouveauStatut != StatutAssociation.CANCELED) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Statut must be ACCEPTED or CANCELED");
+        }
+
+        association.setStatut(nouveauStatut);
+        association = associationRepository.save(association);
+
+        return associationMapper.toDto(association);
+    }
+
 
 }
