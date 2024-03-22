@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import ma.digital.prospace.service.mapper.AssociationMapper;
+import ma.digital.prospace.web.rest.errors.NotificationSendingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -115,44 +116,46 @@ public class AssociationService {
     /**
      *  check that there is an association between the FS and the account and create a session for the current transaction (see header) and create a new session object (transactionID, status = IN_PROGRESS).
      */
-    public List<CompteFSAssociationDTO> processAuthenticationStep2(Long compteID, Long fs, String transactionID) {
+    public CompteFSAssociationDTO processAuthenticationStep2(Long compteID, Long fs, String transactionID) {
         List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteID);
-        List<CompteFSAssociationDTO> responses = new ArrayList<>();
-        List<String> entrepriseList = new ArrayList<>();
         if (associations != null && !associations.isEmpty()) {
-            // Créer une session pour toutes les associations qui correspondent aux critères de recherche
             Session session = new Session();
-            // mock transaction
             session.setTransactionId(transactionID);
             session.setCreatedAt(new Date());
             session.setStatus(Session.Status.IN_PROGRESS);
             sessionRepository.save(session);
             Contact contact = contactRepository.findByCompteProId(compteID);
             String deviceToken = contact.getDeviceToken();
-            // Créer les DTOs pour toutes les associations
+            List<String> entrepriseList = new ArrayList<>();
             for (Association association : associations) {
                 Entreprise entreprise = association.getEntreprise();
                 String entrepriseString = Objects.toString(entreprise, null);
                 entrepriseList.add(entrepriseString);
-                CompteFSAssociationDTO responseDTO = new CompteFSAssociationDTO();
-                responseDTO.setCompteID(compteID);
-                responseDTO.setFs(fs);
-                responseDTO.setEntreprises(Collections.singletonList(entrepriseString));
-                responses.add(responseDTO);
             }
-            // Création de l'objet NotificationMessage
-            NotificationMessage notificationMessage = new NotificationMessage();
-            notificationMessage.setDeviceToken(deviceToken);
-            notificationMessage.setTransactionID(transactionID);
-            notificationMessage.setFs(fs);
-            notificationMessage.setCompteID(compteID);
-            notificationMessage.setTitle("Notificiation prospace");
-            notificationMessage.setBody("Cotenu");
-            notificationService.sendNotificationByToken(notificationMessage);
+            CompteFSAssociationDTO responseDTO = new CompteFSAssociationDTO();
+            responseDTO.setCompteID(compteID);
+            responseDTO.setFs(fs);
+            responseDTO.setEntreprises(entrepriseList);
 
+            try {
+                NotificationMessage notificationMessage = new NotificationMessage();
+                notificationMessage.setDeviceToken(deviceToken);
+                notificationMessage.setTransactionID(transactionID);
+                notificationMessage.setFs(fs);
+                notificationMessage.setCompteID(compteID);
+                notificationMessage.setTitle("Notification prospace");
+                notificationMessage.setBody("Contenu");
+                notificationService.sendNotificationByToken(notificationMessage);
+            } catch (Exception e) {
+                throw new NotificationSendingException("Erreur lors de l'envoi de la notification", e);
+            }
+
+            return responseDTO;
+        } else {
+            return null; // Retourner null si aucune association n'est trouvée
         }
-        return responses;
     }
+
     /**
      * push CompteEntreprise object and update session object (transactionID, jsonData).
      */
