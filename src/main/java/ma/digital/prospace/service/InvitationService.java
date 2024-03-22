@@ -29,7 +29,9 @@ public class InvitationService {
         this.invitationMapper = invitationMapper;
         this.compteProRepository = compteProRepository;
     }
-
+    /**
+     * create an invitation and set statut = PENDING
+     */
     public InvitationDTO createInvitation(InvitationDTO invitationDTO) {
         if (invitationDTO.getCompteProId() != null && !compteProRepository.existsById(invitationDTO.getCompteProId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ComptePro with id " + invitationDTO.getCompteProId() + " not found");

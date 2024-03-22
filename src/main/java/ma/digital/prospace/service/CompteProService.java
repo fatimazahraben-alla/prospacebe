@@ -154,6 +154,9 @@ public class CompteProService {
         contactRepository.save(contact);
 
     }
+    /**
+     * create an account
+     */
     public CompteProDTO createCompte(CompteProDTO compteDTO) {
         ComptePro comptePro = compteProMapper.toEntity(compteDTO);
         comptePro.setStatut(StatutCompte.VALIDE);

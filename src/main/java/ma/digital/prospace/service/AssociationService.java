@@ -192,6 +192,9 @@ public class AssociationService {
 
         return compteEntrepriseDTO;
     }
+    /**
+     * create an association
+     */
     public AssociationDTO createAssociation(AssociationDTO dto) {
         Association association = associationMapper.toEntity(dto);
         association.setCompte(compteProRepository.findById(dto.getCompteID())
@@ -202,6 +205,9 @@ public class AssociationService {
         association = associationRepository.save(association);
         return associationMapper.toDto(association);
     }
+    /**
+     * update an association accepter ou annuler association
+     */
     public AssociationDTO updateStatut(Long associationId, StatutAssociation nouveauStatut) {
         Association association = associationRepository.findById(associationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Association not found with id " + associationId));

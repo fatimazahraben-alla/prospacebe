@@ -129,6 +129,9 @@ public class ProcurationService {
         log.debug("Request to delete Procuration : {}", id);
         procurationRepository.deleteById(id);
     }
+    /**
+     * create an procuration and accepte invitation
+     */
     public ProcurationDTO createProcuration(ProcurationDTO procurationDTO, Long invitationId) {
         ComptePro gestionnaire = compteProRepository.findById(procurationDTO.getGestionnaireEspaceProId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Gestionnaire Espace Pro not found"));
