@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="20240130231405_added_entity_Invitation" author="jhipster">
+        <createTable tableName="invitation">
+            <column name="id" type="bigint" autoIncrement="true" >
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="type_piece" type="varchar(255)"/>
+            <column name="numero_piece" type="varchar(255)"/>
+            <column name="mail" type="varchar(255)"/>
+            <column name="tel" type="varchar(255)"/>
+            <column name="created_at" type="timestamp"/>
+            <column name="statut" type="varchar(255)"/>
+            <column name="compte_pro_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_invitation_compte_pro" references="compte_pro(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="20240130231405_added_entity_Invitation_data" author="jhipster">
+        <loadData
+                file="config/liquibase/fake-data/invitation.csv"
+                separator=";"
+                tableName="invitation">
+            <column name="id" type="numeric"/>
+            <column name="type_piece" type="string"/>
+            <column name="numero_piece" type="string"/>
+            <column name="mail" type="string"/>
+            <column name="tel" type="string"/>
+            <column name="created_at" type="timestamp"/>
+            <column name="statut" type="string"/>
+            <column name="compte_pro_id" type="numeric"/>
+        </loadData>
+    </changeSet>
+
+
+</databaseChangeLog>

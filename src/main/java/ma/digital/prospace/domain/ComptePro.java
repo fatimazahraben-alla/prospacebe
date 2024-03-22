@@ -94,12 +94,6 @@ public class ComptePro implements Serializable {
     private StatutCompte statut;
 
 
-    @OneToMany(mappedBy = "comptePro", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "comptePro" }, allowSetters = true)
-    private Set<Invitation> invitations = new HashSet<>();
-
-
     @ManyToOne
     @JsonIgnoreProperties(value = { "gerants", "associations" }, allowSetters = true)
     private Entreprise entrepriseGeree;
@@ -169,16 +163,6 @@ public class ComptePro implements Serializable {
     public void setIdentifiant(String identifiant) {
         this.identifiant = identifiant;
     }
-
-    public Set<Invitation> getInvitations() {
-        return invitations;
-    }
-
-    public void setInvitations(Set<Invitation> invitations) {
-        this.invitations = invitations;
-    }
-
-
 
     public String getNomAr() {
         return this.nomAr;

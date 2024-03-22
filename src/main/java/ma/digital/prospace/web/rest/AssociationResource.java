@@ -53,7 +53,7 @@ public class AssociationResource {
                 .body(result);
     }*/
 
-    @PutMapping("/associations")
+    /*@PutMapping("/associations")
     public ResponseEntity<AssociationDTO> updateAssociation(@Valid @RequestBody AssociationDTO associationDTO) {
         log.debug("REST request to update Association : {}", associationDTO);
         if (associationDTO.getId() == null) {
@@ -62,7 +62,7 @@ public class AssociationResource {
         AssociationDTO result = associationService.update(associationDTO);
         return ResponseEntity.ok()
                 .body(result);
-    }
+    }*/
 
     @GetMapping("/associations")
     public ResponseEntity<Page<AssociationDTO>> getAllAssociations(Pageable pageable) {
@@ -126,7 +126,7 @@ public class AssociationResource {
         AssociationDTO createdDto = associationService.createAssociation(dto);
         return new ResponseEntity<>(createdDto, HttpStatus.CREATED);
     }
-    @PutMapping("/update-associations")
+    @PutMapping("/associations")
     public ResponseEntity<AssociationDTO> updateAssociationStatut(@RequestParam Long id, @RequestBody String statut) {
         StatutAssociation nouveauStatut;
         try {

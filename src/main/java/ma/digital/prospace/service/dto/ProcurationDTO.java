@@ -21,9 +21,42 @@ public class ProcurationDTO implements Serializable {
 
     private LocalDate dateFin;
 
-    private CompteProDTO gestionnaireEspacePro;
+    public Long getGestionnaireEspaceProId() {
+        return gestionnaireEspaceProId;
+    }
 
-    private CompteProDTO utilisateurPro;
+    public void setGestionnaireEspaceProId(Long gestionnaireEspaceProId) {
+        this.gestionnaireEspaceProId = gestionnaireEspaceProId;
+    }
+
+    public String getGestionnaireEspaceProIdentifiant() {
+        return gestionnaireEspaceProIdentifiant;
+    }
+
+    public void setGestionnaireEspaceProIdentifiant(String gestionnaireEspaceProIdentifiant) {
+        this.gestionnaireEspaceProIdentifiant = gestionnaireEspaceProIdentifiant;
+    }
+
+    public Long getUtilisateurProId() {
+        return utilisateurProId;
+    }
+
+    public void setUtilisateurProId(Long utilisateurProId) {
+        this.utilisateurProId = utilisateurProId;
+    }
+
+    public String getUtilisateurProIdentifiant() {
+        return utilisateurProIdentifiant;
+    }
+
+    public void setUtilisateurProIdentifiant(String utilisateurProIdentifiant) {
+        this.utilisateurProIdentifiant = utilisateurProIdentifiant;
+    }
+
+    private Long gestionnaireEspaceProId;
+    private String gestionnaireEspaceProIdentifiant;
+    private Long utilisateurProId;
+    private String utilisateurProIdentifiant;
 
     public Long getId() {
         return id;
@@ -57,21 +90,6 @@ public class ProcurationDTO implements Serializable {
         this.dateFin = dateFin;
     }
 
-    public CompteProDTO getGestionnaireEspacePro() {
-        return gestionnaireEspacePro;
-    }
-
-    public void setGestionnaireEspacePro(CompteProDTO gestionnaireEspacePro) {
-        this.gestionnaireEspacePro = gestionnaireEspacePro;
-    }
-
-    public CompteProDTO getUtilisateurPro() {
-        return utilisateurPro;
-    }
-
-    public void setUtilisateurPro(CompteProDTO utilisateurPro) {
-        this.utilisateurPro = utilisateurPro;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -102,8 +120,8 @@ public class ProcurationDTO implements Serializable {
                 ", nom='" + getNom() + "'" +
                 ", dateEffet='" + getDateEffet() + "'" +
                 ", dateFin='" + getDateFin() + "'" +
-                ", gestionnaireEspacePro=" + getGestionnaireEspacePro() +
-                ", utilisateurPro=" + getUtilisateurPro() +
+                ", gestionnaireEspacePro=" + getGestionnaireEspaceProId() + getGestionnaireEspaceProIdentifiant()+
+                ", utilisateurPro=" + getUtilisateurProId() + getUtilisateurProIdentifiant()+
                 "}";
     }
 }

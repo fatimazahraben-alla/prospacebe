@@ -24,13 +24,15 @@ public interface ProcurationMapper extends EntityMapper<ProcurationDTO, Procurat
 
     ProcurationMapper INSTANCE = Mappers.getMapper(ProcurationMapper.class);
 
-    @Mapping(target = "dateEffet", qualifiedByName = "localDateToInstant")
-    @Mapping(target = "dateFin", qualifiedByName = "localDateToInstant")
-    Procuration toEntity(ProcurationDTO dto);
-
-    @Mapping(target = "dateEffet", qualifiedByName = "instantToLocalDate")
-    @Mapping(target = "dateFin", qualifiedByName = "instantToLocalDate")
+    @Mapping(source = "gestionnaireEspacePro.id", target = "gestionnaireEspaceProId")
+    @Mapping(source = "gestionnaireEspacePro.identifiant", target = "gestionnaireEspaceProIdentifiant")
+    @Mapping(source = "utilisateurPro.id", target = "utilisateurProId")
+    @Mapping(source = "utilisateurPro.identifiant", target = "utilisateurProIdentifiant")
     ProcurationDTO toDto(Procuration entity);
+
+    @Mapping(source = "gestionnaireEspaceProId", target = "gestionnaireEspacePro.id")
+    @Mapping(source = "utilisateurProId", target = "utilisateurPro.id")
+    Procuration toEntity(ProcurationDTO dto);
 
     @Named("localDateToInstant")
     default Instant mapLocalDateToInstant(LocalDate localDate) {

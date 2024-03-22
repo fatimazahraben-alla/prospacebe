@@ -67,7 +67,7 @@ public class CompteProResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new comptePro, or with status {@code 400 (Bad Request)} if the comptePro has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/compte-pros")
+    /*@PostMapping("/compte-pros")
     public ResponseEntity<CompteProDTO> createComptePro(@Valid @RequestBody CompteProDTO comptePro) throws URISyntaxException {
         log.debug("REST request to save CompteProDTO : {}", comptePro);
         if (comptePro.getId() != null) {
@@ -78,7 +78,7 @@ public class CompteProResource {
             .created(new URI("/api/compte-pros/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
-    }
+    }*/
 
     /**
      * {@code PUT  /compte-pros/:id} : Updates an existing comptePro.

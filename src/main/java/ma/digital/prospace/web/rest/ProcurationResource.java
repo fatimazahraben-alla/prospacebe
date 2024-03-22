@@ -54,7 +54,7 @@ public class ProcurationResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new procuration, or with status {@code 400 (Bad Request)} if the procuration has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/procurations")
+    /*@PostMapping("/procurations")
     public ResponseEntity<ProcurationDTO> createProcuration(@RequestBody ProcurationDTO procuration) throws URISyntaxException {
         log.debug("REST request to save ProcurationDTO : {}", procuration);
         if (procuration.getId() != null) {
@@ -65,7 +65,7 @@ public class ProcurationResource {
             .created(new URI("/api/procurations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
-    }
+    }*/
 
     /**
      * {@code PUT  /procurations/:id} : Updates an existing procuration.
@@ -179,10 +179,10 @@ public class ProcurationResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
-    @PostMapping("/procuration")
+    @PostMapping("/procurations")
     public ResponseEntity<ProcurationDTO> createProcuration(@RequestBody ProcurationDTO procurationDTO, @RequestParam Long invitationId) {
         ProcurationDTO result = procurationService.createProcuration(procurationDTO, invitationId);
-        return ResponseEntity.created(URI.create(String.format("/api/procuration/%s", result.getId()))).body(result);
+        return ResponseEntity.ok(result);
     }
 
 
