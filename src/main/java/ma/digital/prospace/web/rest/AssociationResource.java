@@ -86,15 +86,16 @@ public class AssociationResource {
     }
 
     @GetMapping("/association/processAuthenticationStep2")
-    public ResponseEntity<List<CompteFSAssociationDTO>> processAuthenticationStep2(@RequestParam Long compteID, @RequestParam Long fs,
-                                                                                   @RequestParam String transactionID) {
-        List<CompteFSAssociationDTO> responseDTOs = associationService.processAuthenticationStep2(compteID, fs, transactionID);
-        if (!responseDTOs.isEmpty()) {
-            return ResponseEntity.ok().body(responseDTOs);
+    public ResponseEntity<CompteFSAssociationDTO> processAuthenticationStep2(@RequestParam Long compteID, @RequestParam Long fs,
+                                                                             @RequestParam String transactionID) {
+        CompteFSAssociationDTO responseDTO = associationService.processAuthenticationStep2(compteID, fs, transactionID);
+        if (responseDTO != null) {
+            return ResponseEntity.ok().body(responseDTO);
         } else {
             return ResponseEntity.badRequest().build();
         }
     }
+
     @PostMapping("/association/pushCompteEntreprise")
     public ResponseEntity<Void> pushCompteEntreprise(@RequestBody CompteEntrepriseDTO compteEntrepriseDTO) {
         try {
@@ -117,5 +118,20 @@ public class AssociationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+    //////just pour le testing///////
+    @PostMapping("/notification")
+    public ResponseEntity<String> sendNotification(
+            @RequestParam String deviceToken,
+            @RequestParam List<String> entrepriseList,
+            @RequestParam String transactionID,
+            @RequestParam Long fs,
+            @RequestParam Long compteID,
+            @RequestParam String Title,
+            @RequestParam String Body
+    ) {
+        String result = associationService.constructAndSendPushNotification(deviceToken, entrepriseList, transactionID, fs, compteID, Title, Body);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
 }
 

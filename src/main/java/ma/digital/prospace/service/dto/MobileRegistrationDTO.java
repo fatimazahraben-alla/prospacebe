@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 
 public class MobileRegistrationDTO {
     @NotNull(message = "Le champ 'deviceToken' ne peut pas être nul")
-    @Size(max = 255, message = "Le champ 'deviceToken' ne peut pas dépasser {max} caractères")
+    @Size(max = 1000, message = "Le champ 'deviceToken' ne peut pas dépasser {max} caractères")
     private String deviceToken;
 
     @NotNull(message = "Le champ 'deviceOS' ne peut pas être nul")

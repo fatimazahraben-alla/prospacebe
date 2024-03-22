@@ -2,6 +2,7 @@ package ma.digital.prospace.domain;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class Entreprise implements Serializable {
 
     @Transient
     @Column(name = "date_immatriculation")
-    private Instant dateImmatriculation;
+    private Date dateImmatriculation;
 
     @Column(name = "etat")
     private String etat;
@@ -131,16 +132,17 @@ public class Entreprise implements Serializable {
         this.formeJuridique = formeJuridique;
     }
 
-    public Instant getDateImmatriculation() {
-        return this.dateImmatriculation;
+
+    public Date getDateImmatriculation() {
+        return dateImmatriculation;
     }
 
-    public void setDateImmatriculation(Instant dateImmatriculation) {
+    public void setDateImmatriculation(Date dateImmatriculation) {
         this.dateImmatriculation = dateImmatriculation;
     }
 
     public String getEtat() {
-        return this.etat;
+        return etat;
     }
 
     public void setEtat(String etat) {

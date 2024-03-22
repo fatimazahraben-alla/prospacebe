@@ -1,10 +1,18 @@
 package ma.digital.prospace.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.firebase.messaging.FirebaseMessaging;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.service.mapper.AssociationMapper;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.FirebaseMessagingException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,8 +52,12 @@ public class AssociationService {
     @Autowired
     private RoleeRepository roleeRepository;
     @Autowired
-    private NotificationService notificationService;
+   private NotificationService notificationService;
+
     private final ObjectMapper objectMapper;
+
+    @Autowired
+    private final FirebaseMessaging firebaseMessaging;
 
     // Constructor
     public AssociationService(AssociationRepository associationRepository,
@@ -54,16 +66,21 @@ public class AssociationService {
                               CompteProRepository compteProRepository,
                               EntrepriseRepository entrepriseRepository,
                               RoleeRepository roleeRepository,
+                              ObjectMapper objectMapper,
                               NotificationService notificationService,
-                              ObjectMapper objectMapper) { // Add ObjectMapper to the constructor
+                              FirebaseMessaging firebaseMessaging
+                             ) { // Add ObjectMapper to the constructor
         this.associationRepository = associationRepository;
         this.associationMapper = associationMapper;
         this.sessionRepository = sessionRepository;
         this.compteProRepository = compteProRepository;
         this.entrepriseRepository = entrepriseRepository;
-        this.roleeRepository = roleeRepository;
         this.notificationService = notificationService;
-        this.objectMapper = objectMapper; // Initialize ObjectMapper
+        this.roleeRepository = roleeRepository;
+        this.objectMapper = objectMapper;
+        this.firebaseMessaging = firebaseMessaging;
+        // Initialize ObjectMapper
+
     }
 
     public AssociationDTO save(AssociationDTO associationDTO) {
@@ -110,33 +127,75 @@ public class AssociationService {
         log.debug("Request to delete Association : {}", id);
         associationRepository.deleteById(id);
     }
+   public String constructAndSendPushNotification(String deviceToken,List<String> entrepriseList, String transactionID, Long fs, Long compteID,String Title,String Body) {
+       // Construire la notification
 
-    public List<CompteFSAssociationDTO> processAuthenticationStep2(Long compteID, Long fs, String transactionID) {
+       Notification notification = Notification.builder()
+               .setTitle(Title)
+               .setBody(Body)
+               .build();
+
+       // Construire les données supplémentaires (si nécessaire)
+       Map<String, String> data = new HashMap<>();
+       data.put("transactionID", transactionID);
+       data.put("fs", String.valueOf(fs));
+       data.put("compteID", String.valueOf(compteID));
+       String entreprises = String.join(",", entrepriseList);
+       data.put("entrepriseList", entreprises);
+
+
+       // Construire le message FCM
+       Message message = Message.builder()
+               .setNotification(notification)
+               .putAllData(data)
+               .setToken(deviceToken)
+               .build();
+       try {
+            firebaseMessaging.send(message);
+           return "Success Sending notification";
+       } catch (FirebaseMessagingException e) {
+           e.printStackTrace();
+           return "error sending notification ";
+       }
+   }
+ private class NotificationSendingException extends RuntimeException {
+     public NotificationSendingException(String message) {
+         super(message);
+     }
+
+     public NotificationSendingException(String message, Throwable cause) {
+         super(message, cause);
+     }
+ }
+
+    public CompteFSAssociationDTO processAuthenticationStep2(Long compteID, Long fs, String transactionID) {
         List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteID);
-        List<CompteFSAssociationDTO> responses = new ArrayList<>();
         if (associations != null && !associations.isEmpty()) {
-            // Créer une session pour toutes les associations qui correspondent aux critères de recherche
             Session session = new Session();
-            // mock transaction
             session.setTransactionId(transactionID);
             session.setCreatedAt(new Date());
             session.setStatus(Session.Status.IN_PROGRESS);
             sessionRepository.save(session);
-            //Contact contact = contactRepository.findByCompteProId(compteID);
-            //String deviceToken = contact.getDeviceToken();
-            // Créer les DTOs pour toutes les associations
+            Contact contact = contactRepository.findByCompteProId(compteID);
+            String deviceToken = contact.getDeviceToken();
+            List<String> entrepriseList = new ArrayList<>();
             for (Association association : associations) {
                 Entreprise entreprise = association.getEntreprise();
                 String entrepriseString = Objects.toString(entreprise, null);
-                CompteFSAssociationDTO responseDTO = new CompteFSAssociationDTO();
-                responseDTO.setCompteID(compteID);
-                responseDTO.setFs(fs);
-                responseDTO.setEntreprises(Collections.singletonList(entrepriseString));
-                responses.add(responseDTO);
+                entrepriseList.add(entrepriseString);
             }
+            CompteFSAssociationDTO responseDTO = new CompteFSAssociationDTO();
+            responseDTO.setCompteID(compteID);
+            responseDTO.setFs(fs);
+            responseDTO.setEntreprises(entrepriseList);
+            constructAndSendPushNotification(deviceToken,entrepriseList,transactionID, fs, compteID,"Notification process auth","contenu");
+            return responseDTO;
+        } else {
+            return null; // Retourne null si aucune association n'est trouvée
         }
-        return responses;
     }
+
+
     public void pushCompteEntreprise(CompteEntrepriseDTO compteEntrepriseDTO) throws JsonProcessingException {
         CompteProDTO compteProDTO = compteEntrepriseDTO.getComptePro();
         EntrepriseDTO entrepriseDTO = compteEntrepriseDTO.getEntreprise();
@@ -170,11 +229,13 @@ public class AssociationService {
 
         // Convertir la chaîne JSON en objet Map<String, Object>
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> dataMap = objectMapper.readValue(session.getJsonData(), new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> dataMap = objectMapper.readValue(session.getJsonData(), new TypeReference<Map<String, Object>>() {
+        });
         // Extraire les données de la map et les convertir en objets DTO
         EntrepriseDTO entrepriseDTO = objectMapper.convertValue(dataMap.get("entreprise"), EntrepriseDTO.class);
         CompteProDTO compteProDTO = objectMapper.convertValue(dataMap.get("comptePro"), CompteProDTO.class);
-        List<String> roles = objectMapper.convertValue(dataMap.get("roles"), new TypeReference<List<String>>() {});
+        List<String> roles = objectMapper.convertValue(dataMap.get("roles"), new TypeReference<List<String>>() {
+        });
         // Créer un objet CompteEntrepriseDTO à partir des objets DTO obtenus
         CompteEntrepriseDTO compteEntrepriseDTO = new CompteEntrepriseDTO();
         compteEntrepriseDTO.setEntreprise(entrepriseDTO);
@@ -184,4 +245,24 @@ public class AssociationService {
         return compteEntrepriseDTO;
     }
 
+
 }
+ /* try {
+                NotificationMessage notificationMessage = new NotificationMessage();
+                notificationMessage.setDeviceToken(deviceToken);
+                notificationMessage.setTransactionID(transactionID);
+                notificationMessage.setFs(fs);
+                notificationMessage.setCompteID(compteID);
+                notificationMessage.setTitle("Notification prospace");
+                notificationMessage.setBody("Contenu");
+                notificationService.sendNotificationByToken(notificationMessage);
+            } catch (Exception e) {
+                throw new NotificationSendingException("Erreur lors de l'envoi de la notification", e);
+            }
+
+            return responseDTO;
+        } else {
+            return null; // Retourner null si aucune association n'est trouvée
+        }
+
+            */

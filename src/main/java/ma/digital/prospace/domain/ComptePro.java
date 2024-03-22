@@ -93,9 +93,6 @@ public class ComptePro implements Serializable {
     @Column(name = "statut")
     private StatutCompte statut;
 
-
-
-
     @ManyToOne
     @JsonIgnoreProperties(value = { "gerants", "associations" }, allowSetters = true)
     private Entreprise entrepriseGeree;

@@ -25,6 +25,19 @@ springdoc:
   api-docs:
     enabled: false
 ---
+############################URL MJ WEB SERVICE###########################
+mj:
+  company:
+    url:
+      base: https://rcaddwbs.justice.gov.ma/wsRCPmModel7
+      endpoint: /PersonneMorale/add
+  tribunal:
+    url:
+      base: https://rcaddwbs.justice.gov.ma/wsRCPmModel7
+      endpoint: /ListJuridiction
+
+---
+
 management:
   endpoints:
     web:

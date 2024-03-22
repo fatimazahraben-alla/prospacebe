@@ -1,36 +1,48 @@
+/*
+
 package ma.digital.prospace.config;
 
 import java.time.Duration;
+import java.util.UUID;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.oidc.OidcScopes;
 
-/**@Configuration
+
+@Configuration
 public class OAuth2Configuration {
 
     @Bean
     public OAuth2AuthorizedClientManager authorizedClientManager(
-        ClientRegistrationRepository clientRegistrationRepository,
-        OAuth2AuthorizedClientRepository authorizedClientRepository
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientRepository authorizedClientRepository
     ) {
         DefaultOAuth2AuthorizedClientManager authorizedClientManager = new DefaultOAuth2AuthorizedClientManager(
-            clientRegistrationRepository,
-            authorizedClientRepository
+                clientRegistrationRepository,
+                authorizedClientRepository
         );
 
         authorizedClientManager.setAuthorizedClientProvider(
-            OAuth2AuthorizedClientProviderBuilder
-                .builder()
-                .authorizationCode()
-                .refreshToken(builder -> builder.clockSkew(Duration.ofMinutes(1)))
-                .clientCredentials()
-                .build()
+                OAuth2AuthorizedClientProviderBuilder
+                        .builder()
+                        .authorizationCode()
+                        .refreshToken(builder -> builder.clockSkew(Duration.ofMinutes(1)))
+                        .clientCredentials()
+                        .build()
         );
 
         return authorizedClientManager;
     }
-}*/
+}
+
+ */

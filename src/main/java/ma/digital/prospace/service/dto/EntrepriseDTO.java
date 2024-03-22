@@ -3,6 +3,7 @@ package ma.digital.prospace.service.dto;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -28,7 +29,7 @@ public class EntrepriseDTO implements Serializable {
 
     private String formeJuridique;
 
-    private String dateImmatriculation;
+    private Date dateImmatriculation;
 
     private String etat;
 
@@ -96,11 +97,12 @@ public class EntrepriseDTO implements Serializable {
         this.formeJuridique = formeJuridique;
     }
 
-    public String getDateImmatriculation() {
+
+    public Date getDateImmatriculation() {
         return dateImmatriculation;
     }
 
-    public void setDateImmatriculation(String dateImmatriculation) {
+    public void setDateImmatriculation(Date dateImmatriculation) {
         this.dateImmatriculation = dateImmatriculation;
     }
 
