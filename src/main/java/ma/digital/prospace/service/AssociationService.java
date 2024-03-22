@@ -1,6 +1,10 @@
 package ma.digital.prospace.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import ma.digital.prospace.service.mapper.AssociationMapper;
@@ -46,6 +50,8 @@ public class AssociationService {
     @Autowired
     private RoleeRepository roleeRepository;
     @Autowired
+    private final FirebaseMessaging firebaseMessaging;
+    @Autowired
     private NotificationService notificationService;
     private final ObjectMapper objectMapper;
 
@@ -57,7 +63,8 @@ public class AssociationService {
                               EntrepriseRepository entrepriseRepository,
                               RoleeRepository roleeRepository,
                               NotificationService notificationService,
-                              ObjectMapper objectMapper) { // Add ObjectMapper to the constructor
+                              ObjectMapper objectMapper,
+                              FirebaseMessaging firebaseMessaging) { // Add ObjectMapper to the constructor
         this.associationRepository = associationRepository;
         this.associationMapper = associationMapper;
         this.sessionRepository = sessionRepository;
@@ -65,7 +72,8 @@ public class AssociationService {
         this.entrepriseRepository = entrepriseRepository;
         this.roleeRepository = roleeRepository;
         this.notificationService = notificationService;
-        this.objectMapper = objectMapper; // Initialize ObjectMapper
+        this.objectMapper = objectMapper; // Initialize ObjectMapper*
+        this.firebaseMessaging = firebaseMessaging;
     }
 
     public AssociationDTO save(AssociationDTO associationDTO) {
@@ -116,6 +124,47 @@ public class AssociationService {
     /**
      *  check that there is an association between the FS and the account and create a session for the current transaction (see header) and create a new session object (transactionID, status = IN_PROGRESS).
      */
+    public String constructAndSendPushNotification(String deviceToken,List<String> entrepriseList, String transactionID, Long fs, Long compteID,String Title,String Body) {
+        // Construire la notification
+
+        Notification notification = Notification.builder()
+                .setTitle(Title)
+                .setBody(Body)
+                .build();
+
+        // Construire les données supplémentaires (si nécessaire)
+        Map<String, String> data = new HashMap<>();
+        data.put("transactionID", transactionID);
+        data.put("fs", String.valueOf(fs));
+        data.put("compteID", String.valueOf(compteID));
+        String entreprises = String.join(",", entrepriseList);
+        data.put("entrepriseList", entreprises);
+
+
+        // Construire le message FCM
+        Message message = Message.builder()
+                .setNotification(notification)
+                .putAllData(data)
+                .setToken(deviceToken)
+                .build();
+        try {
+            firebaseMessaging.send(message);
+            return "Success Sending notification";
+        } catch (FirebaseMessagingException e) {
+            e.printStackTrace();
+            return "error sending notification ";
+        }
+    }
+    private class NotificationSendingException extends RuntimeException {
+        public NotificationSendingException(String message) {
+            super(message);
+        }
+
+        public NotificationSendingException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
     public CompteFSAssociationDTO processAuthenticationStep2(Long compteID, Long fs, String transactionID) {
         List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteID);
         if (associations != null && !associations.isEmpty()) {
@@ -136,23 +185,10 @@ public class AssociationService {
             responseDTO.setCompteID(compteID);
             responseDTO.setFs(fs);
             responseDTO.setEntreprises(entrepriseList);
-
-            try {
-                NotificationMessage notificationMessage = new NotificationMessage();
-                notificationMessage.setDeviceToken(deviceToken);
-                notificationMessage.setTransactionID(transactionID);
-                notificationMessage.setFs(fs);
-                notificationMessage.setCompteID(compteID);
-                notificationMessage.setTitle("Notification prospace");
-                notificationMessage.setBody("Contenu");
-                notificationService.sendNotificationByToken(notificationMessage);
-            } catch (Exception e) {
-                throw new NotificationSendingException("Erreur lors de l'envoi de la notification", e);
-            }
-
+            constructAndSendPushNotification(deviceToken,entrepriseList,transactionID, fs, compteID,"Notification process auth","contenu");
             return responseDTO;
         } else {
-            return null; // Retourner null si aucune association n'est trouvée
+            return null; // Retourne null si aucune association n'est trouvée
         }
     }
 

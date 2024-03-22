@@ -99,6 +99,20 @@ public class AssociationResource {
             return ResponseEntity.badRequest().build();
         }
     }
+    //////just pour le testing///////
+    @PostMapping("/notification")
+    public ResponseEntity<String> sendNotification(
+            @RequestParam String deviceToken,
+            @RequestParam List<String> entrepriseList,
+            @RequestParam String transactionID,
+            @RequestParam Long fs,
+            @RequestParam Long compteID,
+            @RequestParam String Title,
+            @RequestParam String Body
+    ) {
+        String result = associationService.constructAndSendPushNotification(deviceToken, entrepriseList, transactionID, fs, compteID, Title, Body);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
     @PostMapping("/association/pushCompteEntreprise")
     public ResponseEntity<Void> pushCompteEntreprise(@RequestBody CompteEntrepriseDTO compteEntrepriseDTO) {
         try {
