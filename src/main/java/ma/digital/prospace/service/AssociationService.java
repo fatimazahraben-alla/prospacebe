@@ -118,6 +118,7 @@ public class AssociationService {
     public List<CompteFSAssociationDTO> processAuthenticationStep2(Long compteID, Long fs, String transactionID) {
         List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteID);
         List<CompteFSAssociationDTO> responses = new ArrayList<>();
+        List<String> entrepriseList = new ArrayList<>();
         if (associations != null && !associations.isEmpty()) {
             // Créer une session pour toutes les associations qui correspondent aux critères de recherche
             Session session = new Session();
@@ -126,18 +127,29 @@ public class AssociationService {
             session.setCreatedAt(new Date());
             session.setStatus(Session.Status.IN_PROGRESS);
             sessionRepository.save(session);
-            //Contact contact = contactRepository.findByCompteProId(compteID);
-            //String deviceToken = contact.getDeviceToken();
+            Contact contact = contactRepository.findByCompteProId(compteID);
+            String deviceToken = contact.getDeviceToken();
             // Créer les DTOs pour toutes les associations
             for (Association association : associations) {
                 Entreprise entreprise = association.getEntreprise();
                 String entrepriseString = Objects.toString(entreprise, null);
+                entrepriseList.add(entrepriseString);
                 CompteFSAssociationDTO responseDTO = new CompteFSAssociationDTO();
                 responseDTO.setCompteID(compteID);
                 responseDTO.setFs(fs);
                 responseDTO.setEntreprises(Collections.singletonList(entrepriseString));
                 responses.add(responseDTO);
             }
+            // Création de l'objet NotificationMessage
+            NotificationMessage notificationMessage = new NotificationMessage();
+            notificationMessage.setDeviceToken(deviceToken);
+            notificationMessage.setTransactionID(transactionID);
+            notificationMessage.setFs(fs);
+            notificationMessage.setCompteID(compteID);
+            notificationMessage.setTitle("Notificiation prospace");
+            notificationMessage.setBody("Cotenu");
+            notificationService.sendNotificationByToken(notificationMessage);
+
         }
         return responses;
     }
