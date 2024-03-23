@@ -7,6 +7,8 @@ import ma.digital.prospace.service.mapper.AssociationMapper;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.FirebaseMessagingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,12 +54,12 @@ public class AssociationService {
     @Autowired
     private RoleeRepository roleeRepository;
     @Autowired
-   private NotificationService notificationService;
+    private NotificationService notificationService;
 
+    private FirebaseMessaging firebaseMessaging;
+    private Logger logger = LoggerFactory.getLogger(AssociationService.class);
     private final ObjectMapper objectMapper;
 
-    @Autowired
-    private final FirebaseMessaging firebaseMessaging;
 
     // Constructor
     public AssociationService(AssociationRepository associationRepository,
@@ -69,7 +71,8 @@ public class AssociationService {
                               ObjectMapper objectMapper,
                               NotificationService notificationService,
                               FirebaseMessaging firebaseMessaging
-                             ) { // Add ObjectMapper to the constructor
+
+    ) { // Add ObjectMapper to the constructor
         this.associationRepository = associationRepository;
         this.associationMapper = associationMapper;
         this.sessionRepository = sessionRepository;
@@ -79,6 +82,8 @@ public class AssociationService {
         this.roleeRepository = roleeRepository;
         this.objectMapper = objectMapper;
         this.firebaseMessaging = firebaseMessaging;
+
+
         // Initialize ObjectMapper
 
     }
@@ -127,46 +132,39 @@ public class AssociationService {
         log.debug("Request to delete Association : {}", id);
         associationRepository.deleteById(id);
     }
-   public String constructAndSendPushNotification(String deviceToken,List<String> entrepriseList, String transactionID, Long fs, Long compteID,String Title,String Body) {
-       // Construire la notification
 
-       Notification notification = Notification.builder()
-               .setTitle(Title)
-               .setBody(Body)
-               .build();
+    private String constructAndSendPushNotification(String deviceToken, String transactionID, String Title, String Body) {
 
-       // Construire les données supplémentaires (si nécessaire)
-       Map<String, String> data = new HashMap<>();
-       data.put("transactionID", transactionID);
-       data.put("fs", String.valueOf(fs));
-       data.put("compteID", String.valueOf(compteID));
-       String entreprises = String.join(",", entrepriseList);
-       data.put("entrepriseList", entreprises);
+        Notification notification = Notification.builder()
+                .setTitle(Title)
+                .setBody(Body)
+                .build();
+        Map<String, String> data = new HashMap<>();
+        data.put("transactionID", transactionID);
 
-
-       // Construire le message FCM
-       Message message = Message.builder()
-               .setNotification(notification)
-               .putAllData(data)
-               .setToken(deviceToken)
-               .build();
-       try {
+        Message message = Message.builder()
+                .setNotification(notification)
+                .putAllData(data)
+                .setToken(deviceToken)
+                .build();
+        try {
             firebaseMessaging.send(message);
-           return "Success Sending notification";
-       } catch (FirebaseMessagingException e) {
-           e.printStackTrace();
-           return "error sending notification ";
-       }
-   }
- private class NotificationSendingException extends RuntimeException {
-     public NotificationSendingException(String message) {
-         super(message);
-     }
+            return "Success Sending notification";
+        } catch (FirebaseMessagingException e) {
+            e.printStackTrace();
+            return "error sending notification ";
+        }
+    }
 
-     public NotificationSendingException(String message, Throwable cause) {
-         super(message, cause);
-     }
- }
+    private class NotificationSendingException extends RuntimeException {
+        public NotificationSendingException(String message) {
+            super(message);
+        }
+
+        public NotificationSendingException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
 
     public CompteFSAssociationDTO processAuthenticationStep2(Long compteID, Long fs, String transactionID) {
         List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteID);
@@ -176,8 +174,6 @@ public class AssociationService {
             session.setCreatedAt(new Date());
             session.setStatus(Session.Status.IN_PROGRESS);
             sessionRepository.save(session);
-            Contact contact = contactRepository.findByCompteProId(compteID);
-            String deviceToken = contact.getDeviceToken();
             List<String> entrepriseList = new ArrayList<>();
             for (Association association : associations) {
                 Entreprise entreprise = association.getEntreprise();
@@ -188,12 +184,29 @@ public class AssociationService {
             responseDTO.setCompteID(compteID);
             responseDTO.setFs(fs);
             responseDTO.setEntreprises(entrepriseList);
-            constructAndSendPushNotification(deviceToken,entrepriseList,transactionID, fs, compteID,"Notification process auth","contenu");
-            return responseDTO;
+            //   String devicetoken =  "fGe7ud_0RceyA-GZyBXJV2:APA91bEacIJWRhkniNtGOc73zMV-KlC3sSojMh6pitdNOnxf-sA_qWs3ThABFOOHd9jtwGcBulXcn9bCsVgfwjHUII43_IdmCEjQWk-q1iuVShaDc5D_xaE-0MMX1A24uuDFXHpzwdH3";
+            try {
+                Contact contact = contactRepository.findByCompteProId(compteID);
+                String deviceToken = contact.getDeviceToken();
+                if (deviceToken != null) {
+                    logger.info("Device token récupéré avec succès : {}", deviceToken);
+                    constructAndSendPushNotification(deviceToken, transactionID, "Notification process auth", "contenu");
+                    return responseDTO;
+                }
+            } catch (Exception e) {
+                logger.info("***************verifier device token******************");
+                logger.info("Une erreur est survenue lors de la récupération du device token");
+
+            }
+            logger.info("*****acunne device token n'est trouvé****");
+            return null;
         } else {
             return null; // Retourne null si aucune association n'est trouvée
         }
+
     }
+
+
 
 
     public void pushCompteEntreprise(CompteEntrepriseDTO compteEntrepriseDTO) throws JsonProcessingException {

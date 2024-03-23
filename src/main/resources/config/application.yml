@@ -25,6 +25,10 @@ springdoc:
   api-docs:
     enabled: false
 ---
+app:
+  firebase-configuration-file: add-portail-firebase-adminsdk-9f51l-fbd1b22725.json
+
+---
 ############################URL MJ WEB SERVICE###########################
 mj:
   company:

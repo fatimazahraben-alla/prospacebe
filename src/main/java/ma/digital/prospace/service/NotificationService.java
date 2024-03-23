@@ -4,10 +4,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import lombok.RequiredArgsConstructor;
-import ma.digital.prospace.repository.ContactRepository;
-import ma.digital.prospace.service.dto.NotificationMessage;
-import ma.digital.prospace.service.mapper.ContactMapper;
+import ma.digital.prospace.service.dto.NotificationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +13,14 @@ import java.util.Map;
 
 @Service
 public class NotificationService {
-
+/*
 @Autowired
     private final FirebaseMessaging firebaseMessaging;
     public NotificationService(FirebaseMessaging firebaseMessaging) {
        this.firebaseMessaging = firebaseMessaging;
     }
-
-    public String sendNotificationByToken(NotificationMessage notificationMessage) {
+/*
+    public String sendNotificationByToken(NotificationRequest notificationMessage) {
 
         Notification notification = Notification.builder()
                 .setTitle(notificationMessage.getTitle())
@@ -52,7 +49,7 @@ public class NotificationService {
             e.printStackTrace();
             return "Error Sending Notification";
         }
-    }
+    }*/
 }
 
 

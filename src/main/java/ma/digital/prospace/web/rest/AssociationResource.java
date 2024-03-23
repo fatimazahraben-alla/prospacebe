@@ -5,9 +5,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.repository.*;
 import ma.digital.prospace.service.AssociationService;
-import ma.digital.prospace.service.dto.AssociationDTO;
-import ma.digital.prospace.service.dto.CompteEntrepriseDTO;
-import ma.digital.prospace.service.dto.CompteFSAssociationDTO;
+import ma.digital.prospace.service.FCMService;
+import ma.digital.prospace.service.dto.*;
 import ma.digital.prospace.service.mapper.AssociationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +19,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("/api")
 public class AssociationResource {
@@ -34,8 +35,11 @@ public class AssociationResource {
     private  RoleeRepository roleeRepository;
     private final AssociationService associationService;
 
-    public AssociationResource(AssociationService associationService) {
+    private FCMService fcmService;
+
+    public AssociationResource(AssociationService associationService, FCMService fcmService) {
         this.associationService = associationService;
+        this.fcmService =  fcmService;
     }
 
     @PostMapping("/associations")
@@ -119,7 +123,7 @@ public class AssociationResource {
         }
     }
     //////just pour le testing///////
-    @PostMapping("/notification")
+   /* @PostMapping("/notification")
     public ResponseEntity<String> sendNotification(
             @RequestParam String deviceToken,
             @RequestParam List<String> entrepriseList,
@@ -132,6 +136,24 @@ public class AssociationResource {
         String result = associationService.constructAndSendPushNotification(deviceToken, entrepriseList, transactionID, fs, compteID, Title, Body);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
-
+*/
+    @PostMapping("/notification")
+    public ResponseEntity sendNotification(@RequestBody NotificationRequest request) throws ExecutionException, InterruptedException {
+        fcmService.sendMessageToToken(request);
+        return new ResponseEntity<>(new NotificationResponse(HttpStatus.OK.value(), "Notification has been sent."), HttpStatus.OK);
+    }
+ /*   @PostMapping("/notification1")
+    public ResponseEntity<String> sendNotification(
+            @RequestParam String deviceToken,
+            @RequestParam List<String> entrepriseList,
+            @RequestParam String transactionID,
+            @RequestParam Long fs,
+            @RequestParam Long compteID,
+            @RequestParam String Title,
+            @RequestParam String Body
+    ) {
+        String result = associationService.constructAndSendPushNotification(deviceToken, entrepriseList, transactionID, fs, compteID, Title, Body);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }*/
 }
 
