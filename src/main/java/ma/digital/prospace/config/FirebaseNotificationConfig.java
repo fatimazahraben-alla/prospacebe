@@ -15,11 +15,11 @@ public class FirebaseNotificationConfig {
     @Bean
     FirebaseMessaging firebaseMessaging() throws IOException {
         GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource("prospacebackendnotife-firebase-adminsdk-z35n8-18537568df.json").getInputStream());
+                .fromStream(new ClassPathResource("add-portail-firebase-adminsdk-9f51l-fbd1b22725.json").getInputStream());
         FirebaseOptions firebaseOptions = FirebaseOptions.builder()
                 .setCredentials(googleCredentials)
                 .build();
-        FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "prospacee");
+        FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions);
         return FirebaseMessaging.getInstance(app);
     }
 }

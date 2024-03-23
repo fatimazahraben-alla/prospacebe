@@ -13,7 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,7 @@ public class AssociationService {
     private RoleeRepository roleeRepository;
     @Autowired
     private final FirebaseMessaging firebaseMessaging;
+    private Logger logger = LoggerFactory.getLogger(AssociationService.class);
     @Autowired
     private NotificationService notificationService;
     private final ObjectMapper objectMapper;
@@ -124,24 +126,15 @@ public class AssociationService {
     /**
      *  check that there is an association between the FS and the account and create a session for the current transaction (see header) and create a new session object (transactionID, status = IN_PROGRESS).
      */
-    public String constructAndSendPushNotification(String deviceToken,List<String> entrepriseList, String transactionID, Long fs, Long compteID,String Title,String Body) {
-        // Construire la notification
+    private String constructAndSendPushNotification(String deviceToken, String transactionID, String Title, String Body) {
 
         Notification notification = Notification.builder()
                 .setTitle(Title)
                 .setBody(Body)
                 .build();
-
-        // Construire les données supplémentaires (si nécessaire)
         Map<String, String> data = new HashMap<>();
         data.put("transactionID", transactionID);
-        data.put("fs", String.valueOf(fs));
-        data.put("compteID", String.valueOf(compteID));
-        String entreprises = String.join(",", entrepriseList);
-        data.put("entrepriseList", entreprises);
 
-
-        // Construire le message FCM
         Message message = Message.builder()
                 .setNotification(notification)
                 .putAllData(data)
@@ -173,8 +166,6 @@ public class AssociationService {
             session.setCreatedAt(new Date());
             session.setStatus(Session.Status.IN_PROGRESS);
             sessionRepository.save(session);
-            Contact contact = contactRepository.findByCompteProId(compteID);
-            String deviceToken = contact.getDeviceToken();
             List<String> entrepriseList = new ArrayList<>();
             for (Association association : associations) {
                 Entreprise entreprise = association.getEntreprise();
@@ -185,11 +176,26 @@ public class AssociationService {
             responseDTO.setCompteID(compteID);
             responseDTO.setFs(fs);
             responseDTO.setEntreprises(entrepriseList);
-            constructAndSendPushNotification(deviceToken,entrepriseList,transactionID, fs, compteID,"Notification process auth","contenu");
-            return responseDTO;
+            //   String devicetoken =  "fGe7ud_0RceyA-GZyBXJV2:APA91bEacIJWRhkniNtGOc73zMV-KlC3sSojMh6pitdNOnxf-sA_qWs3ThABFOOHd9jtwGcBulXcn9bCsVgfwjHUII43_IdmCEjQWk-q1iuVShaDc5D_xaE-0MMX1A24uuDFXHpzwdH3";
+            try {
+                Contact contact = contactRepository.findByCompteProId(compteID);
+                String deviceToken = contact.getDeviceToken();
+                if (deviceToken != null) {
+                    logger.info("Device token récupéré avec succès : {}", deviceToken);
+                    constructAndSendPushNotification(deviceToken, transactionID, "Notification process auth", "contenu");
+                    return responseDTO;
+                }
+            } catch (Exception e) {
+                logger.info("******verifier device token*******");
+                logger.info("Une erreur est survenue lors de la récupération du device token");
+
+            }
+            logger.info("**acunne device token n'est trouvé*");
+            return null;
         } else {
             return null; // Retourne null si aucune association n'est trouvée
         }
+
     }
 
     /**
