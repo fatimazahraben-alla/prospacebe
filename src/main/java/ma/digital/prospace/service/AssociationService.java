@@ -133,14 +133,19 @@ public class AssociationService {
         associationRepository.deleteById(id);
     }
 
-    private String constructAndSendPushNotification(String deviceToken, String transactionID, String Title, String Body) {
+    private String constructAndSendPushNotification(String deviceToken, Long fs,Long compteID,List<String>entrepriseList,String transactionID, String Title, String Body) {
 
         Notification notification = Notification.builder()
                 .setTitle(Title)
                 .setBody(Body)
                 .build();
+
         Map<String, String> data = new HashMap<>();
         data.put("transactionID", transactionID);
+        data.put("fs", String.valueOf(fs));
+        data.put("compteID", String.valueOf(compteID));
+        String entreprises = String.join(",", entrepriseList);
+        data.put("entrepriseList", entreprises);
 
         Message message = Message.builder()
                 .setNotification(notification)
@@ -190,7 +195,7 @@ public class AssociationService {
                 String deviceToken = contact.getDeviceToken();
                 if (deviceToken != null) {
                     logger.info("Device token récupéré avec succès : {}", deviceToken);
-                    constructAndSendPushNotification(deviceToken, transactionID, "Notification process auth", "contenu");
+                    constructAndSendPushNotification(deviceToken,fs,compteID,entrepriseList,transactionID, "Notification process auth", "contenu");
                     return responseDTO;
                 }
             } catch (Exception e) {
@@ -260,22 +265,3 @@ public class AssociationService {
 
 
 }
- /* try {
-                NotificationMessage notificationMessage = new NotificationMessage();
-                notificationMessage.setDeviceToken(deviceToken);
-                notificationMessage.setTransactionID(transactionID);
-                notificationMessage.setFs(fs);
-                notificationMessage.setCompteID(compteID);
-                notificationMessage.setTitle("Notification prospace");
-                notificationMessage.setBody("Contenu");
-                notificationService.sendNotificationByToken(notificationMessage);
-            } catch (Exception e) {
-                throw new NotificationSendingException("Erreur lors de l'envoi de la notification", e);
-            }
-
-            return responseDTO;
-        } else {
-            return null; // Retourner null si aucune association n'est trouvée
-        }
-
-            */

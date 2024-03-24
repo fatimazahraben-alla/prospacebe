@@ -41,7 +41,7 @@ public class EntrepriseService {
 
     private CompteProRepository CompteProRepository;
 
-    public EntrepriseService(EntrepriseRepository entrepriseRepository,EntrepriseMapper entrepriseMapper,CompteProRepository CompteProRepository) {
+    public EntrepriseService(EntrepriseRepository entrepriseRepository, EntrepriseMapper entrepriseMapper, CompteProRepository CompteProRepository) {
         this.entrepriseRepository = entrepriseRepository;
         this.entrepriseMapper = entrepriseMapper;
         this.CompteProRepository = CompteProRepository;
@@ -83,14 +83,14 @@ public class EntrepriseService {
         log.debug("Request to partially update Entreprise : {}", entreprise);
 
         return entrepriseRepository
-            .findById(entreprise.getId())
-            .map(existingEntreprise -> {
-                entrepriseMapper.partialUpdate(existingEntreprise, entreprise);
+                .findById(entreprise.getId())
+                .map(existingEntreprise -> {
+                    entrepriseMapper.partialUpdate(existingEntreprise, entreprise);
 
-                return existingEntreprise;
-            })
-            .map(entrepriseRepository::save)
-            .map(entrepriseMapper::toDto);
+                    return existingEntreprise;
+                })
+                .map(entrepriseRepository::save)
+                .map(entrepriseMapper::toDto);
     }
 
     /**
@@ -126,7 +126,7 @@ public class EntrepriseService {
         log.debug("Request to delete Entreprise : {}", id);
         entrepriseRepository.deleteById(id);
     }
-/*
+
     public String getCurrentUserId(AbstractAuthenticationToken authToken) {
         Map<String, Object> attributes;
         if (authToken instanceof OAuth2AuthenticationToken) {
@@ -149,15 +149,15 @@ public class EntrepriseService {
         return userId;
     }
 
-    private boolean isCurrentUser(Long accountId) {
-        Long currentUserId = getCurrentUserId();
-        return accountId.equals(currentUserId);
+    private boolean isCurrentUser(AbstractAuthenticationToken authToken, Long accountId) {
+        String currentUserId = getCurrentUserId(authToken);
+        return accountId.toString().equals(currentUserId);
     }
 
-    public EntrepriseDTO findCompanyById(Long id) {
+    /*public EntrepriseDTO findCompanyById(Long id) {
             EntrepriseDTO entrepriseDTO = ministryOfJusticeClient.findEntrepriseById(id);
             return entrepriseDTO;
-        }
+        }*/
 
 /*    public List<CompanyManagement> getCompanyManagements() {
         // Assuming your MinistryOfJusticeClient has a method to retrieve company managements
@@ -165,13 +165,13 @@ public class EntrepriseService {
     }
 */
     // Method to retrieve the list of company managements from Ministry of Justice
-   // public List<CompanyManagementDTO> retrieveCompanyManagements() {
-   //         return ministryOfJusticeClient.retrieveCompanyManagements();
-          // Example of logging
-            // Handle the exception according to your application's requirements
-          //  return Collections.emptyList(); // Return an empty list if the retrieval fails
+    // public List<CompanyManagementDTO> retrieveCompanyManagements() {
+    //         return ministryOfJusticeClient.retrieveCompanyManagements();
+    // Example of logging
+    // Handle the exception according to your application's requirements
+    //  return Collections.emptyList(); // Return an empty list if the retrieval fails
 
-  //  }
+    //  }
        /* public List<CompanyManagementDTO> retrieveCompanyManagements() {
         try {
             return ministryOfJusticeClient.retrieveCompanyManagements();
@@ -181,10 +181,10 @@ public class EntrepriseService {
             return Collections.emptyList(); // Return an empty list if the retrieval fails
         }
     } */
-/*
+
 
     // Method to create a company and associate it with an account
-    public void createCompany(Long accountId, EntrepriseDTO entrepriseDTO,Long entrepriseid) {
+  /*  public void createCompany(Long accountId, EntrepriseDTO entrepriseDTO,Long entrepriseid) {
         // find the company, call the ws of the ministry of justice
         EntrepriseDTO company = findCompanyById(entrepriseid);
          //if the accountID = person connected,
@@ -234,8 +234,7 @@ public class EntrepriseService {
             //  List<CompanyManagementDTO> companyManagements = retrieveCompanyManagements();
             // Handle the company managements according to your application's requirements
             // For example, you might display them to the user or perform some other action
-
-  */
+*/
 }
 
 
