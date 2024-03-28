@@ -41,7 +41,6 @@ public class Procuration implements Serializable {
     @ManyToOne
     @JsonIgnoreProperties(value = { "entrepriseGeree", "mandataires", "mandants", "associations" }, allowSetters = true)
     private ComptePro gestionnaireEspacePro;
-
     @ManyToOne
     @JsonIgnoreProperties(value = { "entrepriseGeree", "mandataires", "mandants", "associations" }, allowSetters = true)
     private ComptePro utilisateurPro;

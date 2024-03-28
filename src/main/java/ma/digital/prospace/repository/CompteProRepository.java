@@ -14,6 +14,8 @@ import java.util.Optional;
 public interface CompteProRepository extends JpaRepository<ComptePro, Long> {
     Optional<ComptePro> findByIdentifiant(String identifiant);
     ComptePro getById(Long id);
-    @Query("SELECT COUNT(c) > 0 FROM ComptePro c WHERE c.id = :accountId AND c.entrepriseGeree.id = :companyId")
-    boolean isManagerOfCompany(Long accountId,Long companyId);
+
+
+  //  @Query("SELECT COUNT(c) > 0 FROM ComptePro c WHERE c.id = :accountId AND c.entrepriseGeree.id = :companyId")
+   // boolean isManagerOfCompany(Long accountId,Long companyId);
 }

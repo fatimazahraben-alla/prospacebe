@@ -27,18 +27,11 @@ springdoc:
 ---
 app:
   firebase-configuration-file: add-portail-firebase-adminsdk-9f51l-fbd1b22725.json
-
----
-############################URL MJ WEB SERVICE###########################
 mj:
-  company:
-    url:
-      base: https://rcaddwbs.justice.gov.ma/wsRCPmModel7
-      endpoint: /PersonneMorale/add
   tribunal:
-    url:
-      base: https://rcaddwbs.justice.gov.ma/wsRCPmModel7
-      endpoint: /ListJuridiction
+    url: "https://rcaddwbs.justice.gov.ma/wsRCPmModel7/ListJuridiction"
+  company:
+    url: "https://be4f3ec0-0999-419f-b566-497562955871.mock.pstmn.io/{trib}/{num}/ADD"
 
 ---
 

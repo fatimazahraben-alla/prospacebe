@@ -1,14 +1,7 @@
 package ma.digital.prospace.service.dto;
 
-import ma.digital.prospace.domain.ComptePro;
-import ma.digital.prospace.domain.Entreprise;
-
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * A DTO for the {@link ma.digital.prospace.domain.CompteEntreprise} entity.
@@ -17,7 +10,7 @@ import javax.validation.constraints.Size;
 public class CompteEntrepriseDTO implements Serializable {
 
     private CompteProDTO comptePro;
-    private EntrepriseDTO entreprise;
+    private EntrepriseRequest entreprise;
 
 
     public CompteProDTO getComptePro() {
@@ -28,11 +21,11 @@ public class CompteEntrepriseDTO implements Serializable {
         this.comptePro = comptePro;
     }
 
-    public EntrepriseDTO getEntreprise() {
+    public EntrepriseRequest getEntreprise() {
         return entreprise;
     }
 
-    public void setEntreprise(EntrepriseDTO entreprise) {
+    public void setEntreprise(EntrepriseRequest entreprise) {
         this.entreprise = entreprise;
     }
 

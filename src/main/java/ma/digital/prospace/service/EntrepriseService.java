@@ -1,19 +1,20 @@
 package ma.digital.prospace.service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import jakarta.persistence.EntityNotFoundException;
+import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.google.api.Authentication;
 import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.repository.CompteProRepository;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ma.digital.prospace.repository.ProcurationRepository;
+import ma.digital.prospace.security.SecurityUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import ma.digital.prospace.domain.Entreprise;
 import ma.digital.prospace.repository.EntrepriseRepository;
 import ma.digital.prospace.service.mapper.EntrepriseMapper;
 import ma.digital.prospace.service.dto.*;
+import org.springframework.web.client.RestTemplate;
 
 
 /**
@@ -37,14 +39,18 @@ public class EntrepriseService {
     private final EntrepriseRepository entrepriseRepository;
 
     private final EntrepriseMapper entrepriseMapper;
+    private final ProcurationRepository procurationRepository;
 
 
     private CompteProRepository CompteProRepository;
+    private final RestTemplate restTemplate;
 
-    public EntrepriseService(EntrepriseRepository entrepriseRepository, EntrepriseMapper entrepriseMapper, CompteProRepository CompteProRepository) {
+    public EntrepriseService(EntrepriseRepository entrepriseRepository, EntrepriseMapper entrepriseMapper, CompteProRepository CompteProRepository, RestTemplate restTemplate, ProcurationRepository procurationRepository) {
         this.entrepriseRepository = entrepriseRepository;
         this.entrepriseMapper = entrepriseMapper;
         this.CompteProRepository = CompteProRepository;
+        this.restTemplate = restTemplate;
+        this.procurationRepository = procurationRepository;
     }
 
     /**
@@ -53,9 +59,9 @@ public class EntrepriseService {
      * @param entreprise the entity to save.
      * @return the persisted entity.
      */
-    public EntrepriseDTO save(EntrepriseDTO entrepriseDTO) {
-        log.debug("Request to save Entreprise : {}", entrepriseDTO);
-        Entreprise entreprise = entrepriseMapper.toEntity(entrepriseDTO);
+    public EntrepriseRequest save(EntrepriseRequest entrepriseRequest) {
+        log.debug("Request to save Entreprise : {}", entrepriseRequest);
+        Entreprise entreprise = entrepriseMapper.toEntity(entrepriseRequest);
         entreprise = entrepriseRepository.save(entreprise);
         return entrepriseMapper.toDto(entreprise);
     }
@@ -66,9 +72,9 @@ public class EntrepriseService {
      * @param entreprise the entity to save.
      * @return the persisted entity.
      */
-    public EntrepriseDTO update(EntrepriseDTO entrepriseDTO) {
-        log.debug("Request to update Entreprise : {}", entrepriseDTO);
-        Entreprise entreprise = entrepriseMapper.toEntity(entrepriseDTO);
+    public EntrepriseRequest update(EntrepriseRequest entrepriseRequest) {
+        log.debug("Request to update Entreprise : {}", entrepriseRequest);
+        Entreprise entreprise = entrepriseMapper.toEntity(entrepriseRequest);
         entreprise = entrepriseRepository.save(entreprise);
         return entrepriseMapper.toDto(entreprise);
     }
@@ -79,7 +85,7 @@ public class EntrepriseService {
      * @param entreprise the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<EntrepriseDTO> partialUpdate(EntrepriseDTO entreprise) {
+    public Optional<EntrepriseRequest> partialUpdate(EntrepriseRequest entreprise) {
         log.debug("Request to partially update Entreprise : {}", entreprise);
 
         return entrepriseRepository
@@ -100,7 +106,7 @@ public class EntrepriseService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<EntrepriseDTO> findAll(Pageable pageable) {
+    public Page<EntrepriseRequest> findAll(Pageable pageable) {
         log.debug("Request to get all Entreprises");
         return entrepriseRepository.findAll(pageable).map(entrepriseMapper::toDto);
     }
@@ -112,7 +118,7 @@ public class EntrepriseService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<EntrepriseDTO> findOne(Long id) {
+    public Optional<EntrepriseRequest> findOne(Long id) {
         log.debug("Request to get Entreprise : {}", id);
         return entrepriseRepository.findById(id).map(entrepriseMapper::toDto);
     }
@@ -127,119 +133,150 @@ public class EntrepriseService {
         entrepriseRepository.deleteById(id);
     }
 
-    public String getCurrentUserId(AbstractAuthenticationToken authToken) {
-        Map<String, Object> attributes;
-        if (authToken instanceof OAuth2AuthenticationToken) {
-            attributes = ((OAuth2AuthenticationToken) authToken).getPrincipal().getAttributes();
-        } else if (authToken instanceof JwtAuthenticationToken) {
-            attributes = ((JwtAuthenticationToken) authToken).getTokenAttributes();
+    private Optional<Long> getCurrentUserId() {
+        Optional<String> currentUserLogin = SecurityUtils.getCurrentUserLogin();
+        if (currentUserLogin.isPresent()) {
+            //  implémenter la logique pour récupérer l'ID de l'utilisateur à partir de son login
+            Long userId = retrieveUserIdFromLogin(currentUserLogin.get());
+            return Optional.of(userId);
         } else {
-            throw new IllegalArgumentException("AuthenticationToken is not OAuth2 or JWT!");
+            return Optional.empty();
         }
-        String userId;
-        // Logic to extract user ID from attributes
-        if (attributes.containsKey("sub")) {
-            userId = (String) attributes.get("sub");
-        } else if (attributes.containsKey("uid")) {
-            userId = (String) attributes.get("uid");
-        } else {
-            // Handle case where user ID is not found
-            throw new IllegalStateException("User ID not found in authentication attributes");
-        }
-        return userId;
     }
 
-    private boolean isCurrentUser(AbstractAuthenticationToken authToken, Long accountId) {
-        String currentUserId = getCurrentUserId(authToken);
-        return accountId.toString().equals(currentUserId);
-    }
-
-    /*public EntrepriseDTO findCompanyById(Long id) {
-            EntrepriseDTO entrepriseDTO = ministryOfJusticeClient.findEntrepriseById(id);
-            return entrepriseDTO;
-        }*/
-
-/*    public List<CompanyManagement> getCompanyManagements() {
-        // Assuming your MinistryOfJusticeClient has a method to retrieve company managements
-        return ministryOfJusticeClient.getCompanyManagements();
-    }
-*/
-    // Method to retrieve the list of company managements from Ministry of Justice
-    // public List<CompanyManagementDTO> retrieveCompanyManagements() {
-    //         return ministryOfJusticeClient.retrieveCompanyManagements();
-    // Example of logging
-    // Handle the exception according to your application's requirements
-    //  return Collections.emptyList(); // Return an empty list if the retrieval fails
-
-    //  }
-       /* public List<CompanyManagementDTO> retrieveCompanyManagements() {
-        try {
-            return ministryOfJusticeClient.retrieveCompanyManagements();
-        } catch (MinistryOfJusticeServiceException ex) {
-            ex.printStackTrace(); // Example of logging
-            // Handle the exception according to your application's requirements
-            return Collections.emptyList(); // Return an empty list if the retrieval fails
+    private Long retrieveUserIdFromLogin(String login) {
+        switch (login) {
+            case "john_doe":
+                return 1001L;
+            case "jane_smith":
+                return 1002L;
+            case "bob_jackson":
+                return 1003L;
+            default:
+                return null;
         }
-    } */
+    }
 
+    // Méthode pour vérifier si l'utilisateur actuellement connecté correspond à un ID spécifique
+    private boolean isCurrentUser(Long accountId) {
+        Optional<Long> currentUserId = getCurrentUserId();
+        return currentUserId.isPresent() && currentUserId.get().equals(accountId);
+    }
 
-    // Method to create a company and associate it with an account
-  /*  public void createCompany(Long accountId, EntrepriseDTO entrepriseDTO,Long entrepriseid) {
-        // find the company, call the ws of the ministry of justice
-        EntrepriseDTO company = findCompanyById(entrepriseid);
-         //if the accountID = person connected,
-        if (isCurrentUser(accountId)) {
-          //check that he is the manager of the company
-            if (CompteProRepository.isManagerOfCompany(accountId,entrepriseid))
-            {
-                // Create the Entreprise object
-                Entreprise entreprise = new Entreprise();
-                entreprise.setId(entrepriseDTO.getId());
-                entreprise.setDenomination(entrepriseDTO.getDenomination());
-                entreprise.setStatutJuridique(entrepriseDTO.getStatutJuridique());
-                entreprise.setTribunal(entrepriseDTO.getTribunal());
-                entreprise.setNumeroRC(entrepriseDTO.getNumeroRC());
-                entreprise.setIce(entrepriseDTO.getIce());
-                entreprise.setActivite(entrepriseDTO.getActivite());
-                entreprise.setFormeJuridique(entrepriseDTO.getFormeJuridique());
-                entreprise.setDateImmatriculation(entrepriseDTO.getDateImmatriculation());
-                entreprise.setEtat(entrepriseDTO.getEtat());
+    private boolean checkCriteriaMatch(EntrepriseWSMJ entrepriseWS, EntrepriseRequest entrepriseRequest) {
+        return entrepriseWS.getPersonneRc().getIdentification().getNumRC().equals(entrepriseRequest.getNumeroRC())
+                ;
 
-                // Save the Entreprise object
-                entreprise = entrepriseRepository.save(entreprise);
-                ComptePro account = CompteProRepository.getById(accountId);
-                if (account != null) {
-                    // Assuming you have a method to set the association between the account and the company
-                    account.setEntrepriseGeree(entreprise);
-                    // Optionally, you can also add the account to the company's set of managers
-                    entreprise.getGerants().add(account);
+    }
+
+    private boolean checkManager(ComptePro comptePro, EntrepriseWSMJ entreprise, Long CompID) {
+        List<DirigeantPMDTO> dirigeantsPM = entreprise.getPersonneRc().getDirigeantsPM();
+        for (DirigeantPMDTO dirigeant : dirigeantsPM) {
+            List<RepresentantDTO> representants = dirigeant.getRepresentants();
+            for (RepresentantDTO representant : representants) {
+                String typePiece = representant.getTypePiece();
+                String nom = representant.getNom();
+                String prenom = representant.getPrenom();
+                if (comptePro.getIdentifiant().equals(typePiece) &&
+                        comptePro.getPrenomFr().equals(prenom) &&
+                        comptePro.getNomFr().equals(nom)) {
+                    return true;
                 }
-                 if (!account.getMandants().isEmpty())
-                 {
-
-                 }
-
-
-        } else {
-            // If the user is not the manager of the company, handle the situation accordingly
-            // For example, you might return an error message or perform another action
+            }
         }
-    } else {
-        // Step 3: Handle the case where the accountID does not match the ID of the currently logged-in user
-        // For example, you might log an error, return an error message, or perform another action
+        return false; // No match found
     }
+
+
+    public void createCompany(EntrepriseRequest entrepriseRequest) {
+        // Trouver l'entreprise, appeler le WS du ministère de la justice
+        EntrepriseWSMJService entrepriseWSMJService = new EntrepriseWSMJService(restTemplate);
+        EntrepriseWSMJ entrepriseWS = entrepriseWSMJService.getEntrepriseByJuridictionAndNumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
+
+        Optional<String> currentUserLogin = SecurityUtils.getCurrentUserLogin();
+        if (currentUserLogin.isPresent()) {
+            String currentUsername = currentUserLogin.get();
+            ComptePro compte = CompteProRepository.getById(entrepriseRequest.getCOMPID());
+            // Récupérer le compte correspondant à l'ID
+            Optional<ComptePro> compteProOptional = CompteProRepository.findById(entrepriseRequest.getCOMPID());
+            if (compteProOptional.isPresent()) {
+                ComptePro comptePro = compteProOptional.get();
+                // Vérifier si l'ID du compte correspond à l'utilisateur connecté
+                if (comptePro.getIdentifiant().equals(currentUsername)) {
+                    boolean isManager = checkManager(compte, entrepriseWS, entrepriseRequest.getCOMPID());
+                    if (isManager) {
+                        Entreprise newEntreprise = new Entreprise();
+                        // Définir les attributs de l'entreprise à partir de entrepriseRequest
+                        newEntreprise.setDenomination(entrepriseRequest.getDenomination());
+                        newEntreprise.setStatutJuridique(entrepriseRequest.getStatutJuridique());
+                        newEntreprise.setTribunal(entrepriseRequest.getTribunal());
+                        newEntreprise.setNumeroRC(entrepriseRequest.getNumeroRC());
+                        newEntreprise.setIce(entrepriseRequest.getIce());
+                        newEntreprise.setActivite(entrepriseRequest.getActivite());
+                        newEntreprise.setFormeJuridique(entrepriseRequest.getFormeJuridique());
+                        newEntreprise.setDateImmatriculation(entrepriseRequest.getDateImmatriculation());
+                        newEntreprise.setEtat(entrepriseRequest.getEtat());
+                        if (compte != null) {
+                            // Associer l'entreprise avec le compte trouvé
+                            Set<ComptePro> gerants = new HashSet<>();
+                            gerants.add(comptePro);
+                            newEntreprise.setGerants(gerants);
+                            entrepriseRepository.save(newEntreprise);
+                        } else {
+                            log.info("Vous n'êtes pas le manager");
+                        }
+                    } else {
+                        EntrepriseWSMJService dirigeantService = new EntrepriseWSMJService(restTemplate);
+                        DIRIGEANTDTO dirigeants = dirigeantService.getDirigeantBycodeJuridictionAndnumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC(), "ADD");
+                        boolean check = procurationRepository.checkProcurationForCompteAndGestionnaire(entrepriseRequest.getCOMPID(),currentUsername);
+                        if (check) {
+                            Entreprise newEntreprise = new Entreprise();
+                            newEntreprise.setDenomination(entrepriseRequest.getDenomination());
+                            newEntreprise.setStatutJuridique(entrepriseRequest.getStatutJuridique());
+                            newEntreprise.setTribunal(entrepriseRequest.getTribunal());
+                            newEntreprise.setNumeroRC(entrepriseRequest.getNumeroRC());
+                            newEntreprise.setIce(entrepriseRequest.getIce());
+                            newEntreprise.setActivite(entrepriseRequest.getActivite());
+                            newEntreprise.setFormeJuridique(entrepriseRequest.getFormeJuridique());
+                            newEntreprise.setDateImmatriculation(entrepriseRequest.getDateImmatriculation());
+                            newEntreprise.setEtat(entrepriseRequest.getEtat());
+                            if (compte != null) {
+                                Set<ComptePro> gerants = new HashSet<>();
+                                gerants.add(comptePro);
+                                newEntreprise.setGerants(gerants);
+                                entrepriseRepository.save(newEntreprise);
+                            } else {
+                                log.info("Vous n'êtes pas le manager");
+                            }
+                        } else {
+                            log.info("Vous n'avez pas l'autorisation de création d'entreprise");
+                        }
+                    }
+                } else {
+                    log.info("L'ID du compte ne correspond pas à l'utilisateur connecté");
+                }
+            } else {
+                log.info("Le compte n'existe pas");
+            }
+        } else {
+            log.info("Aucun utilisateur n'est connecté");
+        }
+    }
+
 }
 
-            // Retrieve the list of company managements
-            //  List<CompanyManagementDTO> companyManagements = retrieveCompanyManagements();
-            // Handle the company managements according to your application's requirements
-            // For example, you might display them to the user or perform some other action
-*/
-}
 
 
 
-        // Check if the accountID matches the ID of the currently logged-in user
+
+
+
+
+
+
+
+
+
 
 
 

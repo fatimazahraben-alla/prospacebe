@@ -9,4 +9,9 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ProcurationRepository extends JpaRepository<Procuration, Long> {}
+public interface ProcurationRepository extends JpaRepository<Procuration, Long> {
+    @Query("SELECT COUNT(p) FROM Procuration p " +
+            "WHERE p.utilisateurPro.id = :compteId " +
+            "AND p.gestionnaireEspacePro.id = :connected_account")
+    boolean checkProcurationForCompteAndGestionnaire(Long compteId,String connected_account );
+}

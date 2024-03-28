@@ -2,9 +2,12 @@ package ma.digital.prospace.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class EntrepriseDTO {
+public class IdentificationDTO2 {
     @JsonProperty("NumRC")
     private String numRC;
+
+    @JsonProperty("SiegeSocial")
+    private String siegeSocial;
 
     @JsonProperty("Denomination")
     private String denomination;
@@ -12,12 +15,23 @@ public class EntrepriseDTO {
     @JsonProperty("FormeJuridique")
     private String formeJuridique;
 
+    @JsonProperty("Etat")
+    private String etat;
+
     public String getNumRC() {
         return numRC;
     }
 
     public void setNumRC(String numRC) {
         this.numRC = numRC;
+    }
+
+    public String getSiegeSocial() {
+        return siegeSocial;
+    }
+
+    public void setSiegeSocial(String siegeSocial) {
+        this.siegeSocial = siegeSocial;
     }
 
     public String getDenomination() {
@@ -34,5 +48,13 @@ public class EntrepriseDTO {
 
     public void setFormeJuridique(String formeJuridique) {
         this.formeJuridique = formeJuridique;
+    }
+
+    public String getEtat() {
+        return etat;
+    }
+
+    public void setEtat(String etat) {
+        this.etat = etat;
     }
 }

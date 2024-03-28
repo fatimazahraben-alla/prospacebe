@@ -7,7 +7,7 @@ import org.mapstruct.Named;
 import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.Entreprise;
 import ma.digital.prospace.service.dto.CompteProDTO;
-import ma.digital.prospace.service.dto.EntrepriseDTO;
+import ma.digital.prospace.service.dto.EntrepriseRequest;
 
 @Mapper(componentModel = "spring")
 public interface CompteProMapper extends EntityMapper<CompteProDTO, ComptePro> {
@@ -15,6 +15,6 @@ public interface CompteProMapper extends EntityMapper<CompteProDTO, ComptePro> {
 
     @Named("entrepriseId")
     @Mapping(target = "id", source = "id")
-    EntrepriseDTO toDtoEntrepriseId(Entreprise entreprise);
+    EntrepriseRequest toDtoEntrepriseId(Entreprise entreprise);
 }
 

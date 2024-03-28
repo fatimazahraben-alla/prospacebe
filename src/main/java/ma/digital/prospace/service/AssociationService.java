@@ -12,25 +12,17 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ma.digital.prospace.domain.*;
 import ma.digital.prospace.repository.*;
 import ma.digital.prospace.service.dto.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
 /**
  * Service Implementation for managing {@link Association}.
@@ -216,15 +208,15 @@ public class AssociationService {
 
     public void pushCompteEntreprise(CompteEntrepriseDTO compteEntrepriseDTO) throws JsonProcessingException {
         CompteProDTO compteProDTO = compteEntrepriseDTO.getComptePro();
-        EntrepriseDTO entrepriseDTO = compteEntrepriseDTO.getEntreprise();
+        EntrepriseRequest entrepriseRequest = compteEntrepriseDTO.getEntreprise();
         List<String> roleNames = associationRepository.findRoleNamesByCompteProIdAndEntrepriseId(
                 compteProDTO.getId(),
-                entrepriseDTO.getId());
+                entrepriseRequest.getId());
 
         // Create a data map containing the information from DTOs and the roles list
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("comptePro", compteProDTO);
-        dataMap.put("entreprise", entrepriseDTO);
+        dataMap.put("entreprise", entrepriseRequest);
         dataMap.put("roles", roleNames);
 
         // Serialize the map to JSON
@@ -250,13 +242,13 @@ public class AssociationService {
         Map<String, Object> dataMap = objectMapper.readValue(session.getJsonData(), new TypeReference<Map<String, Object>>() {
         });
         // Extraire les données de la map et les convertir en objets DTO
-        EntrepriseDTO entrepriseDTO = objectMapper.convertValue(dataMap.get("entreprise"), EntrepriseDTO.class);
+        EntrepriseRequest entrepriseRequest = objectMapper.convertValue(dataMap.get("entreprise"), EntrepriseRequest.class);
         CompteProDTO compteProDTO = objectMapper.convertValue(dataMap.get("comptePro"), CompteProDTO.class);
         List<String> roles = objectMapper.convertValue(dataMap.get("roles"), new TypeReference<List<String>>() {
         });
         // Créer un objet CompteEntrepriseDTO à partir des objets DTO obtenus
         CompteEntrepriseDTO compteEntrepriseDTO = new CompteEntrepriseDTO();
-        compteEntrepriseDTO.setEntreprise(entrepriseDTO);
+        compteEntrepriseDTO.setEntreprise(entrepriseRequest);
         compteEntrepriseDTO.setComptePro(compteProDTO);
         compteEntrepriseDTO.setRoles(roles);
 

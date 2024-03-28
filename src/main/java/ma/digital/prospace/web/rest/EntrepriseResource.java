@@ -6,12 +6,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import ma.digital.prospace.service.EntrepriseWSMJService;
+import ma.digital.prospace.service.TribunalWSMJService;
+import ma.digital.prospace.service.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +31,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import ma.digital.prospace.repository.EntrepriseRepository;
 import ma.digital.prospace.service.EntrepriseService;
-import ma.digital.prospace.service.dto.EntrepriseDTO;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -47,12 +51,18 @@ public class EntrepriseResource {
     private String applicationName;
 
     private final EntrepriseService entrepriseService;
-
+    @Autowired
+    private final TribunalWSMJService tribunalService;
     private final EntrepriseRepository entrepriseRepository;
 
-    public EntrepriseResource(EntrepriseService entrepriseService, EntrepriseRepository entrepriseRepository) {
+    private final EntrepriseWSMJService entrepriseWSMJService;
+
+
+    public EntrepriseResource(EntrepriseService entrepriseService, EntrepriseRepository entrepriseRepository, TribunalWSMJService tribunalService,EntrepriseWSMJService entrepriseWSMJService) {
         this.entrepriseService = entrepriseService;
         this.entrepriseRepository = entrepriseRepository;
+        this.tribunalService = tribunalService;
+        this.entrepriseWSMJService= entrepriseWSMJService;
     }
 
     /**
@@ -63,12 +73,12 @@ public class EntrepriseResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/entreprises")
-    public ResponseEntity<EntrepriseDTO> createEntreprise(@RequestBody EntrepriseDTO entreprise) throws URISyntaxException {
+    public ResponseEntity<EntrepriseRequest> createEntreprise(@RequestBody EntrepriseRequest entreprise) throws URISyntaxException {
         log.debug("REST request to save EntrepriseDTO : {}", entreprise);
         if (entreprise.getId() != null) {
             throw new BadRequestAlertException("A new entreprise cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        EntrepriseDTO result = entrepriseService.save(entreprise);
+        EntrepriseRequest result = entrepriseService.save(entreprise);
         return ResponseEntity
             .created(new URI("/api/entreprises/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -86,9 +96,9 @@ public class EntrepriseResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/entreprises/{id}")
-    public ResponseEntity<EntrepriseDTO> updateEntreprise(
+    public ResponseEntity<EntrepriseRequest> updateEntreprise(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody EntrepriseDTO entreprise
+        @RequestBody EntrepriseRequest entreprise
     ) throws URISyntaxException {
         log.debug("REST request to update EntrepriseDTO : {}, {}", id, entreprise);
         if (entreprise.getId() == null) {
@@ -102,7 +112,7 @@ public class EntrepriseResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        EntrepriseDTO result = entrepriseService.update(entreprise);
+        EntrepriseRequest result = entrepriseService.update(entreprise);
         return ResponseEntity
             .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, entreprise.getId().toString()))
@@ -121,9 +131,9 @@ public class EntrepriseResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/entreprises/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<EntrepriseDTO> partialUpdateEntreprise(
+    public ResponseEntity<EntrepriseRequest> partialUpdateEntreprise(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody EntrepriseDTO entreprise
+        @RequestBody EntrepriseRequest entreprise
     ) throws URISyntaxException {
         log.debug("REST request to partial update EntrepriseDTO partially : {}, {}", id, entreprise);
         if (entreprise.getId() == null) {
@@ -137,7 +147,7 @@ public class EntrepriseResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<EntrepriseDTO> result = entrepriseService.partialUpdate(entreprise);
+        Optional<EntrepriseRequest> result = entrepriseService.partialUpdate(entreprise);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -152,9 +162,9 @@ public class EntrepriseResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of entreprises in body.
      */
     @GetMapping("/entreprises")
-    public ResponseEntity<List<EntrepriseDTO>> getAllEntreprises(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<EntrepriseRequest>> getAllEntreprises(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Entreprises");
-        Page<EntrepriseDTO> page = entrepriseService.findAll(pageable);
+        Page<EntrepriseRequest> page = entrepriseService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -166,9 +176,9 @@ public class EntrepriseResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the entreprise, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/entreprises/{id}")
-    public ResponseEntity<EntrepriseDTO> getEntreprise(@PathVariable Long id) {
+    public ResponseEntity<EntrepriseRequest> getEntreprise(@PathVariable Long id) {
         log.debug("REST request to get EntrepriseDTO : {}", id);
-        Optional<EntrepriseDTO> entreprise = entrepriseService.findOne(id);
+        Optional<EntrepriseRequest> entreprise = entrepriseService.findOne(id);
         return ResponseUtil.wrapOrNotFound(entreprise);
     }
 
@@ -187,4 +197,22 @@ public class EntrepriseResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @GetMapping("/tribunaux")
+    public ResponseEntity<List<Juridiction>> getListeTribunaux() {
+            List<Juridiction> tribunaux = tribunalService.getListeTribunaux();
+            return ResponseEntity.ok(tribunaux);
+
+    }
+    @GetMapping("/entreprise/{codeJuridiction}/{numRC}")
+    public EntrepriseWSMJ getEntrepriseByJuridictionAndNumRC(@PathVariable String codeJuridiction, @PathVariable String numRC) {
+        return entrepriseWSMJService.getEntrepriseByJuridictionAndNumRC(codeJuridiction, numRC);
+    }
+
+    @GetMapping("/dirigeant/{codeJuridiction}/{numRC}/{codePartenaire}")
+    public DIRIGEANTDTO getDirigeantBycodeJuridictionAndnumRC(@PathVariable String codeJuridiction, @PathVariable String numRC, @PathVariable String codePartenaire) {
+        return entrepriseWSMJService.getDirigeantBycodeJuridictionAndnumRC(codeJuridiction, numRC, codePartenaire);
+    }
+
+
 }

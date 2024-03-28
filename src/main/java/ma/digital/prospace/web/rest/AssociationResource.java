@@ -1,11 +1,8 @@
 package ma.digital.prospace.web.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.repository.*;
 import ma.digital.prospace.service.AssociationService;
-import ma.digital.prospace.service.FCMService;
 import ma.digital.prospace.service.dto.*;
 import ma.digital.prospace.service.mapper.AssociationMapper;
 import org.slf4j.Logger;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -27,19 +23,18 @@ public class AssociationResource {
 
     private final Logger log = LoggerFactory.getLogger(AssociationResource.class);
     private static final String ENTITY_NAME = "association";
-    private  AssociationRepository associationRepository;
-    private  AssociationMapper associationMapper;
-    private  SessionRepository sessionRepository;
-    private  CompteProRepository compteProRepository;
-    private  EntrepriseRepository entrepriseRepository;
-    private  RoleeRepository roleeRepository;
+    private AssociationRepository associationRepository;
+    private AssociationMapper associationMapper;
+    private SessionRepository sessionRepository;
+    private CompteProRepository compteProRepository;
+    private EntrepriseRepository entrepriseRepository;
+    private RoleeRepository roleeRepository;
     private final AssociationService associationService;
 
-    private FCMService fcmService;
 
-    public AssociationResource(AssociationService associationService, FCMService fcmService) {
+    public AssociationResource(AssociationService associationService) {
         this.associationService = associationService;
-        this.fcmService =  fcmService;
+
     }
 
     @PostMapping("/associations")
@@ -111,6 +106,7 @@ public class AssociationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
     @GetMapping("/association/checkAuthenticationStep2")
     public ResponseEntity<CompteEntrepriseDTO> checkAuthenticationStep2(@RequestParam String transactionId) {
         try {
@@ -122,38 +118,8 @@ public class AssociationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-    //////just pour le testing///////
-   /* @PostMapping("/notification")
-    public ResponseEntity<String> sendNotification(
-            @RequestParam String deviceToken,
-            @RequestParam List<String> entrepriseList,
-            @RequestParam String transactionID,
-            @RequestParam Long fs,
-            @RequestParam Long compteID,
-            @RequestParam String Title,
-            @RequestParam String Body
-    ) {
-        String result = associationService.constructAndSendPushNotification(deviceToken, entrepriseList, transactionID, fs, compteID, Title, Body);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-*/
-    @PostMapping("/notification")
-    public ResponseEntity sendNotification(@RequestBody NotificationRequest request) throws ExecutionException, InterruptedException {
-        fcmService.sendMessageToToken(request);
-        return new ResponseEntity<>(new NotificationResponse(HttpStatus.OK.value(), "Notification has been sent."), HttpStatus.OK);
-    }
- /*   @PostMapping("/notification1")
-    public ResponseEntity<String> sendNotification(
-            @RequestParam String deviceToken,
-            @RequestParam List<String> entrepriseList,
-            @RequestParam String transactionID,
-            @RequestParam Long fs,
-            @RequestParam Long compteID,
-            @RequestParam String Title,
-            @RequestParam String Body
-    ) {
-        String result = associationService.constructAndSendPushNotification(deviceToken, entrepriseList, transactionID, fs, compteID, Title, Body);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-    }*/
 }
+
+
+
 

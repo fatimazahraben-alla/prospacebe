@@ -1,0 +1,10 @@
+GET https://85744579-7386-4444-bd00-4301b87bbe5c.mock.pstmn.io
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-03-24T234812.200.html
+
+###
+
