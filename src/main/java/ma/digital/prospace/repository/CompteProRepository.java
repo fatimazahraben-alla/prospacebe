@@ -12,10 +12,11 @@ import java.util.Optional;
 @SuppressWarnings("unused")
 @Repository
 public interface CompteProRepository extends JpaRepository<ComptePro, Long> {
-    Optional<ComptePro> findByIdentifiant(String identifiant);
+   // Optional<ComptePro> findByIdentifiant(String identifiant);
     ComptePro getById(Long id);
+    ComptePro findByAndPrenomFr(String loginuser);
+  //  @Query("SELECT p.gestionnaireEspacePro FROM Procuration p " +
+        //    "WHERE p.utilisateurPro.id = :connected_account")
+ //   ComptePro findGestionnaireForUtilisateur(String connected_account);
 
-
-  //  @Query("SELECT COUNT(c) > 0 FROM ComptePro c WHERE c.id = :accountId AND c.entrepriseGeree.id = :companyId")
-   // boolean isManagerOfCompany(Long accountId,Long companyId);
 }

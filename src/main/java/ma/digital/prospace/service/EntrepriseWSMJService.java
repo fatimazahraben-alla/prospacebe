@@ -23,12 +23,8 @@ import java.util.List;
 
 @Service
 public class EntrepriseWSMJService {
-
-    @Value("https://4f0b2fbc-c27b-40dc-973a-ff95f3930be0.mock.pstmn.io/wsRcPmModel7/PersonneMorale/1/1/ADD")
-    private String entrepriseApiUrl;
-
-    @Value("https://d6ea7a3e-8efd-41f2-852b-d3b7da86c863.mock.pstmn.io/wsRcPmModel7/DirigeantsPM")
-    private String entrepriseApiUrl2;
+    @Value("${mj.company.url}")
+    public String companyUrl;
 
     private final RestTemplate restTemplate;
 
@@ -37,7 +33,8 @@ public class EntrepriseWSMJService {
     }
 
     public EntrepriseWSMJ getEntrepriseByJuridictionAndNumRC(String codeJuridiction, String numRC) {
-        String url = "https://4f0b2fbc-c27b-40dc-973a-ff95f3930be0.mock.pstmn.io/wsRcPmModel7/PersonneMorale/1/1/ADD";
+
+        String url = companyUrl+codeJuridiction+"/"+numRC;
         System.out.println("Attempting to call API URL: " + url);
 
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
@@ -56,8 +53,8 @@ public class EntrepriseWSMJService {
 
     }
 
-    public DIRIGEANTDTO getDirigeantBycodeJuridictionAndnumRC(String codeJuridiction, String numRC, String codePartenaire) {
-        String url = "https://d6ea7a3e-8efd-41f2-852b-d3b7da86c863.mock.pstmn.io/wsRcPmModel7/DirigeantsPM/1/1/1";
+    public DIRIGEANTDTO getDirigeantBycodeJuridictionAndnumRC(String codeJuridiction, String numRC) {
+            String url = "https://d6ea7a3e-8efd-41f2-852b-d3b7da86c863.mock.pstmn.io/wsRcPmModel7/DirigeantsPM/ADD/"+codeJuridiction+"/"+numRC;
          System.out.println("Attempting to call API URL: " + url);
 
          ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);

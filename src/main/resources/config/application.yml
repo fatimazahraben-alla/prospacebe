@@ -28,10 +28,12 @@ springdoc:
 app:
   firebase-configuration-file: add-portail-firebase-adminsdk-9f51l-fbd1b22725.json
 mj:
-  tribunal:
-    url: "https://rcaddwbs.justice.gov.ma/wsRCPmModel7/ListJuridiction"
-  company:
-    url: "https://be4f3ec0-0999-419f-b566-497562955871.mock.pstmn.io/{trib}/{num}/ADD"
+   tribunal:
+      url: https://31926c9b-601b-40aa-9fca-023d373b15a4.mock.pstmn.io/wsRCPmModel7/ListJuridiction
+   company:
+      url: https://4f0b2fbc-c27b-40dc-973a-ff95f3930be0.mock.pstmn.io/wsRcPmModel7/PersonneMorale/ADD/
+   Dirigeants:
+      url: https://d6ea7a3e-8efd-41f2-852b-d3b7da86c863.mock.pstmn.io/wsRcPmModel7/DirigeantsPM
 
 ---
 

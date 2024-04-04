@@ -20,6 +20,9 @@ logging:
     org.hibernate.SQL: DEBUG
     ma.digital.prospace: DEBUG
 
+
+
+
 spring:
   devtools:
     restart:
@@ -31,17 +34,19 @@ spring:
     serialization:
       indent-output: true
   datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:file:./target/h2db/db/prospace;DB_CLOSE_DELAY=-1;MODE=MYSQL
-    username: prospace
-    password:
+    url: jdbc:postgresql://localhost:5432/BOUTAIB
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
     hikari:
-      poolName: Hikari
       auto-commit: false
-  h2:
-    console:
-      # disable spring boot built-in h2-console since we start it manually with correct configuration
-      enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: update # ou update, validate, none selon vos besoins
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50 # Exemple de configuration du lot de traitement pour les opérations JPA
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
     contexts: dev, faker
@@ -49,6 +54,7 @@ spring:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:
     cache: false
+
 
 server:
   port: 8091

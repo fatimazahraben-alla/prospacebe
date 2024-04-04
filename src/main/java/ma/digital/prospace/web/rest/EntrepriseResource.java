@@ -68,23 +68,14 @@ public class EntrepriseResource {
     /**
      * {@code POST  /entreprises} : Create a new entreprise.
      *
-     * @param entreprise the entreprise to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new entreprise, or with status {@code 400 (Bad Request)} if the entreprise has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     * @param entrepriseRequest the entreprise to create.
+     *
+     *
      */
     @PostMapping("/entreprises")
-    public ResponseEntity<EntrepriseRequest> createEntreprise(@RequestBody EntrepriseRequest entreprise) throws URISyntaxException {
-        log.debug("REST request to save EntrepriseDTO : {}", entreprise);
-        if (entreprise.getId() != null) {
-            throw new BadRequestAlertException("A new entreprise cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        EntrepriseRequest result = entrepriseService.save(entreprise);
-        return ResponseEntity
-            .created(new URI("/api/entreprises/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+    public void createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
+        entrepriseService.createCompany(entrepriseRequest);
     }
-
     /**
      * {@code PUT  /entreprises/:id} : Updates an existing entreprise.
      *
@@ -209,9 +200,9 @@ public class EntrepriseResource {
         return entrepriseWSMJService.getEntrepriseByJuridictionAndNumRC(codeJuridiction, numRC);
     }
 
-    @GetMapping("/dirigeant/{codeJuridiction}/{numRC}/{codePartenaire}")
-    public DIRIGEANTDTO getDirigeantBycodeJuridictionAndnumRC(@PathVariable String codeJuridiction, @PathVariable String numRC, @PathVariable String codePartenaire) {
-        return entrepriseWSMJService.getDirigeantBycodeJuridictionAndnumRC(codeJuridiction, numRC, codePartenaire);
+    @GetMapping("/dirigeant/{codeJuridiction}/{numRC}")
+    public DIRIGEANTDTO getDirigeantBycodeJuridictionAndnumRC(@PathVariable String codeJuridiction, @PathVariable String numRC) {
+        return entrepriseWSMJService.getDirigeantBycodeJuridictionAndnumRC(codeJuridiction, numRC);
     }
 
 

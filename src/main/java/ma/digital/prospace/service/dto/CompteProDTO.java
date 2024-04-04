@@ -53,6 +53,16 @@ public class CompteProDTO implements Serializable {
 
     private StatutCompte statut;
 
+    private  Long compteEntreprise;
+
+    public Long getCompteEntreprise() {
+        return compteEntreprise;
+    }
+
+    public void setCompteEntreprise(Long compteEntreprise) {
+        this.compteEntreprise = compteEntreprise;
+    }
+
     public Long getId() {
         return id;
     }

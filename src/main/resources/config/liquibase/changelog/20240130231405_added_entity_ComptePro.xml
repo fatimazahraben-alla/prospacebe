@@ -9,7 +9,7 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="identifiant" type="varchar(10)">
+            <column name="identifiant" type="varchar(100)">
                 <constraints nullable="true" />
             </column>
             <column name="nom_ar" type="varchar(50)">
@@ -46,6 +46,9 @@
                 <constraints nullable="true" />
             </column>
             <column name="statut" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="typeidentifiant" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
             <column name="entreprise_geree_id" type="bigint">

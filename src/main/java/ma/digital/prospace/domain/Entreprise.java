@@ -7,10 +7,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.*;
+import ma.digital.prospace.domain.enumeration.Statut;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "entreprise")
@@ -29,31 +32,36 @@ public class Entreprise implements Serializable {
     @Column(name = "denomination")
     private String denomination;
 
-    @Transient
+
     @Column(name = "statut_juridique")
     private String statutJuridique;
 
-    @Transient
+
     @Column(name = "tribunal")
     private String tribunal;
 
-    @Transient
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Status_Perphysique_Permorale", length = 50, nullable = true)
+    private Statut Status_Perphysique_Permorale;
+
+
     @Column(name = "numero_rc")
     private String numeroRC;
 
-    @Transient
+
     @Column(name = "ice")
     private String ice;
 
-    @Transient
+
     @Column(name = "activite")
     private String activite;
 
-    @Transient
+
     @Column(name = "forme_juridique")
     private String formeJuridique;
 
-    @Transient
+
     @Column(name = "date_immatriculation")
     private Date dateImmatriculation;
 
@@ -188,6 +196,14 @@ public class Entreprise implements Serializable {
         return id != null && id.equals(((Entreprise) o).id);
     }
 
+    public Statut getStatus_Perphysique_Permorale() {
+        return Status_Perphysique_Permorale;
+    }
+
+    public void setStatus_Perphysique_Permorale(Statut status_Perphysique_Permorale) {
+        Status_Perphysique_Permorale = status_Perphysique_Permorale;
+    }
+
     @Override
     public int hashCode() {
         return getClass().hashCode();
@@ -196,16 +212,19 @@ public class Entreprise implements Serializable {
     @Override
     public String toString() {
         return "Entreprise{" +
-                "id=" + getId() +
-                ", denomination='" + getDenomination() + "'" +
-                ", statutJuridique='" + getStatutJuridique() + "'" +
-                ", tribunal='" + getTribunal() + "'" +
-                ", numeroRC='" + getNumeroRC() + "'" +
-                ", ice='" + getIce() + "'" +
-                ", activite='" + getActivite() + "'" +
-                ", formeJuridique='" + getFormeJuridique() + "'" +
-                ", dateImmatriculation='" + getDateImmatriculation() + "'" +
-                ", etat='" + getEtat() + "'" +
-                "}";
+                "id=" + id +
+                ", denomination='" + denomination + '\'' +
+                ", statutJuridique='" + statutJuridique + '\'' +
+                ", tribunal='" + tribunal + '\'' +
+                ", Status_Perphysique_Permorale=" + Status_Perphysique_Permorale +
+                ", numeroRC='" + numeroRC + '\'' +
+                ", ice='" + ice + '\'' +
+                ", activite='" + activite + '\'' +
+                ", formeJuridique='" + formeJuridique + '\'' +
+                ", dateImmatriculation=" + dateImmatriculation +
+                ", etat='" + etat + '\'' +
+                ", gerants=" + gerants +
+                ", associations=" + associations +
+                '}';
     }
 }

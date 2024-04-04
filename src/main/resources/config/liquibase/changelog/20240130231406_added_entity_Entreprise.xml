@@ -35,6 +35,9 @@
             <column name="date_immatriculation" type="datetime">
                 <constraints nullable="true" />
             </column>
+            <column name="Status_Perphysique_Permorale" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="etat" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
