@@ -6,6 +6,8 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+
+import ma.digital.prospace.Aspect.AuditAspect;
 import ma.digital.prospace.config.ApplicationProperties;
 import ma.digital.prospace.config.CRLFLogConverter;
 import org.apache.commons.lang3.StringUtils;
@@ -15,12 +17,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import tech.jhipster.config.DefaultProfileUtil;
 import tech.jhipster.config.JHipsterConstants;
 
 @SpringBootApplication
 @EnableConfigurationProperties({ LiquibaseProperties.class, ApplicationProperties.class })
+@Import(AuditAspect.class)
 public class ProspaceApp {
 
     private static final Logger log = LoggerFactory.getLogger(ProspaceApp.class);

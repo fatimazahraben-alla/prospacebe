@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -235,6 +236,15 @@ public class UserService {
         }
         user.setActivated(activated);
         return user;
+    }
+    public String getUserIdFromToken(JwtAuthenticationToken token) {
+        Jwt jwt = (Jwt) token.getPrincipal();
+        return jwt.getClaim("sub");
+    }
+
+    public User getUserFromToken(JwtAuthenticationToken token) {
+        String userId = getUserIdFromToken(token);
+        return userRepository.findById(userId).orElse(null);
     }
 
     private void clearUserCaches(User user) {

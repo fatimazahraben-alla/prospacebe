@@ -2,6 +2,7 @@ package ma.digital.prospace.web.rest;
 
 import java.util.List;
 
+import ma.digital.prospace.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -10,9 +11,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ma.digital.prospace.service.UserService;
 import ma.digital.prospace.service.dto.UserDTO;
 import tech.jhipster.web.util.PaginationUtil;
+
 
 @RestController
 @RequestMapping("/api")
@@ -76,5 +81,16 @@ public class PublicUserResource {
         DefaultOidcUser oidcUser = (DefaultOidcUser) authentication.getPrincipal();
         return oidcUser;
     }
+
+    @GetMapping("/user/id")
+    public String getUserId(@AuthenticationPrincipal OidcUser oidcUser) {
+        if (oidcUser != null) {
+            return oidcUser.getSubject(); // Récupérer l'ID de l'utilisateur
+        } else {
+            return "Utilisateur non authentifié";
+        }
+    }
+
+
 
 }
