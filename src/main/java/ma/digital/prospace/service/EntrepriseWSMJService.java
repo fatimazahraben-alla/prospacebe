@@ -58,10 +58,10 @@ public class EntrepriseWSMJService {
     }
 
     public DIRIGEANTDTO getDirigeantBycodeJuridictionAndnumRC(String codeJuridiction, String numRC) {
-            String url = dirigeantUrl+codeJuridiction+"/"+numRC;
-         System.out.println("Attempting to call API URL: " + url);
+            String url2 = dirigeantUrl+codeJuridiction+"/"+numRC;
+         System.out.println("Attempting to call API URL: " + url2);
 
-         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url2, String.class);
          String jsonString = responseEntity.getBody();
 
         // Utilisation de Jackson pour mapper le JSON à l'objet DTO EntrepriseWSMJ

@@ -20,6 +20,8 @@ public interface ProcurationRepository extends JpaRepository<Procuration, Long> 
   boolean checkProcurationForCompteAndGestionnaire(Long compteId, Long connectedAccount);
 
 
+  Procuration findProcurationByUtilisateurProIdAndGestionnaireEspaceProId(Long utilisateurProId, Long gestionnaireEspaceProId);
+
 
 
 }
