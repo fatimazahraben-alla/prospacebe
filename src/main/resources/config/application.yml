@@ -33,7 +33,9 @@ mj:
    company:
       url: https://4f0b2fbc-c27b-40dc-973a-ff95f3930be0.mock.pstmn.io/wsRcPmModel7/PersonneMorale/ADD/
    Dirigeants:
-      url: https://d6ea7a3e-8efd-41f2-852b-d3b7da86c863.mock.pstmn.io/wsRcPmModel7/DirigeantsPM
+      url: https://d6ea7a3e-8efd-41f2-852b-d3b7da86c863.mock.pstmn.io/wsRcPmModel7/DirigeantsPM/ADD/
+   PersonnePhysique:
+      url: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/
 
 ---
 

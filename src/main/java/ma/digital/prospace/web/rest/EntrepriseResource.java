@@ -204,6 +204,10 @@ public class EntrepriseResource {
     public DIRIGEANTDTO getDirigeantBycodeJuridictionAndnumRC(@PathVariable String codeJuridiction, @PathVariable String numRC) {
         return entrepriseWSMJService.getDirigeantBycodeJuridictionAndnumRC(codeJuridiction, numRC);
     }
+    @GetMapping("/Personnepysique/{codeJuridiction}/{numRC}")
+    public PersonnephysiqueDTO getBycodeJuridictionAndnumRC(@PathVariable String codeJuridiction, @PathVariable String numRC) {
+        return entrepriseWSMJService.getBycodeJuridictionAndnumRC(codeJuridiction, numRC);
+    }
 
 
 }

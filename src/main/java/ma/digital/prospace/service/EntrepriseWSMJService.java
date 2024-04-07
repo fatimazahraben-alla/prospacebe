@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import ma.digital.prospace.service.dto.DIRIGEANTDTO;
-import ma.digital.prospace.service.dto.DirigeantPMDTO2;
-import ma.digital.prospace.service.dto.EntrepriseWSMJ;
-import ma.digital.prospace.service.dto.IdentificationDTO;
+import ma.digital.prospace.service.dto.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -25,6 +22,13 @@ import java.util.List;
 public class EntrepriseWSMJService {
     @Value("${mj.company.url}")
     public String companyUrl;
+
+    @Value("${mj.Dirigeants.url}")
+    public String dirigeantUrl;
+
+    @Value("${mj.PersonnePhysique.url}")
+    public String PersonnePhysiqueUrl;
+
 
     private final RestTemplate restTemplate;
 
@@ -54,7 +58,7 @@ public class EntrepriseWSMJService {
     }
 
     public DIRIGEANTDTO getDirigeantBycodeJuridictionAndnumRC(String codeJuridiction, String numRC) {
-            String url = "https://d6ea7a3e-8efd-41f2-852b-d3b7da86c863.mock.pstmn.io/wsRcPmModel7/DirigeantsPM/ADD/"+codeJuridiction+"/"+numRC;
+            String url = dirigeantUrl+codeJuridiction+"/"+numRC;
          System.out.println("Attempting to call API URL: " + url);
 
          ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
@@ -66,6 +70,27 @@ public class EntrepriseWSMJService {
         try {
             dirigeantDTO = objectMapper.readValue(jsonString, DIRIGEANTDTO.class);
             return dirigeantDTO;
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gérer les exceptions en conséquence
+            return null;
+        }
+
+    }
+
+    public PersonnephysiqueDTO getBycodeJuridictionAndnumRC(String codeJuridiction, String numRC) {
+        String url = PersonnePhysiqueUrl+codeJuridiction+"/"+numRC;
+        System.out.println("Attempting to call API URL: " + url);
+
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+        String jsonString = responseEntity.getBody();
+
+        // Utilisation de Jackson pour mapper le JSON à l'objet DTO EntrepriseWSMJ
+        ObjectMapper objectMapper = new ObjectMapper();
+        PersonnephysiqueDTO personnephysiqueDTO;
+        try {
+            personnephysiqueDTO = objectMapper.readValue(jsonString, PersonnephysiqueDTO.class);
+            return personnephysiqueDTO;
         } catch (IOException e) {
             e.printStackTrace();
             // Gérer les exceptions en conséquence

@@ -54,7 +54,7 @@ public class EntrepriseService {
 
     private EntrepriseWSMJService entrepriseWSMJService;
 
-    public EntrepriseService(EntrepriseRepository entrepriseRepository, EntrepriseMapper entrepriseMapper, CompteProRepository CompteProRepository, RestTemplate restTemplate, ProcurationRepository procurationRepository, EntrepriseWSMJService entrepriseWSMJService,AssociationRepository associationRepository) {
+    public EntrepriseService(EntrepriseRepository entrepriseRepository, EntrepriseMapper entrepriseMapper, CompteProRepository CompteProRepository, RestTemplate restTemplate, ProcurationRepository procurationRepository, EntrepriseWSMJService entrepriseWSMJService, AssociationRepository associationRepository) {
         this.entrepriseRepository = entrepriseRepository;
         this.entrepriseMapper = entrepriseMapper;
         this.CompteProRepository = CompteProRepository;
@@ -181,9 +181,7 @@ public class EntrepriseService {
     }
 
 
-
-    private boolean checkManager(ComptePro comptePro, EntrepriseWSMJ entreprise, Long CompID)
-    {
+    private boolean checkManager(ComptePro comptePro, EntrepriseWSMJ entreprise, Long CompID) {
         List<DirigeantPMDTO> dirigeantsPM = entreprise.getPersonneRc().getDirigeantsPM();
         for (DirigeantPMDTO dirigeant : dirigeantsPM) {
             List<RepresentantDTO> representants = dirigeant.getRepresentants();
@@ -201,6 +199,7 @@ public class EntrepriseService {
         }
         return false; // No match found
     }
+
     private boolean checkDirigeantsWS(EntrepriseWSMJ entrepriseWSMJ, DIRIGEANTDTO dirigeantdto, Long accountid) {
         try {
             ComptePro compte = CompteProRepository.getById(accountid);
@@ -228,66 +227,66 @@ public class EntrepriseService {
     }
 
     public void createCompany(EntrepriseRequest2 entrepriseRequest) {
-        if (entrepriseRequest.getPerphysique_Permorale() == Statut.MORAL_PERSON) {
-            EntrepriseWSMJ entrepriseWS = null;
-            try {
-                entrepriseWS = entrepriseWSMJService.getEntrepriseByJuridictionAndNumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
-            } catch (NullPointerException e) {
-                // Handle the case where entrepriseWS is null
-                // Log the error or take appropriate action
-                log.error("EntrepriseWS is null: " + e.getMessage());
-            }            // !!Attention : --> Pour le testing ,on est obligé de commenter tout ce qui en relation avec la sécurité et trvailler statiquement .
-        // Pour que le test je suppose que User connecté est TARIK
-            Optional<String> currentUserLogin = SecurityUtils.getCurrentUserLogin();
-            ComptePro compte = CompteProRepository.getById(entrepriseRequest.getCOMPID());
-           // if (currentUserLogin.isPresent() ) {
-                //String currentUsername = currentUserLogin.get();
-                String currentUsername = "TARIK";
-                    if (compte.getPrenomFr().equals(currentUsername)) {
-                        boolean isManager = checkManager(compte, entrepriseWS, entrepriseRequest.getCOMPID());
-                        if (isManager) {
-                            Entreprise newEntreprise = new Entreprise();
-                            newEntreprise.setNumeroRC(entrepriseRequest.getNumeroRC());
-                            newEntreprise.setTribunal(entrepriseRequest.getTribunal());
-                            newEntreprise.setStatus_Perphysique_Permorale(entrepriseRequest.getPerphysique_Permorale());
-                            newEntreprise.setIce(entrepriseRequest.getIce());
-                            try {
-                                //creation d'entreprise et enregistrement
-                                entrepriseRepository.save(newEntreprise);
-                                ///Association compte avec entreprise
-                                Set<ComptePro> gerants = new HashSet<>();
-                                gerants.add(compte);
-                                newEntreprise.setGerants(gerants);
-                                compte.setEntrepriseGeree(newEntreprise);
-                                CompteProRepository.save(compte);
-                                log.info("Enregistrement réussi");
-                            } catch (Exception e) {
-                                log.error("Erreur lors de l'enregistrement de l'entreprise : " + e.getMessage());
-                            }
-                        } else {
-                            log.info("Vous n'êtes pas le manager");
-                        }
-                    } else {
-                        log.info("Vous n'êtes pas le manager");
-                    }
-                } else {
-                    log.info("Vous n'avez pas l'autorisation de création d'entreprise");
+        switch (entrepriseRequest.getPerphysique_Permorale()) {
+            case PHYSICAL_PERSON:
+                handlePhysicalPerson(entrepriseRequest);
+                break;
+            case MORAL_PERSON:
+                handleMoralPerson(entrepriseRequest);
+                break;
+            default:
+                log.info("Statut non reconnu");
+                break;
+        }
+    }
+    private void handlePhysicalPerson(EntrepriseRequest2 entrepriseRequest) {
+            // Your existing code for the case PHYSICAL_PERSON
+    }
+
+    private void handleMoralPerson(EntrepriseRequest2 entrepriseRequest) {
+        EntrepriseWSMJ entrepriseWS = null;
+        try {
+            entrepriseWS = entrepriseWSMJService.getEntrepriseByJuridictionAndNumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
+        } catch (NullPointerException e) {
+            log.error("EntrepriseWS is null: " + e.getMessage());
+        }
+        Optional<String> currentUserLogin = SecurityUtils.getCurrentUserLogin();
+        ComptePro compte = CompteProRepository.getById(entrepriseRequest.getCOMPID());
+        // if (currentUserLogin.isPresent() ) {
+        //String currentUsername = currentUserLogin.get();
+        String currentUsername = "TARIK";
+        if (compte.getPrenomFr().equals(currentUsername)) {
+            boolean isManager = checkManager(compte, entrepriseWS, entrepriseRequest.getCOMPID());
+            if (isManager) {
+                Entreprise newEntreprise = new Entreprise();
+                newEntreprise.setNumeroRC(entrepriseRequest.getNumeroRC());
+                newEntreprise.setTribunal(entrepriseRequest.getTribunal());
+                newEntreprise.setStatus_Perphysique_Permorale(entrepriseRequest.getPerphysique_Permorale());
+                newEntreprise.setIce(entrepriseRequest.getIce());
+                try {
+                    entrepriseRepository.save(newEntreprise);
+                    Set<ComptePro> gerants = new HashSet<>();
+                    gerants.add(compte);
+                    newEntreprise.setGerants(gerants);
+                    compte.setEntrepriseGeree(newEntreprise);
+                    CompteProRepository.save(compte);
+                    log.info("Enregistrement réussi");
+                } catch (Exception e) {
+                    log.error("Erreur lors de l'enregistrement de l'entreprise : " + e.getMessage());
                 }
-           // } else {
-           //     log.info("L'ID du compte ne correspond pas à l'utilisateur connecté");
-           // }
-         {
-           // Optional<String> currentUserLogin = SecurityUtils.getCurrentUserLogin();
-           // String currentUsername = currentUserLogin.get();
-             String currentUsername = "TARIK";
-             ComptePro accountconnected = CompteProRepository.findByAndPrenomFr(currentUsername);
-             //Long acountconnectedid = accountconnected.getId();
-             Long acountconnectedid = 2L;
-             ComptePro compte = CompteProRepository.getById(entrepriseRequest.getCOMPID());
-             EntrepriseWSMJ entrepriseWS = entrepriseWSMJService.getEntrepriseByJuridictionAndNumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
-             EntrepriseWSMJService dirigeantService = new EntrepriseWSMJService(restTemplate);
-             DIRIGEANTDTO dirigeants = dirigeantService.getDirigeantBycodeJuridictionAndnumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
-             if (procurationRepository.checkProcurationForCompteAndGestionnaire(entrepriseRequest.getCOMPID(),acountconnectedid) && checkDirigeantsWS(entrepriseWS,dirigeants,entrepriseRequest.getCOMPID())) {
+            } else {
+                log.info("Vous n'êtes pas le manager");
+            }
+        } else {
+            // Optional<String> currentUserLogin = SecurityUtils.getCurrentUserLogin();
+            // String currentUsername = currentUserLogin.get();
+
+            ComptePro accountconnected = CompteProRepository.findByAndPrenomFr(currentUsername);
+            //Long acountconnectedid = accountconnected.getId();
+            Long acountconnectedid = 2L;
+            EntrepriseWSMJService dirigeantService = new EntrepriseWSMJService(restTemplate);
+            DIRIGEANTDTO dirigeants = dirigeantService.getDirigeantBycodeJuridictionAndnumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
+            if (procurationRepository.checkProcurationForCompteAndGestionnaire(entrepriseRequest.getCOMPID(), acountconnectedid) && checkDirigeantsWS(entrepriseWS, dirigeants, entrepriseRequest.getCOMPID())) {
                 Entreprise newEntreprise = new Entreprise();
                 newEntreprise.setDenomination(entrepriseRequest.getNumeroRC());
                 newEntreprise.setTribunal(entrepriseRequest.getTribunal());
@@ -297,14 +296,20 @@ public class EntrepriseService {
                     gerants.add(compte);
                     newEntreprise.setGerants(gerants);
                     entrepriseRepository.save(newEntreprise);
+                } else {
+                    log.info("Le compte n'existe pas");
                 }
-            } else {
-                log.info("Le compte n'existe pas");
             }
         }
     }
-
 }
+
+
+
+
+
+
+
 
 
 
