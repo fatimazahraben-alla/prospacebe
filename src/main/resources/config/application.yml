@@ -163,7 +163,7 @@ spring:
         registration:
           oidc:
             client-id: web_app
-            client-secret: web_app
+            client-secret: iI1pQOLrCiYTvKI5l7EyckPrNbR7nvy4
             scope: openid, profile, email, offline_access # last one for refresh tokens
 server:
   servlet:

@@ -15,7 +15,7 @@ public class FirebaseNotificationConfig {
     @Bean
     FirebaseMessaging firebaseMessaging() throws IOException {
         GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource("add-portail-firebase-adminsdk-9f51l-5696fd0be7").getInputStream());
+                .fromStream(new ClassPathResource("add-portail-firebase-adminsdk-9f51l-5696fd0be7.json").getInputStream());
         FirebaseOptions firebaseOptions = FirebaseOptions.builder()
                 .setCredentials(googleCredentials)
                 .build();

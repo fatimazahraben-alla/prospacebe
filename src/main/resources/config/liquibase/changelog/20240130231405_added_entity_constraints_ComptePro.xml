@@ -12,5 +12,6 @@
                                  referencedTableName="entreprise"
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>
+
     </changeSet>
 </databaseChangeLog>

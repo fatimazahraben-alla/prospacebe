@@ -9,6 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,4 +57,24 @@ public class PublicUserResource {
     public List<String> getAuthorities() {
         return userService.getAuthorities();
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<String> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            String role = authentication.getAuthorities().toString();
+            return ResponseEntity.ok("Utilisateur connecté : " + username +role);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Aucun utilisateur connecté");
+        }
+    }
+
+    @GetMapping("/claims")
+    public DefaultOidcUser getClaims(Authentication authentication) {
+        // Récupérer l'utilisateur OIDC à partir de l'objet Authentication
+        DefaultOidcUser oidcUser = (DefaultOidcUser) authentication.getPrincipal();
+        return oidcUser;
+    }
+
 }

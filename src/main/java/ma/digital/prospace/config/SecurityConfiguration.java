@@ -93,17 +93,18 @@ public class SecurityConfiguration {
                                 .requestMatchers(mvc.pattern("/app/**")).permitAll()
                                 .requestMatchers(mvc.pattern("/i18n/**")).permitAll()
                                 .requestMatchers(mvc.pattern("/content/**")).permitAll()
-                                .requestMatchers(mvc.pattern("/swagger-ui/**")).permitAll()
+                                .requestMatchers(mvc.pattern("/swagger-ui/**")).hasAuthority(AuthoritiesConstants.GESTIONNAIRE_ESPACE)
                                 .requestMatchers(mvc.pattern("/api/authenticate")).permitAll()
                                 .requestMatchers(mvc.pattern("/api/auth-info")).permitAll()
                                 .requestMatchers(mvc.pattern("/api/admin/**")).permitAll()
-                                .requestMatchers(mvc.pattern("/api/**")).permitAll()
+                                .requestMatchers(mvc.pattern("/api/**")).authenticated()
                                 .requestMatchers(mvc.pattern("/v3/api-docs/**")).permitAll()
                                 .requestMatchers(mvc.pattern("/management/health")).permitAll()
                                 .requestMatchers(mvc.pattern("/management/health/**")).permitAll()
-                                .requestMatchers(mvc.pattern("/management/info")).permitAll()
+                                .requestMatchers(mvc.pattern("/management/info")).authenticated()
                                 .requestMatchers(mvc.pattern("/management/prometheus")).permitAll()
                                 .requestMatchers(mvc.pattern("/management/**")).hasAuthority(AuthoritiesConstants.ADMIN)
+
                 )
                 .oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.oidcUserService(this.oidcUserService())))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(authenticationConverter())))
@@ -159,6 +160,7 @@ public class SecurityConfiguration {
             return mappedAuthorities;
         };
     }
+
 
     @Bean
     JwtDecoder jwtDecoder(ClientRegistrationRepository clientRegistrationRepository, RestTemplateBuilder restTemplateBuilder) {

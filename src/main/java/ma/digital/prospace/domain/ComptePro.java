@@ -32,50 +32,52 @@ public class ComptePro implements Serializable {
     @Column(name = "id")
     private Long id;
 
+
+
     @Size(max = 10)
     @Column(name = "identifiant", length = 10)
     private String identifiant;
 
 
-    @Transient
+
     @NotNull
     @Size(max = 50)
     @Column(name = "nom_ar", length = 50, nullable = true)
     private String nomAr;
 
-    @Transient
+
     @NotNull
     @Size(max = 50)
     @Column(name = "nom_fr", length = 50, nullable = true)
     private String nomFr;
 
-    @Transient
+
     @NotNull
     @Size(max = 50)
     @Column(name = "prenom_ar", length = 50, nullable = true)
     private String prenomAr;
 
-    @Transient
+
     @NotNull
     @Size(max = 50)
     @Column(name = "prenom_fr", length = 50, nullable = true)
     private String prenomFr;
 
-    @Transient
+
     @Size(max = 50)
     @Column(name = "adresse", length = 50)
     private String adresse;
 
-    @Transient
+
     @Lob
     @Column(name = "photo", nullable = true)
     private String photo;
 
-    @Transient
+
     @Column(name = "mail")
     private String mail;
 
-    @Transient
+
     @Column(name = "telephone")
     private String telephone;
 
@@ -114,6 +116,9 @@ public class ComptePro implements Serializable {
     private Set<Association> associations = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+
+
 
     public Long getId() {
         return this.id;
@@ -407,23 +412,28 @@ public class ComptePro implements Serializable {
     }
 
     // prettier-ignore
+
     @Override
     public String toString() {
         return "ComptePro{" +
-            "id=" + getId() +
-            ", identifiant='" + getIdentifiant() + "'" +
-            ", nomAr='" + getNomAr() + "'" +
-            ", nomFr='" + getNomFr() + "'" +
-            ", prenomAr='" + getPrenomAr() + "'" +
-            ", prenomFr='" + getPrenomFr() + "'" +
-            ", adresse='" + getAdresse() + "'" +
-            ", photo='" + getPhoto() + "'" +
-            ", mail='" + getMail() + "'" +
-            ", telephone='" + getTelephone() + "'" +
-            ", created_at='" + getCreatedAt() + "'" +
-            ", update_at='" + getUpdatedAt() + "'" +
-            ", deleted='" + isDeleted() + "'" +
-            ", statut='" + getStatut() + "'" +
-            "}";
+                "id=" + id +
+                ", identifiant='" + identifiant + '\'' +
+                ", nomAr='" + nomAr + '\'' +
+                ", nomFr='" + nomFr + '\'' +
+                ", prenomAr='" + prenomAr + '\'' +
+                ", prenomFr='" + prenomFr + '\'' +
+                ", adresse='" + adresse + '\'' +
+                ", photo='" + photo + '\'' +
+                ", mail='" + mail + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", deleted=" + deleted +
+                ", statut=" + statut +
+                ", entrepriseGeree=" + entrepriseGeree +
+                ", mandataires=" + mandataires +
+                ", mandants=" + mandants +
+                ", associations=" + associations +
+                '}';
     }
 }
