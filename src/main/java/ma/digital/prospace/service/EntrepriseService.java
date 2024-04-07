@@ -240,6 +240,20 @@ public class EntrepriseService {
         }
         return false;
     }
+    private boolean checkPp(PersonnephysiqueDTO personnephysiqueDTO, Long accountid) {
+        try {
+            ComptePro compte = CompteProRepository.getById(accountid);
+            if (personnephysiqueDTO.getPersonneRc().getCommercant().getNumPiece().equals(compte.getIdentifiant())) {
+                return true;
+            } else {
+                return false; // No match found
+            }
+        } catch (Exception e) {
+            log.info("Une exception s'est produite lors de la vérification des dirigeants WS.", e);
+            return false; // Gestion de l'exception
+        }
+    }
+
 
     public void createCompany(EntrepriseRequest2 entrepriseRequest) {
         switch (entrepriseRequest.getPerphysique_Permorale()) {
@@ -255,8 +269,71 @@ public class EntrepriseService {
         }
     }
     private void handlePhysicalPerson(EntrepriseRequest2 entrepriseRequest) {
-            // Your existing code for the case PHYSICAL_PERSON
+        PersonnephysiqueDTO personnephysiqueDTO = null;
+        try {
+            personnephysiqueDTO = entrepriseWSMJService.getBycodeJuridictionAndnumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
+        } catch (NullPointerException e) {
+            log.error("EntrepriseWS is null: " + e.getMessage());
+        }
+        Optional<String> currentUserLogin = SecurityUtils.getCurrentUserLogin();
+        ComptePro compte = CompteProRepository.getById(entrepriseRequest.getCOMPID());
+        // if (currentUserLogin.isPresent() ) {
+        //String currentUsername = currentUserLogin.get();
+        String currentUsername = "OMAR";
+        if (compte.getPrenomFr().equals(currentUsername)) {
+            boolean isManager = checkManagerPp(compte,personnephysiqueDTO);
+            if (isManager) {
+                Entreprise newEntreprise = new Entreprise();
+                newEntreprise.setNumeroRC(entrepriseRequest.getNumeroRC());
+                newEntreprise.setTribunal(entrepriseRequest.getTribunal());
+                newEntreprise.setStatus_Perphysique_Permorale(entrepriseRequest.getPerphysique_Permorale());
+                newEntreprise.setIce(entrepriseRequest.getIce());
+                try {
+                    entrepriseRepository.save(newEntreprise);
+                    Set<ComptePro> gerants = new HashSet<>();
+                    gerants.add(compte);
+                    newEntreprise.setGerants(gerants);
+                    compte.setEntrepriseGeree(newEntreprise);
+                    CompteProRepository.save(compte);
+                    log.info("Enregistrement réussi");
+                } catch (Exception e) {
+                    log.error("Erreur lors de l'enregistrement de l'entreprise : " + e.getMessage());
+                }
+            } else {
+                log.info("Vous n'êtes pas le manager");
+            }
+        } else {
+            // Optional<String> currentUserLogin = SecurityUtils.getCurrentUserLogin();
+            // String currentUsername = currentUserLogin.get();
+            ComptePro accountconnected = CompteProRepository.findByAndPrenomFr(currentUsername);
+            Long acountconnectedid = accountconnected.getId();
+            EntrepriseWSMJService dirigeantService = null;
+            DIRIGEANTDTO dirigeants = null;
+            try {
+                dirigeants = entrepriseWSMJService.getDirigeantBycodeJuridictionAndnumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
+            } catch (Exception e) {
+                // Gérer l'exception spécifique ici, par exemple, logguer l'erreur ou prendre d'autres mesures appropriées
+                log.info("Une erreur est survenue lors de l'appel à EntrepriseWSMJService : " + e.getMessage());
+            }
+            if (procurationRepository.checkProcurationForCompteAndGestionnaire(entrepriseRequest.getCOMPID(),acountconnectedid) && checkPp(personnephysiqueDTO, entrepriseRequest.getCOMPID())) {
+                try {
+                    Entreprise newEntreprise = new Entreprise();
+                    newEntreprise.setDenomination(entrepriseRequest.getNumeroRC());
+                    newEntreprise.setTribunal(entrepriseRequest.getTribunal());
+                    newEntreprise.setStatus_Perphysique_Permorale(entrepriseRequest.getPerphysique_Permorale());
+                    Set<ComptePro> gerants = new HashSet<>();
+                    gerants.add(compte);
+                    newEntreprise.setGerants(gerants);
+                    entrepriseRepository.save(newEntreprise);
+                    log.info("Enregistrement réussi");
+                } catch(Exception e){
+                    log.error("Erreur lors de l'enregistrement de l'entreprise : " + e.getMessage());
+                }
+            }
+
+        }
     }
+
 
     private void handleMoralPerson(EntrepriseRequest2 entrepriseRequest) {
         EntrepriseWSMJ entrepriseWS = null;
