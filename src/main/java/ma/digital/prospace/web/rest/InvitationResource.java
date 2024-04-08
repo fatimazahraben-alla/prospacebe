@@ -21,11 +21,11 @@ public class InvitationResource {
         this.invitationService = invitationService;
     }
 
-    @PostMapping("/invitations")
+   /* @PostMapping("/invitations")
     public ResponseEntity<InvitationDTO> createInvitation(@RequestBody InvitationDTO invitationDTO) {
         InvitationDTO result = invitationService.createInvitation(invitationDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(result.getId()).toUri();
         return ResponseEntity.created(location).body(result);
-    }
+    }*/
 }

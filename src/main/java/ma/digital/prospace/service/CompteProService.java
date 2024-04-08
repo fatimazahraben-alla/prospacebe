@@ -1,6 +1,7 @@
 package ma.digital.prospace.service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.Contact;
@@ -110,7 +111,7 @@ public class CompteProService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<CompteProDTO> findOne(Long id) {
+    public Optional<CompteProDTO> findOne(UUID id) {
         log.debug("Request to get ComptePro : {}", id);
         return compteProRepository.findById(id).map(compteProMapper::toDto);
     }
@@ -120,7 +121,7 @@ public class CompteProService {
      *
      * @param id the id of the entity.
      */
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete ComptePro : {}", id);
         compteProRepository.deleteById(id);
     }

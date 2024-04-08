@@ -1,16 +1,12 @@
 package ma.digital.prospace.service.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import ma.digital.prospace.domain.ComptePro;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.UUID;
 
 public class MobileRegistrationDTO {
     @NotNull(message = "Le champ 'deviceToken' ne peut pas être nul")
-    @Size(max = 255, message = "Le champ 'deviceToken' ne peut pas dépasser {max} caractères")
+    @Size(max = 1000, message = "Le champ 'deviceToken' ne peut pas dépasser {max} caractères")
     private String deviceToken;
 
     @NotNull(message = "Le champ 'deviceOS' ne peut pas être nul")
@@ -21,16 +17,16 @@ public class MobileRegistrationDTO {
     @Size(max = 50, message = "Le champ 'deviceVersion' ne peut pas dépasser {max} caractères")
     private String deviceVersion;
 
-    public Long getCompteId() {
+    public UUID getCompteId() {
         return compteId;
     }
 
-    public void setCompteId(Long compteId) {
+    public void setCompteId(UUID compteId) {
         this.compteId = compteId;
     }
 
     @NotNull
-    private Long compteId;
+    private UUID compteId;
 
 
 

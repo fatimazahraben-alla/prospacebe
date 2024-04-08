@@ -2,19 +2,24 @@ package ma.digital.prospace.domain;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import jakarta.persistence.*;
+import ma.digital.prospace.domain.enumeration.Statut;
+import ma.digital.prospace.domain.enumeration.typeidentifiant;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import ma.digital.prospace.domain.enumeration.StatutCompte;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * A ComptePro.
@@ -28,15 +33,19 @@ public class ComptePro implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    private UUID id;
 
-
-
-    @Size(max = 10)
-    @Column(name = "identifiant", length = 10)
+    @Size(max = 100)
+    @Column(name = "identifiant")
     private String identifiant;
+
+    @Size(max = 60)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "typeidentifiant", length = 10)
+    private typeidentifiant typeidentifiant;
+
 
 
 
@@ -69,7 +78,7 @@ public class ComptePro implements Serializable {
     private String adresse;
 
 
-    @Lob
+    @Transient
     @Column(name = "photo", nullable = true)
     private String photo;
 
@@ -83,11 +92,11 @@ public class ComptePro implements Serializable {
 
 
     @Column(name = "created_at")
-    private Instant createdAt;
+    private Date createdAt;
 
 
     @Column(name = "updated_at")
-    private Instant updatedAt;
+    private Date updatedAt;
 
     @Column(name = "deleted")
     private boolean deleted;
@@ -95,8 +104,7 @@ public class ComptePro implements Serializable {
     @Column(name = "statut")
     private StatutCompte statut;
 
-
-    @ManyToOne
+    @ManyToOne(optional=true)
     @JsonIgnoreProperties(value = { "gerants", "associations" }, allowSetters = true)
     private Entreprise entrepriseGeree;
 
@@ -118,59 +126,41 @@ public class ComptePro implements Serializable {
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
 
-
-
-    public Long getId() {
-        return this.id;
+    public UUID getId() {
+        return id;
     }
 
-    public ComptePro id(Long id) {
-        this.setId(id);
-        return this;
-    }
-
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
-    }
-
-    public String getIdentifiant() {
-        return this.identifiant;
-    }
-
-    public ComptePro identifiant(String identifiant) {
-        this.setIdentifiant(identifiant);
-        return this;
-    }
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
     }
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
-    public void setIdentifiant(String identifiant) {
-        this.identifiant = identifiant;
-    }
 
     public String getNomAr() {
-        return this.nomAr;
+        return nomAr;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 
     public ComptePro nomAr(String nomAr) {
@@ -411,13 +401,28 @@ public class ComptePro implements Serializable {
         return getClass().hashCode();
     }
 
-    // prettier-ignore
+    public String getIdentifiant() {
+        return identifiant;
+    }
+
+    public void setIdentifiant(String identifiant) {
+        this.identifiant = identifiant;
+    }
+
+    public ma.digital.prospace.domain.enumeration.typeidentifiant getTypeidentifiant() {
+        return typeidentifiant;
+    }
+
+    public void setTypeidentifiant(typeidentifiant typeidentifiant) {
+        this.typeidentifiant = typeidentifiant;
+    }
 
     @Override
     public String toString() {
         return "ComptePro{" +
                 "id=" + id +
-                ", identifiant='" + identifiant + '\'' +
+                ", identifiant=" + identifiant +
+                ", typeidentifiant=" + typeidentifiant +
                 ", nomAr='" + nomAr + '\'' +
                 ", nomFr='" + nomFr + '\'' +
                 ", prenomAr='" + prenomAr + '\'' +
@@ -436,4 +441,9 @@ public class ComptePro implements Serializable {
                 ", associations=" + associations +
                 '}';
     }
+
+
+// prettier-ignore
+
+
 }

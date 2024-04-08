@@ -4,6 +4,8 @@ import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.Contact;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.UUID;
+
 public interface ContactRepository extends JpaRepository<Contact, Long> {
-    Contact findByCompteProId(Long compteProId);
+    Contact findByCompteProId(UUID compteProId);
 }

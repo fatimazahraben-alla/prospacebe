@@ -1,15 +1,13 @@
 package ma.digital.prospace.service.dto;
 
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.Objects;
+import ma.digital.prospace.domain.enumeration.StatutCompte;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import jakarta.persistence.Column;
-import ma.digital.prospace.domain.enumeration.StatutCompte;
-import org.springframework.stereotype.Component;
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the {@link ma.digital.prospace.domain.ComptePro} entity.
@@ -18,7 +16,7 @@ import org.springframework.stereotype.Component;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class CompteProDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     @Size(max = 10)
@@ -45,25 +43,31 @@ public class CompteProDTO implements Serializable {
     private String prenomFr;
 
     @Size(max = 50)
-    private String address;
+    private String address; // Modification du nom de la variable
 
-    private String photo;
+    private String photo; // Modification du type de la variable
 
     private String mail;
 
     private String telephone;
-    private Instant createdAt;
 
-    private Instant updatedAt;
-
-    private boolean deleted;
     private StatutCompte statut;
 
-    public Long getId() {
+    private  Long compteEntreprise;
+
+    public Long getCompteEntreprise() {
+        return compteEntreprise;
+    }
+
+    public void setCompteEntreprise(Long compteEntreprise) {
+        this.compteEntreprise = compteEntreprise;
+    }
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -146,29 +150,6 @@ public class CompteProDTO implements Serializable {
     public void setTelephone(String telephone) {
         this.telephone = telephone;
     }
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
 
     public StatutCompte getStatut() {
         return statut;
@@ -214,10 +195,8 @@ public class CompteProDTO implements Serializable {
                 ", photo='" + getPhoto() + "'" +
                 ", mail='" + getMail() + "'" +
                 ", telephone='" + getTelephone() + "'" +
-                ", created_at='" + getCreatedAt() + "'" +
-                ", update_at='" + getUpdatedAt() + "'" +
-                ", deleted='" + isDeleted() + "'" +
                 ", statut='" + getStatut() + "'" +
                 "}";
     }
 }
+

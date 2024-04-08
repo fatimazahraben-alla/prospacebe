@@ -132,10 +132,10 @@ public class ProcurationService {
     /**
      * create an procuration and accepte invitation
      */
-    public ProcurationDTO createProcuration(ProcurationDTO procurationDTO, Long invitationId) {
-        ComptePro gestionnaire = compteProRepository.findById(procurationDTO.getGestionnaireEspaceProId())
+   /* public ProcurationDTO createProcuration(ProcurationDTO procurationDTO, Long invitationId) {
+        ComptePro gestionnaire = compteProRepository.findById(procurationDTO.getGestionnaireEspacePro())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Gestionnaire Espace Pro not found"));
-        ComptePro utilisateur = compteProRepository.findById(procurationDTO.getUtilisateurProId())
+        ComptePro utilisateur = compteProRepository.findById(procurationDTO.getUtilisateurPro())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Utilisateur Pro not found"));
 
         Procuration procuration = procurationMapper.toEntity(procurationDTO);
@@ -145,7 +145,7 @@ public class ProcurationService {
         invitationService.acceptInvitation(invitationId);
 
         return procurationMapper.toDto(procuration);
-    }
+    }*/
     private void updateInvitationStatus(Long invitationId, StatutInvitation statut) {
         Invitation invitation = invitationRepository.findById(invitationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invitation not found with id: " + invitationId));

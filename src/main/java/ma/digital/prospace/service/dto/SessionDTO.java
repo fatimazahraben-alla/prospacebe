@@ -1,9 +1,6 @@
 package ma.digital.prospace.service.dto;
 
 import lombok.Data;
-import ma.digital.prospace.domain.ComptePro;
-import ma.digital.prospace.domain.Entreprise;
-import ma.digital.prospace.domain.Rolee;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;

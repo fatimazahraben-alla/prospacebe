@@ -1,9 +1,9 @@
 package ma.digital.prospace.service.dto;
 
-import java.io.Serializable;
-
 import ma.digital.prospace.domain.User;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
 
 /**
  * A DTO representing a user, with only the public attributes.

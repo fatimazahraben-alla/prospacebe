@@ -32,7 +32,7 @@ public class InvitationService {
     /**
      * create an invitation and set statut = PENDING
      */
-    public InvitationDTO createInvitation(InvitationDTO invitationDTO) {
+  /*  public InvitationDTO createInvitation(InvitationDTO invitationDTO) {
         if (invitationDTO.getCompteProId() != null && !compteProRepository.existsById(invitationDTO.getCompteProId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ComptePro with id " + invitationDTO.getCompteProId() + " not found");
         }
@@ -48,5 +48,5 @@ public class InvitationService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invitation not found with id: " + invitationId));
         invitation.setStatut(StatutInvitation.ACCEPTED);
         invitationRepository.save(invitation);
-    }
+    }*/
 }

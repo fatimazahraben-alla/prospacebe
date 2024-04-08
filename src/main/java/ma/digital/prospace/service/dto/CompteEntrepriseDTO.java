@@ -1,14 +1,7 @@
 package ma.digital.prospace.service.dto;
 
-import ma.digital.prospace.domain.ComptePro;
-import ma.digital.prospace.domain.Entreprise;
-
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * A DTO for the {@link ma.digital.prospace.domain.CompteEntreprise} entity.

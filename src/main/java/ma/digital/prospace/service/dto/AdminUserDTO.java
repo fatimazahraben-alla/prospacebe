@@ -1,16 +1,16 @@
 package ma.digital.prospace.service.dto;
 
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import ma.digital.prospace.domain.Authority;
 import ma.digital.prospace.domain.User;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A DTO representing a user, with his authorities.

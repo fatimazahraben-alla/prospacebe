@@ -35,6 +35,9 @@
             <column name="date_immatriculation" type="datetime">
                 <constraints nullable="true" />
             </column>
+            <column name="Status_Perphysique_Permorale" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="etat" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
@@ -67,6 +70,7 @@
             <column name="activite" type="string"/>
             <column name="forme_juridique" type="string"/>
             <column name="date_immatriculation" type="date"/>
+            <column name="Status_Perphysique_Permorale" type="string"/>
             <column name="etat" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>

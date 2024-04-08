@@ -8,7 +8,6 @@ import com.google.firebase.messaging.Notification;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import ma.digital.prospace.service.mapper.AssociationMapper;
-import ma.digital.prospace.web.rest.errors.NotificationSendingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,10 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ma.digital.prospace.domain.*;
 import ma.digital.prospace.repository.*;
 import ma.digital.prospace.service.dto.*;
@@ -155,7 +151,7 @@ public class AssociationService {
         }
     }
 
-    public CompteFSAssociationDTO processAuthenticationStep2(Long compteID, Long fs, String transactionID) {
+    public CompteFSAssociationDTO processAuthenticationStep2(UUID compteID, Long fs, String transactionID) {
         List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteID);
         if (associations != null && !associations.isEmpty()) {
             Session session = new Session();

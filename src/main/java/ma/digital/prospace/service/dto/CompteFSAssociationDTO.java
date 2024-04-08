@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * A DTO for the {@link ma.digital.prospace.domain.ComptePro} entity.
@@ -16,17 +17,17 @@ import java.util.List;
 @Component
 public class CompteFSAssociationDTO {
     @NotNull
-    private Long compteID;
+    private UUID compteID;
     @NotNull
     private Long fs;
     @NotNull
     private List<String> entreprises;
 
-    public Long getCompteID() {
+    public UUID getCompteID() {
         return compteID;
     }
 
-    public void setCompteID(Long compteID) {
+    public void setCompteID(UUID compteID) {
         this.compteID = compteID;
     }
 

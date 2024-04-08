@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -92,7 +93,7 @@ public class CompteProResource {
      */
     @PutMapping("/compte-pros/{id}")
     public ResponseEntity<CompteProDTO> updateComptePro(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @Valid @RequestBody CompteProDTO comptePro
     ) throws URISyntaxException {
         log.debug("REST request to update CompteProDTO : {}, {}", id, comptePro);
@@ -127,7 +128,7 @@ public class CompteProResource {
      */
     @PatchMapping(value = "/compte-pros/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<CompteProDTO> partialUpdateComptePro(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @NotNull @RequestBody CompteProDTO comptePro
     ) throws URISyntaxException {
         log.debug("REST request to partial update CompteProDTO partially : {}, {}", id, comptePro);
@@ -171,7 +172,7 @@ public class CompteProResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the comptePro, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/compte-pros/{id}")
-    public ResponseEntity<CompteProDTO> getComptePro(@PathVariable Long id) {
+    public ResponseEntity<CompteProDTO> getComptePro(@PathVariable UUID id) {
         log.debug("REST request to get CompteProDTO : {}", id);
         Optional<CompteProDTO> comptePro = compteProService.findOne(id);
         return ResponseUtil.wrapOrNotFound(comptePro);
@@ -184,7 +185,7 @@ public class CompteProResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/compte-pros/{id}")
-    public ResponseEntity<Void> deleteComptePro(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteComptePro(@PathVariable UUID id) {
         log.debug("REST request to delete CompteProDTO : {}", id);
         compteProService.delete(id);
         return ResponseEntity

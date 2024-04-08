@@ -1,13 +1,13 @@
 package ma.digital.prospace.service.dto;
 
+import ma.digital.prospace.domain.enumeration.StatutAssociation;
+import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
-
-import javax.validation.constraints.NotNull;
-
-import ma.digital.prospace.domain.enumeration.StatutAssociation;
-import org.springframework.stereotype.Component;
+import java.util.UUID;
 
 /**
  * A DTO for the {@link ma.digital.prospace.domain.Association} entity.
@@ -18,7 +18,7 @@ public class AssociationDTO implements Serializable {
     private Long id;
 
     @NotNull
-    private Long compteID;
+    private UUID compteID;
 
     @NotNull
     private Long entrepriseID;
@@ -34,7 +34,9 @@ public class AssociationDTO implements Serializable {
 
     private Instant dateEffet;
 
-    private StatutAssociation statut = StatutAssociation.PENDING;
+    private Long fs;
+
+    private StatutAssociation statut;
 
     public Long getId() {
         return id;
@@ -44,11 +46,11 @@ public class AssociationDTO implements Serializable {
         this.id = id;
     }
 
-    public Long getCompteID() {
+    public UUID getCompteID() {
         return compteID;
     }
 
-    public void setCompteID(Long compteID) {
+    public void setCompteID(UUID compteID) {
         this.compteID = compteID;
     }
 
@@ -100,6 +102,13 @@ public class AssociationDTO implements Serializable {
         this.dateEffet = dateEffet;
     }
 
+    public Long getFs() {
+        return fs;
+    }
+
+    public void setFs(Long fs) {
+        this.fs = fs;
+    }
 
     public StatutAssociation getStatut() {
         return statut;
@@ -133,6 +142,7 @@ public class AssociationDTO implements Serializable {
                 ", mail='" + mail + '\'' +
                 ", dateFin=" + dateFin +
                 ", dateEffet=" + dateEffet +
+                ", fs=" + fs +
                 ", statut=" + statut +
                 '}';
     }

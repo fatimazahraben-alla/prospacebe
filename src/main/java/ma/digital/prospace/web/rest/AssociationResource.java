@@ -90,7 +90,7 @@ public class AssociationResource {
     }
 
     @GetMapping("/association/processAuthenticationStep2")
-    public ResponseEntity<CompteFSAssociationDTO> processAuthenticationStep2(@RequestParam Long compteID, @RequestParam Long fs,
+    public ResponseEntity<CompteFSAssociationDTO> processAuthenticationStep2(@RequestParam UUID compteID, @RequestParam Long fs,
                                                                              @RequestParam String transactionID) {
         CompteFSAssociationDTO responseDTO = associationService.processAuthenticationStep2(compteID, fs, transactionID);
         if (responseDTO != null) {

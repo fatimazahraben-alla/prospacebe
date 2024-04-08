@@ -179,11 +179,11 @@ public class ProcurationResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
-    @PostMapping("/procurations")
+ /*   @PostMapping("/procurations")
     public ResponseEntity<ProcurationDTO> createProcuration(@RequestBody ProcurationDTO procurationDTO, @RequestParam Long invitationId) {
         ProcurationDTO result = procurationService.createProcuration(procurationDTO, invitationId);
         return ResponseEntity.ok(result);
-    }
+    }*/
 
 
 }

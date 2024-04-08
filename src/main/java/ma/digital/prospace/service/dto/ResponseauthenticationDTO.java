@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A DTO for the {@link ma.digital.prospace.domain.ComptePro} entity.

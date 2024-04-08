@@ -6,14 +6,21 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import ma.digital.prospace.service.EntrepriseService;
+import ma.digital.prospace.service.EntrepriseWSMJService;
+import ma.digital.prospace.service.TribunalWSMJService;
+import ma.digital.prospace.service.dto.*;
+import ma.digital.prospace.web.rest.errors.CustomException;
+import ma.digital.prospace.web.rest.errors.EntrepriseBadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import ma.digital.prospace.repository.EntrepriseRepository;
-import ma.digital.prospace.service.EntrepriseService;
-import ma.digital.prospace.service.dto.EntrepriseDTO;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -49,33 +54,36 @@ public class EntrepriseResource {
     private String applicationName;
 
     private final EntrepriseService entrepriseService;
-
+    @Autowired
+    private final TribunalWSMJService tribunalWSMJService;
     private final EntrepriseRepository entrepriseRepository;
 
-    public EntrepriseResource(EntrepriseService entrepriseService, EntrepriseRepository entrepriseRepository) {
+    private final EntrepriseWSMJService entrepriseWSMJService;
+
+
+    public EntrepriseResource(EntrepriseService entrepriseService, EntrepriseRepository entrepriseRepository, TribunalWSMJService tribunalWSMJService,EntrepriseWSMJService entrepriseWSMJService) {
         this.entrepriseService = entrepriseService;
         this.entrepriseRepository = entrepriseRepository;
+        this.tribunalWSMJService = tribunalWSMJService;
+        this.entrepriseWSMJService= entrepriseWSMJService;
     }
-
     /**
-     * {@code POST  /entreprises} : Create a new entreprise.
+     * POST  /entreprises : Create a new entreprise.
      *
-     * @param entreprise the entreprise to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new entreprise, or with status {@code 400 (Bad Request)} if the entreprise has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     * @param entrepriseRequest the entreprise to create
+     * @return the ResponseEntity with status 201 (Created) and with body the new entreprise,
+     * or with status 400 (Bad Request) if the entreprise has already an ID
      */
     @PostMapping("/entreprises")
-    public ResponseEntity<EntrepriseDTO> createEntreprise(@RequestBody EntrepriseDTO entreprise) throws URISyntaxException {
-        log.debug("REST request to save EntrepriseDTO : {}", entreprise);
-        if (entreprise.getId() != null) {
-            throw new BadRequestAlertException("A new entreprise cannot already have an ID", ENTITY_NAME, "idexists");
+    public ResponseEntity<?> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
+        try {
+            entrepriseService.createCompany(entrepriseRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (EntrepriseBadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request message");
         }
-        EntrepriseDTO result = entrepriseService.save(entreprise);
-        return ResponseEntity
-            .created(new URI("/api/entreprises/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
     }
+
 
     /**
      * {@code PUT  /entreprises/:id} : Updates an existing entreprise.
@@ -190,4 +198,25 @@ public class EntrepriseResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @GetMapping("entreprise/tribunaux")
+    public ResponseEntity<List<Juridiction>> getListeTribunaux() {
+        List<Juridiction> tribunaux = tribunalWSMJService.getListeTribunaux();
+        return ResponseEntity.ok(tribunaux);
+
+    }
+    @GetMapping("/entreprise/{codeJuridiction}/{numRC}")
+    public EntrepriseWSMJ getEntrepriseByJuridictionAndNumRC(@PathVariable String codeJuridiction, @PathVariable String numRC) {
+        return entrepriseWSMJService.getEntrepriseByJuridictionAndNumRC(codeJuridiction, numRC);
+    }
+
+    @GetMapping("/dirigeant/{codeJuridiction}/{numRC}")
+    public DIRIGEANTDTO getDirigeantBycodeJuridictionAndnumRC(@PathVariable String codeJuridiction, @PathVariable String numRC) {
+        return entrepriseWSMJService.getDirigeantBycodeJuridictionAndnumRC(codeJuridiction, numRC);
+    }
+    @GetMapping("/Personnepysique/{codeJuridiction}/{numRC}")
+    public PersonnephysiqueDTO getBycodeJuridictionAndnumRC(@PathVariable String codeJuridiction, @PathVariable String numRC) {
+        return entrepriseWSMJService.getBycodeJuridictionAndnumRC(codeJuridiction, numRC);
+    }
+
 }

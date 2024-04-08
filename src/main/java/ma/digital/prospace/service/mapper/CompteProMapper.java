@@ -1,5 +1,7 @@
 package ma.digital.prospace.service.mapper;
 
+import ma.digital.prospace.service.dto.EntrepriseDTO;
+import ma.digital.prospace.service.dto.EntrepriseDTO11;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -7,14 +9,15 @@ import org.mapstruct.Named;
 import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.Entreprise;
 import ma.digital.prospace.service.dto.CompteProDTO;
-import ma.digital.prospace.service.dto.EntrepriseDTO;
+
+import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public interface CompteProMapper extends EntityMapper<CompteProDTO, ComptePro> {
     ComptePro toEntity(CompteProDTO compteProDTO);
     CompteProDTO toDto(ComptePro comptePro);
 
-    default ComptePro fromId(Long id) {
+    default ComptePro fromId(UUID id) {
         if (id == null) {
             return null;
         }
