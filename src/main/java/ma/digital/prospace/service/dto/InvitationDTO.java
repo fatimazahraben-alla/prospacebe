@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Map;
+
 @Component
 public class InvitationDTO {
     private Long id;
@@ -15,6 +17,8 @@ public class InvitationDTO {
     private String tel;
     private StatutInvitation statut;
     private Long compteProId;
+
+    private Long compteProDestinataireId;
 
     public Long getId() {
         return id;
@@ -71,6 +75,14 @@ public class InvitationDTO {
 
     public void setCompteProId(Long compteProId) {
         this.compteProId = compteProId;
+    }
+
+    public Long getCompteProDestinataireId() {
+        return compteProDestinataireId;
+    }
+
+    public void setCompteProDestinataireId(Long compteProDestinataireId) {
+        this.compteProDestinataireId = compteProDestinataireId;
     }
 }
 

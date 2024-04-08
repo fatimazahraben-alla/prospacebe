@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 
-/**@Configuration
+@Configuration
 public class OAuth2Configuration {
 
     @Bean
@@ -33,4 +33,4 @@ public class OAuth2Configuration {
 
         return authorizedClientManager;
     }
-}*/
+}

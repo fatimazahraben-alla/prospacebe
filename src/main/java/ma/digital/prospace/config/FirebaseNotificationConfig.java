@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 
 @Configuration
@@ -15,7 +14,7 @@ public class FirebaseNotificationConfig {
     @Bean
     FirebaseMessaging firebaseMessaging() throws IOException {
         GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource("add-portail-firebase-adminsdk-9f51l-fbd1b22725.json").getInputStream());
+                .fromStream(new ClassPathResource("add-portail-firebase-adminsdk-9f51l-b26b210ef8.json").getInputStream());
         FirebaseOptions firebaseOptions = FirebaseOptions.builder()
                 .setCredentials(googleCredentials)
                 .build();

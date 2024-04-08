@@ -7,15 +7,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {FournisseurServiceMapper.class})
 public interface RoleeMapper {
 
-    @Mapping(target = "fournisseurServiceId", source = "fs.id")
-    RoleeDTO toDto(Rolee rolee);
+    Rolee toEntity(RoleeDTO dto);
 
-    @Mapping(target = "fs", source = "fournisseurServiceId")
-    Rolee toEntity(RoleeDTO roleeDTO);
+    RoleeDTO toDto(Rolee entity);
 
+    @Mapping(target = "id", ignore = true)
+    void updateEntityFromDto(RoleeDTO dto, @MappingTarget Rolee entity);
     default void partialUpdate(@MappingTarget Rolee target, RoleeDTO source) {
         if (source.getFournisseurServiceId() != null) {
             target.setFs(map(source.getFournisseurServiceId()));

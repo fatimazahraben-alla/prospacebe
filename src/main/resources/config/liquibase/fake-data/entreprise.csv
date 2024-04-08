@@ -1,3 +1,3 @@
 ﻿id;denomination;statut_juridique;tribunal;numero_rc;ice;activite;forme_juridique;date_immatriculation;etat
-1;;;;;;;;;OK
-2;;;;;;;;;OK
+1;Entreprise XYZ;SARL;Tribunal de Commerce Casablanca;123456;0012345678901234;Commerce de détail;Société à Responsabilité Limitée;;OK
+2;Compagnie ABC;SA;Tribunal de Commerce Rabat;654321;0023456789012345;Technologies de l'information;Société Anonyme;;OK

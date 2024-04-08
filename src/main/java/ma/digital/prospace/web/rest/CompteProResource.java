@@ -9,6 +9,8 @@ import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import jakarta.persistence.EntityNotFoundException;
+import ma.digital.prospace.domain.enumeration.StatutCompte;
 import ma.digital.prospace.service.dto.ContactDTO;
 import ma.digital.prospace.service.dto.MobileRegistrationDTO;
 import org.slf4j.Logger;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,26 +62,6 @@ public class CompteProResource {
         this.compteProService = compteProService;
         this.compteProRepository = compteProRepository;
     }
-
-    /**
-     * {@code POST  /compte-pros} : Create a new comptePro.
-     *
-     * @param comptePro the comptePro to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new comptePro, or with status {@code 400 (Bad Request)} if the comptePro has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    /*@PostMapping("/compte-pros")
-    public ResponseEntity<CompteProDTO> createComptePro(@Valid @RequestBody CompteProDTO comptePro) throws URISyntaxException {
-        log.debug("REST request to save CompteProDTO : {}", comptePro);
-        if (comptePro.getId() != null) {
-            throw new BadRequestAlertException("A new comptePro cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        CompteProDTO result = compteProService.save(comptePro);
-        return ResponseEntity
-            .created(new URI("/api/compte-pros/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
-    }*/
 
     /**
      * {@code PUT  /compte-pros/:id} : Updates an existing comptePro.
@@ -177,35 +160,56 @@ public class CompteProResource {
         return ResponseUtil.wrapOrNotFound(comptePro);
     }
 
-    /**
-     * {@code DELETE  /compte-pros/:id} : delete the "id" comptePro.
-     *
-     * @param id the id of the comptePro to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
-    @DeleteMapping("/compte-pros/{id}")
-    public ResponseEntity<Void> deleteComptePro(@PathVariable Long id) {
-        log.debug("REST request to delete CompteProDTO : {}", id);
-        compteProService.delete(id);
-        return ResponseEntity
-            .noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-            .build();
-    }
     @PostMapping("/compte-pros/registerMobile")
     public ResponseEntity<MobileRegistrationDTO> registerMobile(@Valid @RequestBody MobileRegistrationDTO mobileRegistrationDTO) {
         compteProService.registerContactDTO(mobileRegistrationDTO);
         return ResponseEntity.ok().build();
     }
-    @PostMapping("/compte")
+    @PostMapping("/compte-pros")
     public ResponseEntity<CompteProDTO> createCompte(@RequestBody CompteProDTO compteProDTO) {
-        CompteProDTO result = compteProService.createCompte(compteProDTO);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(result.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(result);
+        compteProDTO.setStatut(StatutCompte.VALIDE);
+        CompteProDTO createdCompte = compteProService.save(compteProDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCompte);
+    }
+    @DeleteMapping("/compte-pros/{compteID}")
+    public ResponseEntity<Void> deleteCompte(@PathVariable Long compteID) {
+        try {
+            compteProService.delete(compteID);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+    @PostMapping("/compte-pros")
+    public ResponseEntity<CompteProDTO> createAccount(@RequestBody CreateAccountRequest createAccountRequest) {
+        try {
+            CompteProDTO newComptePro = compteProService.createAccount(createAccountRequest.getDeviceToken(), createAccountRequest.getSubId());
+            return ResponseEntity.ok(newComptePro);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build(); // or handle more gracefully as needed
+        }
+    }
+
+    static class CreateAccountRequest {
+        private String deviceToken;
+        private Long subId;
+
+
+        public String getDeviceToken() {
+            return deviceToken;
+        }
+
+        public void setDeviceToken(String deviceToken) {
+            this.deviceToken = deviceToken;
+        }
+
+        public Long getSubId() {
+            return subId;
+        }
+
+        public void setSubId(Long subId) {
+            this.subId = subId;
+        }
     }
 
 }

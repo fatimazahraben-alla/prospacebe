@@ -1,7 +1,10 @@
 package ma.digital.prospace.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -39,7 +42,7 @@ public class FournisseurServiceService {
     /**
      * Save a fournisseurService.
      *
-     * @param fournisseurService the entity to save.
+     * @param fournisseurServiceDTO the entity to save.
      * @return the persisted entity.
      */
     public FournisseurServiceDTO save(FournisseurServiceDTO fournisseurServiceDTO) {
@@ -52,7 +55,7 @@ public class FournisseurServiceService {
     /**
      * Update a fournisseurService.
      *
-     * @param fournisseurService the entity to save.
+     * @param fournisseurServiceDTO the entity to save.
      * @return the persisted entity.
      */
     public FournisseurServiceDTO update(FournisseurServiceDTO fournisseurServiceDTO) {
@@ -114,5 +117,11 @@ public class FournisseurServiceService {
     public void delete(Long id) {
         log.debug("Request to delete FournisseurService : {}", id);
         fournisseurServiceRepository.deleteById(id);
+    }
+    @Transactional(readOnly = true)
+    public List<FournisseurServiceDTO> findAll() {
+        return fournisseurServiceRepository.findAll().stream()
+                .map(fournisseurServiceMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

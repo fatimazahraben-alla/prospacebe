@@ -42,27 +42,6 @@ public class AssociationResource {
         this.associationService = associationService;
     }
 
-    /*@PostMapping("/associations")
-    public ResponseEntity<AssociationDTO> createAssociation(@Valid @RequestBody AssociationDTO associationDTO) throws URISyntaxException {
-        log.debug("REST request to save Association : {}", associationDTO);
-        if (associationDTO.getId() != null) {
-            throw new IllegalArgumentException("A new association cannot already have an ID");
-        }
-        AssociationDTO result = associationService.save(associationDTO);
-        return ResponseEntity.created(new URI("/api/associations/" + result.getId()))
-                .body(result);
-    }*/
-
-    /*@PutMapping("/associations")
-    public ResponseEntity<AssociationDTO> updateAssociation(@Valid @RequestBody AssociationDTO associationDTO) {
-        log.debug("REST request to update Association : {}", associationDTO);
-        if (associationDTO.getId() == null) {
-            throw new IllegalArgumentException("Invalid id");
-        }
-        AssociationDTO result = associationService.update(associationDTO);
-        return ResponseEntity.ok()
-                .body(result);
-    }*/
 
     @GetMapping("/associations")
     public ResponseEntity<Page<AssociationDTO>> getAllAssociations(Pageable pageable) {

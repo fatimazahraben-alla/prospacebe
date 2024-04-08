@@ -12,6 +12,9 @@
             <column name="identifiant" type="varchar(10)">
                 <constraints nullable="true" />
             </column>
+            <column name="type_identifiant" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="nom_ar" type="varchar(50)">
                 <constraints nullable="true" />
             </column>
@@ -71,6 +74,7 @@
                 usePreparedStatements="true">
             <column name="id" type="NUMERIC"/>
             <column name="identifiant" type="STRING"/>
+            <column name="type_identifiant" type="STRING"/>
             <column name="nom_ar" type="STRING"/>
             <column name="nom_fr" type="STRING"/>
             <column name="prenom_ar" type="STRING"/>

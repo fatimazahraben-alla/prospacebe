@@ -5,10 +5,12 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import jakarta.persistence.*;
+import ma.digital.prospace.domain.enumeration.TypePiece;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -35,7 +37,9 @@ public class ComptePro implements Serializable {
     @Size(max = 10)
     @Column(name = "identifiant", length = 10)
     private String identifiant;
-
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type_identifiant")
+    private TypePiece typeIdentifiant;
 
     @Transient
     @NotNull
@@ -72,6 +76,7 @@ public class ComptePro implements Serializable {
     private String photo;
 
     @Transient
+    @Email
     @Column(name = "mail")
     private String mail;
 
@@ -136,6 +141,14 @@ public class ComptePro implements Serializable {
         this.setIdentifiant(identifiant);
         return this;
     }
+    public TypePiece getTypeIdentifiant() {
+        return typeIdentifiant;
+    }
+
+    public void setTypeIdentifiant(TypePiece typeIdentifiant) {
+        this.typeIdentifiant = typeIdentifiant;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }
@@ -412,6 +425,7 @@ public class ComptePro implements Serializable {
         return "ComptePro{" +
             "id=" + getId() +
             ", identifiant='" + getIdentifiant() + "'" +
+            ", typeIdentifiant='" + getTypeIdentifiant() + "'" +
             ", nomAr='" + getNomAr() + "'" +
             ", nomFr='" + getNomFr() + "'" +
             ", prenomAr='" + getPrenomAr() + "'" +

@@ -4,6 +4,7 @@ import ma.digital.prospace.domain.ComptePro;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,4 +15,5 @@ import java.util.Optional;
 public interface CompteProRepository extends JpaRepository<ComptePro, Long> {
     Optional<ComptePro> findByIdentifiant(String identifiant);
     ComptePro getById(Long id);
+    List<ComptePro> findByDeletedFalse();
 }

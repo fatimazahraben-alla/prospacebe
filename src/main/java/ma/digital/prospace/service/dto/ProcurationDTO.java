@@ -3,6 +3,7 @@ package ma.digital.prospace.service.dto;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -17,9 +18,9 @@ public class ProcurationDTO implements Serializable {
 
     private String nom;
 
-    private LocalDate dateEffet;
+    private Instant dateEffet;
 
-    private LocalDate dateFin;
+    private Instant dateFin;
 
     public Long getGestionnaireEspaceProId() {
         return gestionnaireEspaceProId;
@@ -74,19 +75,19 @@ public class ProcurationDTO implements Serializable {
         this.nom = nom;
     }
 
-    public LocalDate getDateEffet() {
+    public Instant getDateEffet() {
         return dateEffet;
     }
 
-    public void setDateEffet(LocalDate dateEffet) {
+    public void setDateEffet(Instant dateEffet) {
         this.dateEffet = dateEffet;
     }
 
-    public LocalDate getDateFin() {
+    public Instant getDateFin() {
         return dateFin;
     }
 
-    public void setDateFin(LocalDate dateFin) {
+    public void setDateFin(Instant dateFin) {
         this.dateFin = dateFin;
     }
 

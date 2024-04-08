@@ -1,9 +1,12 @@
 package ma.digital.prospace.service.dto;
 
+import ma.digital.prospace.domain.Rolee;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A DTO for the {@link ma.digital.prospace.domain.FournisseurServiceDTO} entity.
@@ -17,6 +20,8 @@ public class FournisseurServiceDTO	 implements Serializable {
     private String nom;
 
     private String description;
+
+    private Set<Rolee> roles = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -40,6 +45,13 @@ public class FournisseurServiceDTO	 implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    public Set<Rolee> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Rolee> roles) {
+        this.roles = roles;
     }
 
     @Override

@@ -28,7 +28,7 @@ public class Contact implements Serializable {
     @Column(name = "telephone", length = 50, nullable = false)
     private String telephone;
 
-    @Size(max =50)
+    @Size(max =250)
     @Column(name = "device_token")
     private String deviceToken;
 

@@ -53,8 +53,7 @@ public class AssociationService {
     @Autowired
     private final FirebaseMessaging firebaseMessaging;
     private Logger logger = LoggerFactory.getLogger(AssociationService.class);
-    @Autowired
-    private NotificationService notificationService;
+
     private final ObjectMapper objectMapper;
 
     // Constructor
@@ -64,7 +63,6 @@ public class AssociationService {
                               CompteProRepository compteProRepository,
                               EntrepriseRepository entrepriseRepository,
                               RoleeRepository roleeRepository,
-                              NotificationService notificationService,
                               ObjectMapper objectMapper,
                               FirebaseMessaging firebaseMessaging) { // Add ObjectMapper to the constructor
         this.associationRepository = associationRepository;
@@ -73,7 +71,6 @@ public class AssociationService {
         this.compteProRepository = compteProRepository;
         this.entrepriseRepository = entrepriseRepository;
         this.roleeRepository = roleeRepository;
-        this.notificationService = notificationService;
         this.objectMapper = objectMapper; // Initialize ObjectMapper*
         this.firebaseMessaging = firebaseMessaging;
     }
@@ -146,15 +143,6 @@ public class AssociationService {
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
             return "error sending notification ";
-        }
-    }
-    private class NotificationSendingException extends RuntimeException {
-        public NotificationSendingException(String message) {
-            super(message);
-        }
-
-        public NotificationSendingException(String message, Throwable cause) {
-            super(message, cause);
         }
     }
 

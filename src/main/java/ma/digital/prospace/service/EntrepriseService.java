@@ -36,7 +36,7 @@ public class EntrepriseService {
     /**
      * Save a entreprise.
      *
-     * @param entreprise the entity to save.
+     * @param entrepriseDTO the entity to save.
      * @return the persisted entity.
      */
     public EntrepriseDTO save(EntrepriseDTO entrepriseDTO) {
@@ -49,7 +49,7 @@ public class EntrepriseService {
     /**
      * Update a entreprise.
      *
-     * @param entreprise the entity to save.
+     * @param entrepriseDTO the entity to save.
      * @return the persisted entity.
      */
     public EntrepriseDTO update(EntrepriseDTO entrepriseDTO) {

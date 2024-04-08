@@ -13,11 +13,10 @@ import ma.digital.prospace.service.dto.ProcurationDTO;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 /**
- * Mapper for the entity {@link Procuration} and its DTO {@link Procuration}.
+ * Mapper for the entity {@link Procuration} and its DTO {@link ProcurationDTO}.
  */
 @Mapper(componentModel = "spring")
 public interface ProcurationMapper extends EntityMapper<ProcurationDTO, Procuration> {
@@ -46,10 +45,13 @@ public interface ProcurationMapper extends EntityMapper<ProcurationDTO, Procurat
 
     default void partialUpdate(Procuration entity, ProcurationDTO dto) {
         if (dto.getDateEffet() != null) {
-            entity.setDateEffet(mapLocalDateToInstant(dto.getDateEffet()));
+            entity.setDateEffet((dto.getDateEffet()));
         }
-        // Autres mises à jour partielles si nécessaire
+        if (dto.getDateFin() != null) {
+            entity.setDateFin((dto.getDateFin()));
+        }
     }
+
     @Named("compteProId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
@@ -60,7 +62,9 @@ public interface ProcurationMapper extends EntityMapper<ProcurationDTO, Procurat
     }
 
     default LocalDate map(Instant instant) {
-        return instant != null ? LocalDate.ofInstant(instant, ZoneOffset.UTC) : null;
+        return instant != null ? instant.atZone(ZoneOffset.UTC).toLocalDate() : null;
     }
 }
+
+
 

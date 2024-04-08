@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -78,7 +79,40 @@ public class Session implements Serializable {
     public void setStatus(Status status) {
         this.status = status;
     }
+    public static Session createSession(String transactionId, Date createdAt, String jsonData, Status status) {
+        Session session = new Session();
+        session.setTransactionId(transactionId);
+        session.setCreatedAt(createdAt);
+        session.setJsonData(jsonData);
+        session.setStatus(status);
+        return session;
+    }
 
+    // Lire une session par son identifiant
+    public static Session getSessionById(EntityManager entityManager, Long id) {
+        return entityManager.find(Session.class, id);
+    }
+
+    // Mettre à jour une session
+    public static void updateSession(EntityManager entityManager, Session session) {
+        entityManager.getTransaction().begin();
+        entityManager.merge(session);
+        entityManager.getTransaction().commit();
+    }
+
+    // Supprimer une session
+    public static void deleteSession(EntityManager entityManager, Session session) {
+        entityManager.getTransaction().begin();
+        entityManager.remove(session);
+        entityManager.getTransaction().commit();
+    }
+
+    // Lister toutes les sessions
+    public static List<Session> getAllSessions(EntityManager entityManager) {
+        String jpql = "SELECT s FROM Session s";
+        TypedQuery<Session> query = entityManager.createQuery(jpql, Session.class);
+        return query.getResultList();
+    }
 
 
 }
