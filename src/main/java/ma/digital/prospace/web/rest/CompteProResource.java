@@ -75,8 +75,8 @@ public class CompteProResource {
      */
     @PutMapping("/compte-pros/{id}")
     public ResponseEntity<CompteProDTO> updateComptePro(
-        @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody CompteProDTO comptePro
+            @PathVariable(value = "id", required = false) final Long id,
+            @Valid @RequestBody CompteProDTO comptePro
     ) throws URISyntaxException {
         log.debug("REST request to update CompteProDTO : {}, {}", id, comptePro);
         if (comptePro.getId() == null) {
@@ -92,9 +92,9 @@ public class CompteProResource {
 
         CompteProDTO result = compteProService.update(comptePro);
         return ResponseEntity
-            .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, comptePro.getId().toString()))
-            .body(result);
+                .ok()
+                .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, comptePro.getId().toString()))
+                .body(result);
     }
 
     /**
@@ -110,8 +110,8 @@ public class CompteProResource {
      */
     @PatchMapping(value = "/compte-pros/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<CompteProDTO> partialUpdateComptePro(
-        @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody CompteProDTO comptePro
+            @PathVariable(value = "id", required = false) final Long id,
+            @NotNull @RequestBody CompteProDTO comptePro
     ) throws URISyntaxException {
         log.debug("REST request to partial update CompteProDTO partially : {}, {}", id, comptePro);
         if (comptePro.getId() == null) {
@@ -128,8 +128,8 @@ public class CompteProResource {
         Optional<CompteProDTO> result = compteProService.partialUpdate(comptePro);
 
         return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, comptePro.getId().toString())
+                result,
+                HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, comptePro.getId().toString())
         );
     }
 
@@ -180,7 +180,7 @@ public class CompteProResource {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-    @PostMapping("/compte-pros")
+    @PostMapping("/compte-pro")
     public ResponseEntity<CompteProDTO> createAccount(@RequestBody CreateAccountRequest createAccountRequest) {
         try {
             CompteProDTO newComptePro = compteProService.createAccount(createAccountRequest.getDeviceToken(), createAccountRequest.getSubId());

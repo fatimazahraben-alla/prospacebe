@@ -87,14 +87,14 @@ public class CompteProService {
         log.debug("Request to partially update ComptePro : {}", comptePro);
 
         return compteProRepository
-            .findById(comptePro.getId())
-            .map(existingComptePro -> {
-                compteProMapper.partialUpdate(existingComptePro, comptePro);
+                .findById(comptePro.getId())
+                .map(existingComptePro -> {
+                    compteProMapper.partialUpdate(existingComptePro, comptePro);
 
-                return existingComptePro;
-            })
-            .map(compteProRepository::save)
-            .map(compteProMapper::toDto);
+                    return existingComptePro;
+                })
+                .map(compteProRepository::save)
+                .map(compteProMapper::toDto);
     }
 
 
