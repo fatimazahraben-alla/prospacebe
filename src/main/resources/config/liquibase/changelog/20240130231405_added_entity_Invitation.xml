@@ -15,7 +15,7 @@
             <column name="tel" type="varchar(255)"/>
             <column name="created_at" type="timestamp"/>
             <column name="statut" type="varchar(255)"/>
-            <column name="compte_pro_id" type="bigint">
+            <column name="compte_pro_id" type="UUID">
                 <constraints nullable="true" foreignKeyName="fk_invitation_compte_pro" references="compte_pro(id)"/>
             </column>
         </createTable>
@@ -32,7 +32,7 @@
             <column name="tel" type="string"/>
             <column name="created_at" type="timestamp"/>
             <column name="statut" type="string"/>
-            <column name="compte_pro_id" type="numeric"/>
+            <column name="compte_pro_id" type="UUID"/>
         </loadData>
     </changeSet>
 

@@ -1,1 +1,2 @@
-﻿id;date_effet;date_fin
+﻿id;date_effet;date_fin;gestionnaire_espace_pro_id;utilisateur_pro_id
+0;2021-01-01T00:00:00;2021-01-01T00:00:00;f5233d5b-8ba1-49de-b47c-71d9a42ee100;4c973896-5761-41fc-8217-07c5d13a004b

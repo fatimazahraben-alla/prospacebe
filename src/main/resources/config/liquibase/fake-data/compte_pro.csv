@@ -1,3 +1,4 @@
 id;identifiant;nom_ar;nom_fr;prenom_ar;prenom_fr;adresse;photo;mail;telephone;created_at;updated_at;deleted;statut;typeidentifiant;entreprise_geree_id
-1;1234567890;test;Nom Français;test;TARIK;Street Name;test;email@example.com;1234567890;2021-01-01T00:00:00;2021-01-02T00:00:00;true;VALIDE;CNI;
-2;IDGA;test2;Nom Français2;test2;Prenom Français2;Another St;test;aemail@example.com;0987654321;2021-02-01T00:00:00;2021-02-02T00:00:00;false;VALIDE;CNI;1
+4c973896-5761-41fc-8217-07c5d13a004b;123456789;test;Nom Français;test;TARIK;Street Name;test;email@example.com;1234567890;2021-01-01T00:00:00;2021-01-02T00:00:00;true;VALIDE;CNI;1
+f5233d5b-8ba1-49de-b47c-71d9a42ee100;IDGA;test2;Nom Français2;test2;Prenom Français2;Another St;test;aemail@example.com;0987654321;2021-02-01T00:00:00;2021-02-02T00:00:00;false;VALIDE;CNI;1
+

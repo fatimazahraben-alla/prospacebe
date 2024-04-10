@@ -1,4 +1,4 @@
 ﻿id;date_effet;date_fin;mail;telephone;statut;entreprise_id;compte_id;role_id
-1;;;test@example.com;123456789;ACTIVE;1;1;1
-2;;;test2@example.com;987654321;INACTIVE;2;2;2
+1;;;test@example.com;123456789;ACTIVE;1;4c973896-5761-41fc-8217-07c5d13a004b;1
+2;;;test2@example.com;987654321;INACTIVE;2;4c973896-5761-41fc-8217-07c5d13a004b;2
 

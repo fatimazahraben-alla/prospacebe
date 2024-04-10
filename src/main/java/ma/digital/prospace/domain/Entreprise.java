@@ -227,4 +227,5 @@ public class Entreprise implements Serializable {
                 ", associations=" + associations +
                 '}';
     }
+
 }

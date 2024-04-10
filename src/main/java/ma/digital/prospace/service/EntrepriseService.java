@@ -1,6 +1,15 @@
 package ma.digital.prospace.service;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.util.*;
@@ -22,7 +31,10 @@ import ma.digital.prospace.domain.Entreprise;
 import ma.digital.prospace.repository.EntrepriseRepository;
 import ma.digital.prospace.service.mapper.EntrepriseMapper;
 import ma.digital.prospace.service.dto.*;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 
 /**
@@ -39,17 +51,18 @@ public class EntrepriseService {
     private final ProcurationRepository procurationRepository;
     private final AssociationRepository associationRepository;
     private CompteProRepository CompteProRepository;
-    private final RestTemplate restTemplate;
+
+    @Autowired
+    private JwtDecoder jwtDecoder;
 
     private final UserService userService;
+@Autowired
+   private EntrepriseWSMJService entrepriseWSMJService;
 
-    private EntrepriseWSMJService entrepriseWSMJService;
-
-    public EntrepriseService(EntrepriseRepository entrepriseRepository, EntrepriseMapper entrepriseMapper, CompteProRepository CompteProRepository, RestTemplate restTemplate, ProcurationRepository procurationRepository, EntrepriseWSMJService entrepriseWSMJService, AssociationRepository associationRepository, UserService userService) {
+    public EntrepriseService(EntrepriseRepository entrepriseRepository, EntrepriseMapper entrepriseMapper, CompteProRepository CompteProRepository, ProcurationRepository procurationRepository, EntrepriseWSMJService entrepriseWSMJService, AssociationRepository associationRepository, UserService userService) {
         this.entrepriseRepository = entrepriseRepository;
         this.entrepriseMapper = entrepriseMapper;
         this.CompteProRepository = CompteProRepository;
-        this.restTemplate = restTemplate;
         this.procurationRepository = procurationRepository;
         this.entrepriseWSMJService = entrepriseWSMJService;
         this.associationRepository = associationRepository;
@@ -138,11 +151,56 @@ public class EntrepriseService {
 
 
     // Méthode pour vérifier si l'utilisateur actuellement connecté correspond à un ID spécifique
-    private boolean isCurrentUser(UUID accountId) {
-        JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        String currentUserId = userService.getUserIdFromToken(authenticationToken);
-        return currentUserId != null && accountId.toString().equals(currentUserId);
+    public boolean isCurrentUser(String accountId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Vérifie si l'utilisateur est authentifié via OIDC
+        if (authentication == null) {
+            throw new IllegalStateException("Impossible de récupérer l'objet OidcUser à partir du contexte de sécurité.");
+
+        }else {
+            OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
+            // Récupère l'identifiant utilisateur (sub) depuis le token OIDC
+            String userId = oidcUser.getSubject();
+            // Compare l'identifiant utilisateur avec l'accountId fourni
+            return userId.equals(accountId);
+        }
     }
+    public boolean isUserIdMatchingAccount(String accountId, AbstractAuthenticationToken authToken) {
+        // Récupère l'utilisateur à partir de l'authentification
+        AdminUserDTO userDTO = userService.getUserFromAuthentication(authToken);
+        // Récupère l'ID de l'utilisateur
+        String userId = userDTO.getId(); // Assurez-vous que votre AdminUserDTO a une méthode getId() pour récupérer l'ID de l'utilisateur
+
+        // Compare l'ID de l'utilisateur avec l'ID du compte spécifique
+        return userId.equals(accountId);
+    }
+
+
+    public UUID getUserId() {
+        // Obtenir la requête HTTP actuelle
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            HttpServletRequest request = attributes.getRequest();
+            // Récupérer le principal de l'utilisateur de l'objet de sécurité
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            // Vérifier le type réel de l'utilisateur
+            if (principal instanceof JwtAuthenticationToken) {
+                // Si l'utilisateur est un JwtAuthenticationToken, extrayez les informations pertinentes du jeton JWT
+                Jwt jwt = ((JwtAuthenticationToken) principal).getToken();
+                String userIdFromJwt = jwt.getSubject(); // Obtenez l'identifiant de l'utilisateur à partir du jeton JWT
+                if (userIdFromJwt != null) {
+                    return UUID.fromString(userIdFromJwt);
+                }
+            } else if (principal instanceof OidcUser) {
+                // Si l'utilisateur est un OidcUser, procédez comme d'habitude
+                OidcUser oidcUser = (OidcUser) principal;
+                return UUID.fromString(oidcUser.getSubject());
+            }
+        }
+        return null; // Gérer le cas où l'utilisateur n'est pas authentifié
+    }
+
 
     private boolean checkCriteriaMatch(EntrepriseWSMJ entrepriseWS, EntrepriseDTO11 entrepriseRequest) {
         return entrepriseWS.getPersonneRc().getIdentification().getNumRC().equals(entrepriseRequest.getNumRC())
@@ -217,7 +275,7 @@ public class EntrepriseService {
         return false;
     }
 
-    private boolean checkPp(PersonnephysiqueDTO personnephysiqueDTO, UUID accountid) {
+    private boolean checkPp(PersonnephysiqueDTO personnephysiqueDTO,UUID accountid) {
         ComptePro compte = CompteProRepository.getById(accountid);
         if (personnephysiqueDTO.getPersonneRc().getCommercant().getNumPiece().equals(compte.getIdentifiant())) {
             return true;
@@ -228,10 +286,10 @@ public class EntrepriseService {
     }
 
 
-    public void createCompany(EntrepriseRequest2 entrepriseRequest) {
+    public void createCompany(EntrepriseRequest2 entrepriseRequest,AbstractAuthenticationToken authToken) {
         switch (entrepriseRequest.getPerphysique_Permorale()) {
             case PHYSICAL_PERSON:
-                handlePhysicalPerson(entrepriseRequest);
+                handlePhysicalPerson(entrepriseRequest,authToken);
                 break;
             case MORAL_PERSON:
                 handleMoralPerson(entrepriseRequest);
@@ -242,15 +300,15 @@ public class EntrepriseService {
         }
     }
 
-    private void handlePhysicalPerson(EntrepriseRequest2 entrepriseRequest) {
+    private void handlePhysicalPerson(EntrepriseRequest2 entrepriseRequest,AbstractAuthenticationToken authToken) {
         PersonnephysiqueDTO personnephysiqueDTO = entrepriseWSMJService.getBycodeJuridictionAndnumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
-        Optional<String> currentUserLogin = SecurityUtils.getCurrentUserLogin();
-        ComptePro compte = CompteProRepository.getById(entrepriseRequest.getCOMPID());
-        String currentUsername = null;
-        if (currentUserLogin.isPresent()) {
-            if (isCurrentUser(entrepriseRequest.getCOMPID())) {
-                boolean isManager = checkManagerPp(compte, personnephysiqueDTO);
-                if (isManager) {
+        if (personnephysiqueDTO != null) {
+            Optional<ComptePro> compteOptional = CompteProRepository.findByCustomIdQuery(entrepriseRequest.getCOMPID());
+            ComptePro compte = compteOptional.orElse(null);
+            UUID compIdUUID = entrepriseRequest.getCOMPID();
+          String compIdString = compIdUUID.toString();
+            if (isUserIdMatchingAccount(compIdString,authToken)){
+                if (checkManagerPp(compte, personnephysiqueDTO)) {
                     Entreprise newEntreprise = new Entreprise();
                     newEntreprise.setNumeroRC(entrepriseRequest.getNumeroRC());
                     newEntreprise.setTribunal(entrepriseRequest.getTribunal());
@@ -271,11 +329,7 @@ public class EntrepriseService {
                     log.info("Vous n'êtes pas le manager");
                 }
             } else {
-                // Optional<String> currentUserLogin = SecurityUtils.getCurrentUserLogin();
-                // String currentUsername = currentUserLogin.get();
-                JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-                String userIdString = userService.getUserIdFromToken(authenticationToken);
-                UUID accountConnectedId = UUID.fromString(userIdString);
+                UUID accountConnectedId = this.getUserId();
                 if (procurationRepository.checkProcurationForCompteAndGestionnaire(entrepriseRequest.getCOMPID(), accountConnectedId) && checkPp(personnephysiqueDTO, entrepriseRequest.getCOMPID())) {
                     Entreprise newEntreprise2 = new Entreprise();
                     newEntreprise2.setNumeroRC(entrepriseRequest.getNumeroRC());
@@ -294,9 +348,10 @@ public class EntrepriseService {
                         log.error("Erreur lors de l'enregistrement de l'entreprise : " + e.getMessage());
                     }
                 }
-
             }
         }
+        log.info("PersonnephysiqueDTO est vide. Impossible de continuer le traitement.");
+
     }
 
     private void handleMoralPerson(EntrepriseRequest2 entrepriseRequest) {
@@ -308,9 +363,9 @@ public class EntrepriseService {
         }
         Optional<String> currentUserLogin = SecurityUtils.getCurrentUserLogin();
         ComptePro compte = CompteProRepository.getById(entrepriseRequest.getCOMPID());
-        String currentUsername = null;
-        if (currentUserLogin.isPresent()) {
-            if (isCurrentUser(entrepriseRequest.getCOMPID())) {
+        UUID compIdUUID = entrepriseRequest.getCOMPID();
+        String compIdString = compIdUUID.toString();
+        if (isCurrentUser(compIdString)){
                 boolean isManager = checkManager(compte, entrepriseWS, entrepriseRequest.getCOMPID());
                 if (isManager) {
                     Entreprise newEntreprise = new Entreprise();
@@ -368,7 +423,7 @@ public class EntrepriseService {
             }
         }
     }
-}
+
 
 
 

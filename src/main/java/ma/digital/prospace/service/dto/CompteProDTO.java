@@ -1,6 +1,7 @@
 package ma.digital.prospace.service.dto;
 
 import ma.digital.prospace.domain.enumeration.StatutCompte;
+import ma.digital.prospace.domain.enumeration.typeidentifiant;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
@@ -24,7 +25,7 @@ public class CompteProDTO implements Serializable {
 
     @NotNull
     @Size(max = 25)
-    private String typeIdentifiant;
+    private typeidentifiant typeidentifiant;
 
     @NotNull
     @Size(max = 50)
@@ -79,12 +80,12 @@ public class CompteProDTO implements Serializable {
         this.identifiant = identifiant;
     }
 
-    public String getTypeIdentifiant() {
-        return typeIdentifiant;
+    public ma.digital.prospace.domain.enumeration.typeidentifiant getTypeidentifiant() {
+        return typeidentifiant;
     }
 
-    public void setTypeIdentifiant(String typeIdentifiant) {
-        this.typeIdentifiant = typeIdentifiant;
+    public void setTypeidentifiant(ma.digital.prospace.domain.enumeration.typeidentifiant typeidentifiant) {
+        this.typeidentifiant = typeidentifiant;
     }
 
     public String getNomAr() {
@@ -181,22 +182,6 @@ public class CompteProDTO implements Serializable {
     }
 
     // prettier-ignore
-    @Override
-    public String toString() {
-        return "ComptePro{" +
-                "id=" + getId() +
-                ", identifiant='" + getIdentifiant() + "'" +
-                ", typeIdentifiant='" + getTypeIdentifiant() + "'" +
-                ", nomAr='" + getNomAr() + "'" +
-                ", nomFr='" + getNomFr() + "'" +
-                ", prenomAr='" + getPrenomAr() + "'" +
-                ", prenomFr='" + getPrenomFr() + "'" +
-                ", address='" + getAddress() + "'" +
-                ", photo='" + getPhoto() + "'" +
-                ", mail='" + getMail() + "'" +
-                ", telephone='" + getTelephone() + "'" +
-                ", statut='" + getStatut() + "'" +
-                "}";
-    }
+
 }
 

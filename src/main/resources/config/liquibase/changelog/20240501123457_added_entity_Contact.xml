@@ -16,7 +16,7 @@
             <column name="device_token" type="varchar(50)"/>
             <column name="deviceOS" type="varchar(50)"/>
             <column name="device_version" type="varchar(50)"/>
-            <column name="compte_pro_id" type="bigint">
+            <column name="compte_pro_id" type="UUID">
                 <constraints nullable="false" foreignKeyName="fk_contact_comptePro" referencedTableName="compte_pro" referencedColumnNames="id"/>
             </column>
         </createTable>
@@ -34,7 +34,7 @@
             <column name="device_token" type="STRING"/>
             <column name="deviceOS" type="STRING"/>
             <column name="device_version" type="STRING"/>
-            <column name="compte_pro_id" type="NUMERIC"/>
+            <column name="compte_pro_id" type="UUID"/>
         </loadData>
     </changeSet>
 

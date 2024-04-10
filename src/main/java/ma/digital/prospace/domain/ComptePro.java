@@ -34,7 +34,7 @@ public class ComptePro implements Serializable {
 
     @Id
     @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    @GenericGenerator(name = "id", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
     @Size(max = 100)
@@ -45,8 +45,6 @@ public class ComptePro implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "typeidentifiant", length = 10)
     private typeidentifiant typeidentifiant;
-
-
 
 
     @NotNull
@@ -417,30 +415,6 @@ public class ComptePro implements Serializable {
         this.typeidentifiant = typeidentifiant;
     }
 
-    @Override
-    public String toString() {
-        return "ComptePro{" +
-                "id=" + id +
-                ", identifiant=" + identifiant +
-                ", typeidentifiant=" + typeidentifiant +
-                ", nomAr='" + nomAr + '\'' +
-                ", nomFr='" + nomFr + '\'' +
-                ", prenomAr='" + prenomAr + '\'' +
-                ", prenomFr='" + prenomFr + '\'' +
-                ", adresse='" + adresse + '\'' +
-                ", photo='" + photo + '\'' +
-                ", mail='" + mail + '\'' +
-                ", telephone='" + telephone + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", deleted=" + deleted +
-                ", statut=" + statut +
-                ", entrepriseGeree=" + entrepriseGeree +
-                ", mandataires=" + mandataires +
-                ", mandants=" + mandants +
-                ", associations=" + associations +
-                '}';
-    }
 
 
 // prettier-ignore

@@ -93,7 +93,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(mvc.pattern("/app/**")).permitAll()
                                 .requestMatchers(mvc.pattern("/i18n/**")).permitAll()
                                 .requestMatchers(mvc.pattern("/content/**")).permitAll()
-                                .requestMatchers(mvc.pattern("/swagger-ui/**")).hasAuthority(AuthoritiesConstants.GESTIONNAIRE_ESPACE)
+                                .requestMatchers(mvc.pattern("/swagger-ui/**")).authenticated()
                                 .requestMatchers(mvc.pattern("/api/authenticate")).permitAll()
                                 .requestMatchers(mvc.pattern("/api/auth-info")).permitAll()
                                 .requestMatchers(mvc.pattern("/api/admin/**")).permitAll()
@@ -104,6 +104,9 @@ public class SecurityConfiguration {
                                 .requestMatchers(mvc.pattern("/management/info")).authenticated()
                                 .requestMatchers(mvc.pattern("/management/prometheus")).permitAll()
                                 .requestMatchers(mvc.pattern("/management/**")).hasAuthority(AuthoritiesConstants.ADMIN)
+
+
+
 
                 )
                 .oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.oidcUserService(this.oidcUserService())))

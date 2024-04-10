@@ -140,15 +140,5 @@ public class Association implements Serializable {
         return getClass().hashCode();
     }
 
-    @Override
-    public String toString() {
-        return "Association{" +
-                "id=" + id +
-                ", dateEffet=" + dateEffet +
-                ", dateFin=" + dateFin +
-                ", mail='" + mail + '\'' +
-                ", telephone='" + telephone + '\'' +
-                ", statut=" + statut +
-                '}';
-    }
+
 }

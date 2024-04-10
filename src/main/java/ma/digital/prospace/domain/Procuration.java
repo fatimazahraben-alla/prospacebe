@@ -133,12 +133,15 @@ public class Procuration implements Serializable {
     }
 
     // prettier-ignore
+
     @Override
     public String toString() {
         return "Procuration{" +
-            "id=" + getId() +
-            ", dateEffet='" + getDateEffet() + "'" +
-            ", dateFin='" + getDateFin() + "'" +
-            "}";
+                "id=" + id +
+                ", dateEffet=" + dateEffet +
+                ", dateFin=" + dateFin +
+                ", gestionnaireEspacePro=" + gestionnaireEspacePro +
+                ", utilisateurPro=" + utilisateurPro +
+                '}';
     }
 }

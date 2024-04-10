@@ -25,6 +25,16 @@ springdoc:
   api-docs:
     enabled: false
 ---
+mj:
+  tribunal:
+    url: https://31926c9b-601b-40aa-9fca-023d373b15a4.mock.pstmn.io/wsRCPmModel7/ListJuridiction
+  company:
+    url: https://4f0b2fbc-c27b-40dc-973a-ff95f3930be0.mock.pstmn.io/wsRcPmModel7/PersonneMorale/ADD/
+  Dirigeants:
+    url: https://d6ea7a3e-8efd-41f2-852b-d3b7da86c863.mock.pstmn.io/wsRcPmModel7/DirigeantsPM/ADD/
+  PersonnePhysique:
+    url: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/
+---
 management:
   endpoints:
     web:
@@ -88,15 +98,7 @@ management:
       repository:
         autotime:
           enabled: true
-mj:
-  tribunal:
-    url: https://31926c9b-601b-40aa-9fca-023d373b15a4.mock.pstmn.io/wsRCPmModel7/ListJuridiction
-  company:
-    url: https://4f0b2fbc-c27b-40dc-973a-ff95f3930be0.mock.pstmn.io/wsRcPmModel7/PersonneMorale/ADD/
-  Dirigeants:
-    url: https://d6ea7a3e-8efd-41f2-852b-d3b7da86c863.mock.pstmn.io/wsRcPmModel7/DirigeantsPM/ADD/
-  PersonnePhysique:
-    url: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/
+
 spring:
   application:
     name: prospace
@@ -167,11 +169,12 @@ spring:
       client:
         provider:
           oidc:
-            issuer-uri: http://localhost:8080/realms/jhipster
+            issuer-uri:  http://localhost:8080/realms/jhipster
+            jwk-set-uri: http://localhost:8080/realms/jhipster/protocol/openid-connect/certs
         registration:
           oidc:
-            client-id: web_app
-            client-secret: iI1pQOLrCiYTvKI5l7EyckPrNbR7nvy4
+            client-id: prospace-mobile-client
+            client-secret: e6NTL8U1TueWyF7RH3DJsjPiNvY06nX0
             scope: openid, profile, email, offline_access # last one for refresh tokens
 server:
   servlet:

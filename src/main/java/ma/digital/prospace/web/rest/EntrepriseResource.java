@@ -5,10 +5,16 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+
 
 import ma.digital.prospace.service.EntrepriseService;
 import ma.digital.prospace.service.EntrepriseWSMJService;
 import ma.digital.prospace.service.TribunalWSMJService;
+import ma.digital.prospace.service.UserService;
 import ma.digital.prospace.service.dto.*;
 import ma.digital.prospace.web.rest.errors.CustomException;
 import ma.digital.prospace.web.rest.errors.EntrepriseBadRequestException;
@@ -22,15 +28,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import ma.digital.prospace.repository.EntrepriseRepository;
@@ -52,6 +54,8 @@ public class EntrepriseResource {
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
+    @Autowired
+    private JwtDecoder jwtDecoder;
 
     private final EntrepriseService entrepriseService;
     @Autowired
@@ -60,13 +64,16 @@ public class EntrepriseResource {
 
     private final EntrepriseWSMJService entrepriseWSMJService;
 
+    private final UserService userService;
 
-    public EntrepriseResource(EntrepriseService entrepriseService, EntrepriseRepository entrepriseRepository, TribunalWSMJService tribunalWSMJService,EntrepriseWSMJService entrepriseWSMJService) {
+    public EntrepriseResource(EntrepriseService entrepriseService, EntrepriseRepository entrepriseRepository, TribunalWSMJService tribunalWSMJService, EntrepriseWSMJService entrepriseWSMJService, UserService userService) {
         this.entrepriseService = entrepriseService;
         this.entrepriseRepository = entrepriseRepository;
         this.tribunalWSMJService = tribunalWSMJService;
-        this.entrepriseWSMJService= entrepriseWSMJService;
+        this.entrepriseWSMJService = entrepriseWSMJService;
+        this.userService = userService;
     }
+
     /**
      * POST  /entreprises : Create a new entreprise.
      *
@@ -75,15 +82,39 @@ public class EntrepriseResource {
      * or with status 400 (Bad Request) if the entreprise has already an ID
      */
     @PostMapping("/entreprises")
-    public ResponseEntity<?> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
+    public ResponseEntity<?> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest,AbstractAuthenticationToken authToken) {
         try {
-            entrepriseService.createCompany(entrepriseRequest);
+            entrepriseService.createCompany(entrepriseRequest,authToken);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (EntrepriseBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request message");
         }
     }
 
+    @GetMapping("/isCurrentUser")
+    public boolean isCurrentUser(@RequestParam String accountId) {
+        return entrepriseService.isCurrentUser(accountId);
+    }
+
+    @GetMapping("/user-info")
+    public String getUserInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            // Faites quelque chose avec le principal, par exemple l'imprimer
+            System.out.println("Principal de l'utilisateur : " + principal.toString());
+            return principal.toString();
+        } else {
+            System.out.println("Utilisateur non authentifié.");
+        }
+        return null;
+    }
+
+    @GetMapping("/users/{accountId}")
+    public ResponseEntity<Boolean> checkUserIdMatchAccount(@PathVariable String accountId, AbstractAuthenticationToken authToken) {
+        boolean isMatching = entrepriseService.isUserIdMatchingAccount(accountId, authToken);
+        return ResponseEntity.ok(isMatching);
+    }
 
     /**
      * {@code PUT  /entreprises/:id} : Updates an existing entreprise.
@@ -219,4 +250,8 @@ public class EntrepriseResource {
         return entrepriseWSMJService.getBycodeJuridictionAndnumRC(codeJuridiction, numRC);
     }
 
+    @GetMapping("/id")
+    public UUID getUserId() {
+        return entrepriseService.getUserId();
+    }
 }

@@ -6,7 +6,7 @@
     <!-- Added the entity ComptePro. -->
     <changeSet id="20240130231405-1" author="jhipster">
         <createTable tableName="compte_pro">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="id" type="UUID" >
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="identifiant" type="varchar(10)">
@@ -48,7 +48,7 @@
             <column name="statut" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="typeidentifiant" type="varchar(255)">
+            <column name="typeidentifiant" type="varchar(10)">
                 <constraints nullable="true" />
             </column>
             <column name="entreprise_geree_id" type="bigint">
@@ -72,7 +72,7 @@
                 separator=";"
                 tableName="compte_pro"
                 usePreparedStatements="true">
-            <column name="id" type="NUMERIC"/>
+            <column name="id" type="UUID"/>
             <column name="identifiant" type="STRING"/>
             <column name="nom_ar" type="STRING"/>
             <column name="nom_fr" type="STRING"/>
