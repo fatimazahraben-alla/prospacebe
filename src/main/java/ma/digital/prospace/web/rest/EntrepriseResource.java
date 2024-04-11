@@ -250,8 +250,5 @@ public class EntrepriseResource {
         return entrepriseWSMJService.getBycodeJuridictionAndnumRC(codeJuridiction, numRC);
     }
 
-    @GetMapping("/id")
-    public UUID getUserId() {
-        return entrepriseService.getUserId();
-    }
+
 }
