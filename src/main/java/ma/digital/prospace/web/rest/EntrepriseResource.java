@@ -48,6 +48,7 @@ import tech.jhipster.web.util.ResponseUtil;
 public class EntrepriseResource {
 
     private final Logger log = LoggerFactory.getLogger(EntrepriseResource.class);
+    private static final Logger auditLogger = LoggerFactory.getLogger("com.yourcompany.entreprise");
 
     private static final String ENTITY_NAME = "entreprise";
 
@@ -83,37 +84,15 @@ public class EntrepriseResource {
     @PostMapping("/entreprises")
     @PreAuthorize("hasAuthority('ROLE_GESTIONNAIREESPACE')")
     public ResponseEntity<?> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
+        auditLogger.info("Attempting to create company: {}", entrepriseRequest);
         try {
             entrepriseService.createCompany(entrepriseRequest);
+            auditLogger.info("Successfully created company with NumRC: {}", entrepriseRequest.getNumeroRC());
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (EntrepriseBadRequestException e) {
+            auditLogger.error("Failed to create company due to bad request: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request message");
         }
-    }
-
-    @GetMapping("/isCurrentUser")
-    public boolean isCurrentUser(@RequestParam String accountId) {
-        return entrepriseService.isCurrentUser(accountId);
-    }
-
-    @GetMapping("/user-info")
-    public String getUserInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            Object principal = authentication.getPrincipal();
-            // Faites quelque chose avec le principal, par exemple l'imprimer
-            System.out.println("Principal de l'utilisateur : " + principal.toString());
-            return principal.toString();
-        } else {
-            System.out.println("Utilisateur non authentifié.");
-        }
-        return null;
-    }
-
-    @GetMapping("/users/{accountId}")
-    public ResponseEntity<Boolean> checkUserIdMatchAccount(@PathVariable String accountId, AbstractAuthenticationToken authToken) {
-        boolean isMatching = entrepriseService.isUserIdMatchingAccount(accountId, authToken);
-        return ResponseEntity.ok(isMatching);
     }
 
     /**
