@@ -82,9 +82,9 @@ public class EntrepriseResource {
      */
     @PostMapping("/entreprises")
     @PreAuthorize("hasAuthority('ROLE_GESTIONNAIREESPACE')")
-    public ResponseEntity<?> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest,AbstractAuthenticationToken authToken) {
+    public ResponseEntity<?> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
         try {
-            entrepriseService.createCompany(entrepriseRequest,authToken);
+            entrepriseService.createCompany(entrepriseRequest);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (EntrepriseBadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request message");
