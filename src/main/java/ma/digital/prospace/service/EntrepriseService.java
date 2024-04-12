@@ -1,6 +1,7 @@
 package ma.digital.prospace.service;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,6 +46,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class EntrepriseService {
 
     private final Logger log = LoggerFactory.getLogger(EntrepriseService.class);
+    private static final Logger auditLogger = LoggerFactory.getLogger("ma.digital.prospace.audit");
 
     private final EntrepriseRepository entrepriseRepository;
     private final EntrepriseMapper entrepriseMapper;
@@ -76,9 +78,14 @@ public class EntrepriseService {
      * @return the persisted entity.
      */
     public EntrepriseDTO save(EntrepriseDTO entrepriseDTO) {
-        log.debug("Request to save Entreprise : {}", entrepriseDTO);
+        log.debug("Request to save Entreprise: {}", entrepriseDTO);
+        // Convert DTO to entity
         Entreprise entreprise = entrepriseMapper.toEntity(entrepriseDTO);
+        // Save entity to the database
         entreprise = entrepriseRepository.save(entreprise);
+        // Audit log to record the saving action
+        auditLogger.info("Audit: Saved entreprise with ID {}", entreprise.getId());
+        // Convert entity back to DTO
         return entrepriseMapper.toDto(entreprise);
     }
 
@@ -293,20 +300,30 @@ public class EntrepriseService {
 
     }
 
-
     public void createCompany(EntrepriseRequest2 entrepriseRequest, AbstractAuthenticationToken authToken) {
+        // Log de début de traitement
+        log.debug("Début de la création de l'entreprise avec le type: {}", entrepriseRequest.getPerphysique_Permorale());
+
         switch (entrepriseRequest.getPerphysique_Permorale()) {
             case PHYSICAL_PERSON:
+                log.debug("Traitement d'une personne physique");
+                auditLogger.info("Ceci est un message d'audit.");
                 handlePhysicalPerson(entrepriseRequest, authToken);
                 break;
             case MORAL_PERSON:
+                log.debug("Traitement d'une personne morale");
+                auditLogger.info("Ceci est un message d'audit.");
                 handleMoralPerson(entrepriseRequest);
                 break;
             default:
-                log.info("Statut non reconnu");
+                log.info("Statut non reconnu: {}", entrepriseRequest.getPerphysique_Permorale());
                 break;
         }
+
+        // Log de fin de traitement
+        log.debug("Fin de traitement de la demande de création d'entreprise");
     }
+
 
     private void handlePhysicalPerson(EntrepriseRequest2 entrepriseRequest, AbstractAuthenticationToken authToken) {
         PersonnephysiqueDTO personnephysiqueDTO = entrepriseWSMJService.getBycodeJuridictionAndnumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());

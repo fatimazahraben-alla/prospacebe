@@ -1,6 +1,7 @@
 package ma.digital.prospace.web.rest;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ma.digital.prospace.domain.User;
 import org.slf4j.Logger;
@@ -64,16 +65,17 @@ public class PublicUserResource {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<String> getCurrentUser() {
+    public ResponseEntity<List<String>> getUserRoles() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            String role = authentication.getAuthorities().toString();
-            return ResponseEntity.ok("Utilisateur connecté : " + username +role);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Aucun utilisateur connecté");
+        if (authentication != null) {
+            List<String> roles = authentication.getAuthorities().stream()
+                    .map(authority -> authority.getAuthority())
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(roles);
         }
+        return ResponseEntity.ok().build(); // Ou renvoyer une réponse appropriée si l'utilisateur n'est pas authentifié
     }
+
 
     @GetMapping("/claims")
     public DefaultOidcUser getClaims(Authentication authentication) {
@@ -90,6 +92,8 @@ public class PublicUserResource {
             return "Utilisateur non authentifié";
         }
     }
+
+
 
 
 

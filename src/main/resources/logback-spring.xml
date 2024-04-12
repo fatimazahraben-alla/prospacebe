@@ -64,12 +64,25 @@
     <!-- jhipster-needle-logback-add-log - JHipster will add a new log with level -->
 
     <springProperty name="log.level" source="logging.level.root" defaultValue="INFO" />
-    <root level="${log.level}">
+    <ROOT level="${log.level}">
         <appender-ref ref="CONSOLE" />
-    </root>
+    </ROOT>
 
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
         <resetJUL>true</resetJUL>
     </contextListener>
+    <!-- File appender for audit logs -->
+    <appender name="AUDIT" class="ch.qos.logback.core.FileAppender">
+        <file>audit.log</file>
+        <encoder>
+            <pattern>%d{"yyyy-MM-dd HH:mm:ss"} [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="ma.digital.prospace.audit" level="INFO">
+        <appender-ref ref="AUDIT"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
 
 </configuration>

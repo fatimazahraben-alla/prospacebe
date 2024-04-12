@@ -4,12 +4,14 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.PREFERRED_USERNAME;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
+import ma.digital.prospace.security.oauth2.JwtAuthConverter;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
 import java.util.*;
 import ma.digital.prospace.security.*;
 import ma.digital.prospace.security.SecurityUtils;
 import ma.digital.prospace.security.oauth2.AudienceValidator;
 import ma.digital.prospace.security.oauth2.CustomClaimConverter;
-import ma.digital.prospace.security.oauth2.JwtGrantedAuthorityConverter;
 import ma.digital.prospace.web.filter.SpaWebFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -21,6 +23,7 @@ import org.springframework.core.env.Profiles;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -47,7 +50,8 @@ import tech.jhipster.config.JHipsterProperties;
 import tech.jhipster.web.filter.CookieCsrfFilter;
 
 @Configuration
-@EnableMethodSecurity(securedEnabled = true)
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
 
     private final Environment env;
@@ -56,10 +60,13 @@ public class SecurityConfiguration {
 
     @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
     private String issuerUri;
+    private JwtAuthConverter jwtAuthConverter;
 
-    public SecurityConfiguration(Environment env, JHipsterProperties jHipsterProperties) {
+
+    public SecurityConfiguration(Environment env, JHipsterProperties jHipsterProperties,JwtAuthConverter jwtAuthConverter) {
         this.env = env;
         this.jHipsterProperties = jHipsterProperties;
+        this.jwtAuthConverter = jwtAuthConverter;
     }
 
     @Bean
@@ -110,7 +117,7 @@ public class SecurityConfiguration {
 
                 )
                 .oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.oidcUserService(this.oidcUserService())))
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(authenticationConverter())))
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)))
                 .oauth2Client(withDefaults());
         if (env.acceptsProfiles(Profiles.of(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT))) {
             http
@@ -125,12 +132,12 @@ public class SecurityConfiguration {
         return new MvcRequestMatcher.Builder(introspector);
     }
 
-    Converter<Jwt, AbstractAuthenticationToken> authenticationConverter() {
+  /*  Converter<Jwt, AbstractAuthenticationToken> authenticationConverter() {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new JwtGrantedAuthorityConverter());
         jwtAuthenticationConverter.setPrincipalClaimName(PREFERRED_USERNAME);
         return jwtAuthenticationConverter;
-    }
+    }*/
 
     OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService() {
         final OidcUserService delegate = new OidcUserService();

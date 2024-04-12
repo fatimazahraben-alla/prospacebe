@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 
@@ -27,7 +27,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -82,6 +81,7 @@ public class EntrepriseResource {
      * or with status 400 (Bad Request) if the entreprise has already an ID
      */
     @PostMapping("/entreprises")
+    @PreAuthorize("hasAuthority('ROLE_GESTIONNAIREESPACE')")
     public ResponseEntity<?> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest,AbstractAuthenticationToken authToken) {
         try {
             entrepriseService.createCompany(entrepriseRequest,authToken);
@@ -193,7 +193,6 @@ public class EntrepriseResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of entreprises in body.
      */
     @GetMapping("/entreprises")
-    @PreAuthorize("hasAuthority('ROLE_GESTIONNAIREESPACE')")
     public ResponseEntity<List<EntrepriseDTO>> getAllEntreprises(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Entreprises");
         Page<EntrepriseDTO> page = entrepriseService.findAll(pageable);

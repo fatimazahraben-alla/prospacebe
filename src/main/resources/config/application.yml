@@ -25,6 +25,8 @@ springdoc:
   api-docs:
     enabled: false
 ---
+
+
 mj:
   tribunal:
     url: https://31926c9b-601b-40aa-9fca-023d373b15a4.mock.pstmn.io/wsRCPmModel7/ListJuridiction
