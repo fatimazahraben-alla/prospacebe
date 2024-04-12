@@ -29,7 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class CompteProService {
 
     private final Logger log = LoggerFactory.getLogger(CompteProService.class);
-
+    private static final Logger auditLogger = LoggerFactory.getLogger("com.yourcompany.espace");
     private final CompteProRepository compteProRepository;
 
     private final CompteProMapper compteProMapper;

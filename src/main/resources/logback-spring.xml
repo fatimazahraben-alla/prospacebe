@@ -72,17 +72,33 @@
         <resetJUL>true</resetJUL>
     </contextListener>
     <!-- File appender for audit logs -->
-    <appender name="AUDIT" class="ch.qos.logback.core.FileAppender">
-        <file>audit.log</file>
+    <appender name="ENTREPRISE_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/entreprise.log</file>
         <encoder>
             <pattern>%d{"yyyy-MM-dd HH:mm:ss"} [%thread] %-5level %logger{35} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <logger name="ma.digital.prospace.audit" level="INFO">
-        <appender-ref ref="AUDIT"/>
-        <appender-ref ref="CONSOLE"/>
+    <appender name="ESPACE_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/espace.log</file>
+        <encoder>
+            <pattern>%d{"yyyy-MM-dd HH:mm:ss"} [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger for entreprise actions -->
+    <logger name="com.yourcompany.entreprise" level="INFO" additivity="false">
+        <appender-ref ref="ENTREPRISE_LOG"/>
     </logger>
 
+    <!-- Logger for espace actions -->
+    <logger name="com.yourcompany.espace" level="INFO" additivity="false">
+        <appender-ref ref="ESPACE_LOG"/>
+    </logger>
+
+    <!-- Root logger -->
+    <ROOT level="info">
+        <appender-ref ref="CONSOLE"/>
+    </ROOT>
 
 </configuration>
