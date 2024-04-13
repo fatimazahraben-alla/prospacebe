@@ -329,7 +329,9 @@ public class EntrepriseService {
                     handleMoralPerson(entrepriseRequest);
                     break;
                 default:
+                    auditLogger1.info("Type de personne non reconnu: " + entrepriseRequest.getPerphysique_Permorale());
                     throw new IllegalArgumentException("Type de personne non reconnu: " + entrepriseRequest.getPerphysique_Permorale());
+
             }
         } catch (Exception e) {
             throw new EntrepriseCreationException("Erreur lors de la création de l'entreprise", e);

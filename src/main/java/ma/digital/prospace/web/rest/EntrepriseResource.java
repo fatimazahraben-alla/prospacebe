@@ -81,7 +81,7 @@ public class EntrepriseResource {
      * or with status 400 (Bad Request) if the entreprise has already an ID
      */
     @PostMapping("/entreprises")
-    @PreAuthorize("hasAuthority('ROLE_GESTIONNAIREESPACE')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
         auditLogger.info("Attempting to create company: {}", entrepriseRequest);
         try {
