@@ -46,7 +46,7 @@ import tech.jhipster.web.util.ResponseUtil;
 public class CompteProResource {
 
     private final Logger log = LoggerFactory.getLogger(CompteProResource.class);
-
+    private static final Logger auditLogger = LoggerFactory.getLogger("ma.digital.prospace.audit2");
     private static final String ENTITY_NAME = "comptePro";
 
     @Value("${jhipster.clientApp.name}")
@@ -195,8 +195,21 @@ public class CompteProResource {
     }
     @PostMapping("/compte-pros/registerMobile")
     public ResponseEntity<MobileRegistrationDTO> registerMobile(@Valid @RequestBody MobileRegistrationDTO mobileRegistrationDTO) {
-        compteProService.registerContactDTO(mobileRegistrationDTO);
-        return ResponseEntity.ok().build();
+        try {
+            log.info("Attempting to register or update mobile registration for compteId: {}", mobileRegistrationDTO.getCompteId());
+            auditLogger.info("Initiated mobile registration for compteId: {}", mobileRegistrationDTO.getCompteId());
+
+            compteProService.registerContactDTO(mobileRegistrationDTO);
+
+            log.info("Successful mobile registration for compteId: {}", mobileRegistrationDTO.getCompteId());
+            auditLogger.info("Completed mobile registration for compteId: {}", mobileRegistrationDTO.getCompteId());
+
+            return ResponseEntity.ok().body(mobileRegistrationDTO);
+        } catch (Exception e) {
+            log.error("Failed to register or update mobile for compteId: {}, error: {}", mobileRegistrationDTO.getCompteId(), e.getMessage());
+            auditLogger.error("Failed mobile registration attempt for compteId: {}", mobileRegistrationDTO.getCompteId());
+            return ResponseEntity.badRequest().build();
+        }
     }
     @PostMapping("/compte")
     public ResponseEntity<CompteProDTO> createCompte(@RequestBody CompteProDTO compteProDTO) {

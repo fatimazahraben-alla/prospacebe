@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/audit")
 public class AuditLogRessource {
 
-    private static final String PATH_TO_ENTREPRISE_LOG = "logs/ENTREPRISE_LOG.log";
-    private static final String PATH_TO_ESPACE_LOG = "logs/ESPACE_LOG.log";
+    private static final String PATH_TO_ENTREPRISE_LOG = "logs/audit.log";
+    private static final String PATH_TO_ESPACE_LOG = "logs/audit2.log";
 
     @GetMapping("/api/audit-logs")
     public List<String> getAuditLogs(@RequestParam String logType, @RequestParam(required = false) String filter) {

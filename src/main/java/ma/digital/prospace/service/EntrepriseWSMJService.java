@@ -4,10 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ma.digital.prospace.service.dto.DIRIGEANTDTO;
 import ma.digital.prospace.service.dto.EntrepriseWSMJ;
 import ma.digital.prospace.service.dto.PersonnephysiqueDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
 
@@ -21,7 +26,8 @@ public class EntrepriseWSMJService {
 
     @Value("${mj.PersonnePhysique.url}")
     public String PersonnePhysiqueUrl;
-
+    private final Logger log = LoggerFactory.getLogger( EntrepriseWSMJService.class);
+    private static final Logger auditLogger1 = LoggerFactory.getLogger("ma.digital.prospace.audit");
 
     private final RestTemplate restTemplate;
 
@@ -30,24 +36,35 @@ public class EntrepriseWSMJService {
     }
 
     public EntrepriseWSMJ getEntrepriseByJuridictionAndNumRC(String codeJuridiction, String numRC) {
+        String url = companyUrl + codeJuridiction + "/" + numRC;
+        auditLogger1.info("Attempting to call API URL: {}", url);
 
-        String url = companyUrl+codeJuridiction+"/"+numRC;
-        System.out.println("Attempting to call API URL: " + url);
-
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
-        String jsonString = responseEntity.getBody();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-      EntrepriseWSMJ entrepriseWSMJ;
+        ResponseEntity<String> responseEntity;
         try {
-           entrepriseWSMJ = objectMapper.readValue(jsonString, EntrepriseWSMJ.class);
-            return entrepriseWSMJ;
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Gérer les exceptions en conséquence
+            responseEntity = restTemplate.getForEntity(url, String.class);
+        } catch (Exception e) {
+            auditLogger1.error("Failed to retrieve data from API: {}", e.getMessage());
+            return null; // Renvoie directement null en cas d'erreur réseau ou autre exception
+        }
+
+        if (responseEntity.getStatusCode() != HttpStatus.OK) {
+            auditLogger1.error("API call returned non-OK status: {}", responseEntity.getStatusCode());
+            return null; // Renvoie null si le statut HTTP n'est pas 200 OK
+        }
+
+        String jsonString = responseEntity.getBody();
+        if (jsonString == null || jsonString.trim().isEmpty()) {
+            auditLogger1.info("Received empty or null response from API for URL: {}", url);
             return null;
         }
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(jsonString, EntrepriseWSMJ.class);
+        } catch (IOException e) {
+            auditLogger1.error("Error parsing JSON from response", e);
+            return null;
+        }
     }
 
     public DIRIGEANTDTO getDirigeantBycodeJuridictionAndnumRC(String codeJuridiction, String numRC) {

@@ -29,7 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class CompteProService {
 
     private final Logger log = LoggerFactory.getLogger(CompteProService.class);
-    private static final Logger auditLogger = LoggerFactory.getLogger("com.yourcompany.espace");
+    private static final Logger auditLogger = LoggerFactory.getLogger("ma.digital.prospace.audit2");
     private final CompteProRepository compteProRepository;
 
     private final CompteProMapper compteProMapper;
@@ -101,7 +101,12 @@ public class CompteProService {
     @Transactional(readOnly = true)
     public Page<CompteProDTO> findAll(Pageable pageable) {
         log.debug("Request to get all ComptePros");
-        return compteProRepository.findAll(pageable).map(compteProMapper::toDto);
+        Page<CompteProDTO> result = compteProRepository.findAll(pageable).map(compteProMapper::toDto);
+
+        // Audit log entry
+        auditLogger.info("Performed a retrieval of all ComptePros - Page: {}, Size: {}", pageable.getPageNumber(), pageable.getPageSize());
+
+        return result;
     }
 
     /**
@@ -127,34 +132,34 @@ public class CompteProService {
     }
 
     public void registerContactDTO(MobileRegistrationDTO requestDTO) {
+        auditLogger.info("Initiating registration/update for compteId: {}", requestDTO.getCompteId());
 
         ComptePro comptePro = compteProRepository.findById(requestDTO.getCompteId())
-
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Compte not found"));
+                .orElseThrow(() -> {
+                    auditLogger.error("Failed to find compte with ID: {}", requestDTO.getCompteId());
+                    return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Compte not found");
+                });
 
         Contact contact = contactRepository.findByCompteProId(requestDTO.getCompteId());
 
         if (contact == null) {
-
-            // Contact doesn't exist, create a new one
-
+            auditLogger.info("Creating new contact for compteId: {}", requestDTO.getCompteId());
             contact = new Contact();
-
             contact.setComptePro(comptePro);
-
+        } else {
+            auditLogger.info("Updating existing contact for compteId: {}", requestDTO.getCompteId());
         }
+
         // Update contact fields
-
         contact.setDeviceToken(requestDTO.getDeviceToken());
-
         contact.setDeviceOS(requestDTO.getDeviceOS());
-
         contact.setDeviceVersion(requestDTO.getDeviceVersion());
+
         // Save or update the contact
-
         contactRepository.save(contact);
-
+        auditLogger.info("Completed registration/update for compteId: {}", requestDTO.getCompteId());
     }
+
     /**
      * create an account
      */

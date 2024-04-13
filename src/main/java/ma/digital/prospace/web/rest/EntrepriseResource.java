@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+
+import ma.digital.prospace.web.rest.errors.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -16,8 +18,6 @@ import ma.digital.prospace.service.EntrepriseWSMJService;
 import ma.digital.prospace.service.TribunalWSMJService;
 import ma.digital.prospace.service.UserService;
 import ma.digital.prospace.service.dto.*;
-import ma.digital.prospace.web.rest.errors.CustomException;
-import ma.digital.prospace.web.rest.errors.EntrepriseBadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import ma.digital.prospace.repository.EntrepriseRepository;
-import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -48,7 +47,7 @@ import tech.jhipster.web.util.ResponseUtil;
 public class EntrepriseResource {
 
     private final Logger log = LoggerFactory.getLogger(EntrepriseResource.class);
-    private static final Logger auditLogger = LoggerFactory.getLogger("com.yourcompany.entreprise");
+    private static final Logger auditLogger = LoggerFactory.getLogger("ma.digital.prospace.audit");
 
     private static final String ENTITY_NAME = "entreprise";
 
@@ -90,10 +89,18 @@ public class EntrepriseResource {
             auditLogger.info("Successfully created company with NumRC: {}", entrepriseRequest.getNumeroRC());
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (EntrepriseBadRequestException e) {
-            auditLogger.error("Failed to create company due to bad request: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request message");
+            auditLogger.error("Failed to create company due to bad request: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Bad request message", "BAD_REQUEST"));
+        } catch (EntrepriseCreationException e) {
+            auditLogger.error("Failed to create company: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(e.getMessage(), "CREATION_FAILED"));
+        } catch (Exception e) {
+            auditLogger.error("Unexpected error occurred: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Internal server error", "INTERNAL_ERROR"));
         }
     }
+
+
 
     /**
      * {@code PUT  /entreprises/:id} : Updates an existing entreprise.
