@@ -61,25 +61,7 @@ public class CompteProResource {
         this.compteProRepository = compteProRepository;
     }
 
-    /**
-     * {@code POST  /compte-pros} : Create a new comptePro.
-     *
-     * @param comptePro the comptePro to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new comptePro, or with status {@code 400 (Bad Request)} if the comptePro has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    /*@PostMapping("/compte-pros")
-    public ResponseEntity<CompteProDTO> createComptePro(@Valid @RequestBody CompteProDTO comptePro) throws URISyntaxException {
-        log.debug("REST request to save CompteProDTO : {}", comptePro);
-        if (comptePro.getId() != null) {
-            throw new BadRequestAlertException("A new comptePro cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        CompteProDTO result = compteProService.save(comptePro);
-        return ResponseEntity
-            .created(new URI("/api/compte-pros/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
-    }*/
+
 
     /**
      * {@code PUT  /compte-pros/:id} : Updates an existing comptePro.
@@ -211,15 +193,37 @@ public class CompteProResource {
             return ResponseEntity.badRequest().build();
         }
     }
-    @PostMapping("/compte")
-    public ResponseEntity<CompteProDTO> createCompte(@RequestBody CompteProDTO compteProDTO) {
-        CompteProDTO result = compteProService.createCompte(compteProDTO);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(result.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(result);
+    @PostMapping("/compte-pro")
+    public ResponseEntity<CompteProDTO> createAccount(@RequestBody CreateAccountRequest createAccountRequest) {
+        try {
+            CompteProDTO newComptePro = compteProService.createAccount(createAccountRequest.getDeviceToken(), createAccountRequest.getSubId());
+            return ResponseEntity.ok(newComptePro);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build(); // or handle more gracefully as needed
+        }
     }
+
+    static class CreateAccountRequest {
+        private String deviceToken;
+        private UUID subId;
+
+
+        public String getDeviceToken() {
+            return deviceToken;
+        }
+
+        public void setDeviceToken(String deviceToken) {
+            this.deviceToken = deviceToken;
+        }
+
+        public UUID getSubId() {
+            return subId;
+        }
+
+        public void setSubId(UUID subId) {
+            this.subId = subId;
+        }
+    }
+
 
 }

@@ -3,12 +3,17 @@ package ma.digital.prospace.service;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.Contact;
 import ma.digital.prospace.domain.enumeration.StatutCompte;
 import ma.digital.prospace.repository.ContactRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,7 +25,6 @@ import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.service.mapper.CompteProMapper;
 import ma.digital.prospace.service.dto.*;
 import org.springframework.web.server.ResponseStatusException;
-
 /**
  * Service Implementation for managing {@link ComptePro}.
  */
@@ -30,16 +34,22 @@ public class CompteProService {
 
     private final Logger log = LoggerFactory.getLogger(CompteProService.class);
     private static final Logger auditLogger = LoggerFactory.getLogger("ma.digital.prospace.audit2");
+
     private final CompteProRepository compteProRepository;
 
     private final CompteProMapper compteProMapper;
 
     private final ContactRepository contactRepository;
+    private final FirebaseNotificationService firebaseNotificationService;
+    @Autowired
+    private final FirebaseMessaging firebaseMessaging;
 
-    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository) {
+    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository, FirebaseNotificationService firebaseNotificationService, FirebaseMessaging firebaseMessaging) {
         this.compteProRepository = compteProRepository;
         this.compteProMapper = compteProMapper;
         this.contactRepository = contactRepository;
+        this.firebaseNotificationService = firebaseNotificationService;
+        this.firebaseMessaging = firebaseMessaging;
     }
 
     /**
@@ -163,11 +173,36 @@ public class CompteProService {
     /**
      * create an account
      */
-    public CompteProDTO createCompte(CompteProDTO compteDTO) {
-        ComptePro comptePro = compteProMapper.toEntity(compteDTO);
-        comptePro.setStatut(StatutCompte.VALIDE);
-        comptePro = compteProRepository.save(comptePro);
-        return compteProMapper.toDto(comptePro);
-    }
+    public CompteProDTO createAccount(String deviceToken, UUID subId) {
+        auditLogger.info("Creating account with subId: {0}", subId);
 
+        ComptePro comptePro = new ComptePro();
+        comptePro.setId(subId);
+        comptePro.setStatut(StatutCompte.VALIDE);
+
+        comptePro = compteProRepository.save(comptePro);
+        auditLogger.info("Account saved with ID: {0}", comptePro.getId());
+
+        // Notification
+        Message message = Message.builder()
+                .setNotification(Notification.builder()
+                        .setTitle("Bienvenue")
+                        .setBody("Votre compte a été créé avec succès.")
+                        .build())
+                .setToken(deviceToken)
+                .build();
+
+        try {
+            String response = firebaseMessaging.send(message);
+            auditLogger.info("Notification sent, response: {0}", response);
+        } catch (FirebaseMessagingException e) {
+            auditLogger.warn("Failed to send notification", e);
+            throw new RuntimeException(e);
+        }
+
+        CompteProDTO result = compteProMapper.toDto(comptePro);
+        auditLogger.info("Account DTO created with ID: {0}", result.getId());
+        return result;
+    }
 }
+
