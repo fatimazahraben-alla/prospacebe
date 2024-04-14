@@ -4,9 +4,10 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <!-- Definition of the invitation table -->
     <changeSet id="20240130231405_added_entity_Invitation" author="jhipster">
         <createTable tableName="invitation">
-            <column name="id" type="bigint" autoIncrement="true" >
+            <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="type_piece" type="varchar(255)"/>
@@ -18,8 +19,27 @@
             <column name="compte_pro_id" type="UUID">
                 <constraints nullable="true" foreignKeyName="fk_invitation_compte_pro" references="compte_pro(id)"/>
             </column>
+            <!-- New column for destinataire account -->
+            <column name="compte_pro_destinataire_id" type="UUID">
+                <constraints nullable="true" foreignKeyName="fk_invitation_compte_pro_destinataire" references="compte_pro(id)"/>
+            </column>
         </createTable>
     </changeSet>
+
+    <!-- Definition of the invitation_attributes table for storing key/value pairs -->
+    <changeSet id="20240130231406_added_entity_InvitationAttributes" author="jhipster">
+        <createTable tableName="invitation_attributes">
+            <column name="invitation_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_invitation_attributes_invitation" references="invitation(id)"/>
+            </column>
+            <column name="key" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Loading fake data for the invitation table -->
     <changeSet id="20240130231405_added_entity_Invitation_data" author="jhipster">
         <loadData
                 file="config/liquibase/fake-data/invitation.csv"
@@ -33,8 +53,8 @@
             <column name="created_at" type="timestamp"/>
             <column name="statut" type="string"/>
             <column name="compte_pro_id" type="UUID"/>
+            <!-- Assume no fake data for compte_pro_destinataire_id for simplicity -->
         </loadData>
     </changeSet>
-
 
 </databaseChangeLog>

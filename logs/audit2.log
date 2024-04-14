@@ -17,3 +17,13 @@
 2024-04-14 03:54:15,010 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProService.java:150] Updating existing contact for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
 2024-04-14 03:54:15,021 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProService.java:160] Completed registration/update for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
 2024-04-14 03:54:15,090 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProResource.java:205] Completed mobile registration for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 16:54:48,950 INFO [XNIO-1 task-6] m.d.p.audit2 [CompteProResource.java:200] Initiated mobile registration for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 16:54:49,081 INFO [XNIO-1 task-6] m.d.p.audit2 [CompteProService.java:135] Initiating registration/update for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 16:54:49,584 INFO [XNIO-1 task-6] m.d.p.audit2 [CompteProService.java:150] Updating existing contact for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 16:54:49,631 INFO [XNIO-1 task-6] m.d.p.audit2 [CompteProService.java:160] Completed registration/update for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 16:54:49,901 INFO [XNIO-1 task-6] m.d.p.audit2 [CompteProResource.java:205] Completed mobile registration for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 23:26:35,885 INFO [XNIO-1 task-6] m.d.p.audit2 [CompteProResource.java:200] Initiated mobile registration for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 23:26:35,890 INFO [XNIO-1 task-6] m.d.p.audit2 [CompteProService.java:135] Initiating registration/update for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 23:26:35,918 INFO [XNIO-1 task-6] m.d.p.audit2 [CompteProService.java:150] Updating existing contact for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 23:26:35,931 INFO [XNIO-1 task-6] m.d.p.audit2 [CompteProService.java:160] Completed registration/update for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 23:26:35,989 INFO [XNIO-1 task-6] m.d.p.audit2 [CompteProResource.java:205] Completed mobile registration for compteId: 4c973896-5761-41fc-8217-07c5d13a004b

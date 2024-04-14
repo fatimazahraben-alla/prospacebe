@@ -1,11 +1,18 @@
 package ma.digital.prospace.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityNotFoundException;
+import ma.digital.prospace.domain.FournisseurService;
+import ma.digital.prospace.repository.FournisseurServiceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +20,7 @@ import ma.digital.prospace.domain.Rolee;
 import ma.digital.prospace.repository.RoleeRepository;
 import ma.digital.prospace.service.mapper.RoleeMapper;
 import ma.digital.prospace.service.dto.RoleeDTO;
+import org.springframework.web.server.ResponseStatusException;
 
 
 /**
@@ -25,12 +33,13 @@ public class RoleeService {
     private final Logger log = LoggerFactory.getLogger(RoleeService.class);
 
     private final RoleeRepository roleeRepository;
-
+    private final FournisseurServiceRepository fournisseurServiceRepository;
     private final RoleeMapper roleeMapper;
 
-    public RoleeService(RoleeRepository roleeRepository, RoleeMapper roleeMapper) {
+    public RoleeService(RoleeRepository roleeRepository, RoleeMapper roleeMapper, FournisseurServiceRepository fournisseurServiceRepository) {
         this.roleeRepository = roleeRepository;
         this.roleeMapper = roleeMapper;
+        this.fournisseurServiceRepository = fournisseurServiceRepository;
     }
 
     /**
@@ -108,5 +117,24 @@ public class RoleeService {
     public void delete(Long id) {
         log.debug("Request to delete Rolee : {}", id);
         roleeRepository.deleteById(id);
+    }
+    public RoleeDTO createRolee(RoleeDTO roleeDTO) {
+        log.debug("Request to create Rolee : {}", roleeDTO);
+        Rolee rolee = roleeMapper.toEntity(roleeDTO);
+        rolee = roleeRepository.save(rolee);
+        return roleeMapper.toDto(rolee);
+    }
+
+    public RoleeDTO updateRolee(RoleeDTO roleeDTO) {
+        log.debug("Request to update Rolee : {}", roleeDTO);
+        Rolee rolee = roleeMapper.toEntity(roleeDTO);
+        rolee = roleeRepository.save(rolee);
+        return roleeMapper.toDto(rolee);
+    }
+    @Transactional(readOnly = true)
+    public List<RoleeDTO> findAll() {
+        return roleeRepository.findAll().stream()
+                .map(roleeMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

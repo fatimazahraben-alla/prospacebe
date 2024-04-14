@@ -1,18 +1,27 @@
 package ma.digital.prospace.service.dto;
 
 import org.springframework.stereotype.Component;
+import ma.digital.prospace.domain.enumeration.StatutInvitation;
+import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Map;
+import java.util.Date;
+import java.util.UUID;
+
 @Component
 public class InvitationDTO {
     private Long id;
-    private String token;
-    private String typeIdentifiantTo;
-    private String identifiantTo;
-    private String object;
-    private Date dateCreation;
-    private Date dateFin;
-    private String status;
+    private String typePiece;
+    private String numeroPiece;
+    private String mail;
+    private String tel;
+    private StatutInvitation statut;
+    private UUID compteProId;
+
+    private UUID compteProDestinataireId;
 
 
     public Long getId() {
@@ -23,63 +32,59 @@ public class InvitationDTO {
         this.id = id;
     }
 
-    public String getToken() {
-        return token;
+    public String getTypePiece() {
+        return typePiece;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setTypePiece(String typePiece) {
+        this.typePiece = typePiece;
     }
 
-    public String getTypeIdentifiantTo() {
-        return typeIdentifiantTo;
+    public String getNumeroPiece() {
+        return numeroPiece;
     }
 
-    public void setTypeIdentifiantTo(String typeIdentifiantTo) {
-        this.typeIdentifiantTo = typeIdentifiantTo;
+    public void setNumeroPiece(String numeroPiece) {
+        this.numeroPiece = numeroPiece;
     }
 
-    public String getIdentifiantTo() {
-        return identifiantTo;
+    public String getMail() {
+        return mail;
     }
 
-    public void setIdentifiantTo(String identifiantTo) {
-        this.identifiantTo = identifiantTo;
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
-    public String getObject() {
-        return object;
+    public String getTel() {
+        return tel;
     }
 
-    public void setObject(String object) {
-        this.object = object;
+    public void setTel(String tel) {
+        this.tel = tel;
     }
 
-    public Date getDateCreation() {
-        return dateCreation;
+    public StatutInvitation getStatut() {
+        return statut;
     }
 
-    public void setDateCreation(Date dateCreation) {
-        this.dateCreation = dateCreation;
+    public void setStatut(StatutInvitation statut) {
+        this.statut = statut;
     }
 
-    public Date getDateFin() {
-        return dateFin;
+    public UUID getCompteProId() {
+        return compteProId;
     }
 
-    public void setDateFin(Date dateFin) {
-        this.dateFin = dateFin;
+    public void setCompteProId(UUID compteProId) {
+        this.compteProId = compteProId;
     }
 
-    public String getStatus() {
-        return status;
+    public UUID getCompteProDestinataireId() {
+        return compteProDestinataireId;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setCompteProDestinataireId(UUID compteProDestinataireId) {
+        this.compteProDestinataireId = compteProDestinataireId;
     }
-
-
-    // Getters and Setters
 }
-

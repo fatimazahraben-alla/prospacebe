@@ -39,6 +39,11 @@ public class Invitation implements Serializable {
     @ManyToOne
     @JoinColumn(name = "compte_pro_id")
     private ComptePro comptePro;
+    @ManyToOne
+    @JoinColumn(name = "compte_pro_destinataire_id")
+    private ComptePro compteProDestinataire;
+
+
 
     public Long getId() {
         return id;
@@ -102,4 +107,12 @@ public class Invitation implements Serializable {
     public void setComptePro(ComptePro comptePro) {
         this.comptePro = comptePro;
     }
+    public ComptePro getCompteProDestinataire() {
+        return compteProDestinataire;
+    }
+
+    public void setCompteProDestinataire(ComptePro compteProDestinataire) {
+        this.compteProDestinataire = compteProDestinataire;
+    }
+
 }

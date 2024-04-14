@@ -169,13 +169,14 @@ public class AssociationService {
             responseDTO.setCompteID(compteID);
             responseDTO.setFs(fs);
             responseDTO.setEntreprises(entrepriseList);
-            //   String devicetoken =  "fGe7ud_0RceyA-GZyBXJV2:APA91bEacIJWRhkniNtGOc73zMV-KlC3sSojMh6pitdNOnxf-sA_qWs3ThABFOOHd9jtwGcBulXcn9bCsVgfwjHUII43_IdmCEjQWk-q1iuVShaDc5D_xaE-0MMX1A24uuDFXHpzwdH3";
+             // String devicetoken =  "fGe7ud_0RceyA-GZyBXJV2:APA91bEacIJWRhkniNtGOc73zMV-KlC3sSojMh6pitdNOnxf-sA_qWs3ThABFOOHd9jtwGcBulXcn9bCsVgfwjHUII43_IdmCEjQWk-q1iuVShaDc5D_xaE-0MMX1A24uuDFXHpzwdH3";
+            Contact contact = contactRepository.findByCompteProId(compteID);
+            String devicetoken = contact.getDeviceToken();
             try {
-                Contact contact = contactRepository.findByCompteProId(compteID);
-                String deviceToken = contact.getDeviceToken();
-                if (deviceToken != null) {
-                    logger.info("Device token récupéré avec succès : {}", deviceToken);
-                    constructAndSendPushNotification(deviceToken, transactionID, "Notification process auth", "contenu");
+
+                if (devicetoken != null) {
+                    logger.info("Device token récupéré avec succès : {}", devicetoken);
+                    constructAndSendPushNotification(devicetoken, transactionID, "Notification process auth", "contenu");
                     return responseDTO;
                 }
             } catch (Exception e) {
