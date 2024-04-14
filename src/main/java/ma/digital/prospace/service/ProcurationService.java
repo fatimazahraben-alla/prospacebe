@@ -1,28 +1,22 @@
 package ma.digital.prospace.service;
 
-import java.time.ZoneOffset;
-import java.util.List;
+import java.time.Instant;
 import java.util.Optional;
-import java.util.Set;
-
-import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.ComptePro;
-import ma.digital.prospace.domain.Invitation;
-import ma.digital.prospace.domain.enumeration.StatutInvitation;
+import ma.digital.prospace.domain.Procuration;
 import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.repository.InvitationRepository;
+import ma.digital.prospace.repository.ProcurationRepository;
+import ma.digital.prospace.service.dto.ProcurationDTO;
+import ma.digital.prospace.service.mapper.ProcurationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import ma.digital.prospace.domain.Procuration;
-import ma.digital.prospace.repository.ProcurationRepository;
-import ma.digital.prospace.service.mapper.ProcurationMapper;
-import ma.digital.prospace.service.dto.*;
 import org.springframework.web.server.ResponseStatusException;
 
 
@@ -32,7 +26,6 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 @Transactional
 public class ProcurationService {
-
     private final Logger log = LoggerFactory.getLogger(ProcurationService.class);
 
     private final ProcurationRepository procurationRepository;
@@ -86,14 +79,14 @@ public class ProcurationService {
         log.debug("Request to partially update Procuration : {}", procuration);
 
         return procurationRepository
-            .findById(procuration.getId())
-            .map(existingProcuration -> {
-                procurationMapper.partialUpdate(existingProcuration, procuration);
+                .findById(procuration.getId())
+                .map(existingProcuration -> {
+                    procurationMapper.partialUpdate(existingProcuration, procuration);
 
-                return existingProcuration;
-            })
-            .map(procurationRepository::save)
-            .map(procurationMapper::toDto);
+                    return existingProcuration;
+                })
+                .map(procurationRepository::save)
+                .map(procurationMapper::toDto);
     }
 
     /**
@@ -129,30 +122,25 @@ public class ProcurationService {
         log.debug("Request to delete Procuration : {}", id);
         procurationRepository.deleteById(id);
     }
-    /**
-     * create an procuration and accepte invitation
-     */
-   /* public ProcurationDTO createProcuration(ProcurationDTO procurationDTO, Long invitationId) {
-        ComptePro gestionnaire = compteProRepository.findById(procurationDTO.getGestionnaireEspacePro())
+
+    public ResponseEntity<ProcurationDTO> createProcuration(ProcurationDTO procurationDTO, Long invitationId) {
+        ComptePro gestionnaire = compteProRepository.findById(procurationDTO.getGestionnaireEspaceProId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Gestionnaire Espace Pro not found"));
-        ComptePro utilisateur = compteProRepository.findById(procurationDTO.getUtilisateurPro())
+        ComptePro utilisateur = compteProRepository.findById(procurationDTO.getUtilisateurProId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Utilisateur Pro not found"));
 
         Procuration procuration = procurationMapper.toEntity(procurationDTO);
         procuration = procurationRepository.save(procuration);
 
-        // Accepter l'invitation
         invitationService.acceptInvitation(invitationId);
 
-        return procurationMapper.toDto(procuration);
-    }*/
-    private void updateInvitationStatus(Long invitationId, StatutInvitation statut) {
-        Invitation invitation = invitationRepository.findById(invitationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invitation not found with id: " + invitationId));
-        invitation.setStatut(statut);
-        invitationRepository.save(invitation);
+        return ResponseEntity.ok(procurationMapper.toDto(procuration));
     }
 
-
-
+    public void deleteProcuration(Long procurationId) {
+        Procuration procuration = procurationRepository.findById(procurationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Procuration not found"));
+        procuration.setDateFin(Instant.now());
+        procurationRepository.save(procuration);
+    }
 }

@@ -3,8 +3,10 @@ package ma.digital.prospace.service.dto;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the {@link ma.digital.prospace.domain.Procuration} entity.
@@ -17,13 +19,14 @@ public class ProcurationDTO implements Serializable {
 
     private String nom;
 
-    private LocalDate dateEffet;
+    private Instant dateEffet;
 
-    private LocalDate dateFin;
+    private Instant dateFin;
 
-    private CompteProDTO gestionnaireEspacePro;
-
-    private CompteProDTO utilisateurPro;
+    private UUID gestionnaireEspaceProId;
+    private String gestionnaireEspaceProIdentifiant;
+    private UUID utilisateurProId;
+    private String utilisateurProIdentifiant;
 
     public Long getId() {
         return id;
@@ -41,69 +44,51 @@ public class ProcurationDTO implements Serializable {
         this.nom = nom;
     }
 
-    public LocalDate getDateEffet() {
+    public Instant getDateEffet() {
         return dateEffet;
     }
 
-    public void setDateEffet(LocalDate dateEffet) {
+    public void setDateEffet(Instant dateEffet) {
         this.dateEffet = dateEffet;
     }
 
-    public LocalDate getDateFin() {
+    public Instant getDateFin() {
         return dateFin;
     }
 
-    public void setDateFin(LocalDate dateFin) {
+    public void setDateFin(Instant dateFin) {
         this.dateFin = dateFin;
     }
 
-    public CompteProDTO getGestionnaireEspacePro() {
-        return gestionnaireEspacePro;
+    public UUID getGestionnaireEspaceProId() {
+        return gestionnaireEspaceProId;
     }
 
-    public void setGestionnaireEspacePro(CompteProDTO gestionnaireEspacePro) {
-        this.gestionnaireEspacePro = gestionnaireEspacePro;
+    public void setGestionnaireEspaceProId(UUID gestionnaireEspaceProId) {
+        this.gestionnaireEspaceProId = gestionnaireEspaceProId;
     }
 
-    public CompteProDTO getUtilisateurPro() {
-        return utilisateurPro;
+    public String getGestionnaireEspaceProIdentifiant() {
+        return gestionnaireEspaceProIdentifiant;
     }
 
-    public void setUtilisateurPro(CompteProDTO utilisateurPro) {
-        this.utilisateurPro = utilisateurPro;
+    public void setGestionnaireEspaceProIdentifiant(String gestionnaireEspaceProIdentifiant) {
+        this.gestionnaireEspaceProIdentifiant = gestionnaireEspaceProIdentifiant;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ProcurationDTO)) {
-            return false;
-        }
-
-        ProcurationDTO procuration = (ProcurationDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, procuration.id);
+    public UUID getUtilisateurProId() {
+        return utilisateurProId;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.id);
+    public void setUtilisateurProId(UUID utilisateurProId) {
+        this.utilisateurProId = utilisateurProId;
     }
 
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "ProcurationDTO{" +
-                "id=" + getId() +
-                ", nom='" + getNom() + "'" +
-                ", dateEffet='" + getDateEffet() + "'" +
-                ", dateFin='" + getDateFin() + "'" +
-                ", gestionnaireEspacePro=" + getGestionnaireEspacePro() +
-                ", utilisateurPro=" + getUtilisateurPro() +
-                "}";
+    public String getUtilisateurProIdentifiant() {
+        return utilisateurProIdentifiant;
+    }
+
+    public void setUtilisateurProIdentifiant(String utilisateurProIdentifiant) {
+        this.utilisateurProIdentifiant = utilisateurProIdentifiant;
     }
 }
