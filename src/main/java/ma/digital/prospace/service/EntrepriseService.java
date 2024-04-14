@@ -277,9 +277,12 @@ public class EntrepriseService {
             } catch (IllegalArgumentException e) {
                 // Gérer le cas où le type de pièce n'est pas une valeur valide de l'énumération
                 log.info("Type de pièce d'identité non valide : " + typePieceParsed);
+                auditLogger1.info("Type de pièce d'identité non valide : " + typePieceParsed);
             }
         }
+        auditLogger1.info("Aucune correspondance trouvée");
         return false; // Aucune correspondance trouvée
+
     }
 
 

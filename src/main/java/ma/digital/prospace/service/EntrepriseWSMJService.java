@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
@@ -89,25 +90,34 @@ public class EntrepriseWSMJService {
     }
 
     public PersonnephysiqueDTO getBycodeJuridictionAndnumRC(String codeJuridiction, String numRC) {
-        String url3 = PersonnePhysiqueUrl+codeJuridiction+"/"+numRC;
-        System.out.println("Attempting to call API URL: " + url3);
+        String url = PersonnePhysiqueUrl + codeJuridiction + "/" + numRC;
+        auditLogger1.info("Attempting to call API URL: {}", url);
 
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url3, String.class);
-        String jsonString = responseEntity.getBody();
-
-        // Utilisation de Jackson pour mapper le JSON à l'objet DTO EntrepriseWSMJ
-        ObjectMapper objectMapper = new ObjectMapper();
-        PersonnephysiqueDTO personnephysiqueDTO;
+        ResponseEntity<String> responseEntity;
         try {
-            personnephysiqueDTO = objectMapper.readValue(jsonString, PersonnephysiqueDTO.class);
-            return personnephysiqueDTO;
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Gérer les exceptions en conséquence
+            responseEntity = restTemplate.getForEntity(url, String.class);
+        } catch (RestClientException e) {
+            auditLogger1.error("Failed to fetch data from API for codeJuridiction: {}, numRC: {}. Error: {}", codeJuridiction, numRC, e.getMessage());
             return null;
         }
 
+        String jsonString = responseEntity.getBody();
+        if (jsonString == null || jsonString.trim().isEmpty()) {
+            auditLogger1.warn("Empty JSON response received for codeJuridiction: {}, numRC: {}", codeJuridiction, numRC);
+            return null;
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            PersonnephysiqueDTO personnephysiqueDTO = objectMapper.readValue(jsonString, PersonnephysiqueDTO.class);
+            auditLogger1.info("Successfully parsed JSON for codeJuridiction: {}, numRC: {}", codeJuridiction, numRC);
+            return personnephysiqueDTO;
+        } catch (IOException e) {
+            auditLogger1.error("Error parsing JSON for codeJuridiction: {}, numRC: {}. JSON: {}", codeJuridiction, numRC, jsonString, e);
+            return null;
+        }
     }
+
 
 
 }
