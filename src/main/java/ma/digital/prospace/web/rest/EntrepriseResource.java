@@ -80,25 +80,22 @@ public class EntrepriseResource {
      * @return the ResponseEntity with status 201 (Created) and with body the new entreprise,
      * or with status 400 (Bad Request) if the entreprise has already an ID
      */
-    @PostMapping("/entreprises")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping(value = "/entreprises", produces = "application/json")
+    @PreAuthorize("hasAuthority('ROLE_GESTIONNAIREESPACE')")
     public ResponseEntity<?> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
-        auditLogger.info("Attempting to create company: {}", entrepriseRequest);
+        auditLogger.info("Tentative de création de l'entreprise : {}", entrepriseRequest);
         try {
             entrepriseService.createCompany(entrepriseRequest);
-            auditLogger.info("Successfully created company with NumRC: {}", entrepriseRequest.getNumeroRC());
+            auditLogger.info("Entreprise créée avec succès avec le NumRC : {}", entrepriseRequest.getNumeroRC());
             return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (EntrepriseBadRequestException e) {
-            auditLogger.error("Failed to create company due to bad request: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Bad request message", "BAD_REQUEST"));
-        } catch (EntrepriseCreationException e) {
-            auditLogger.error("Failed to create company: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(e.getMessage(), "CREATION_FAILED"));
-        } catch (Exception e) {
-            auditLogger.error("Unexpected error occurred: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Internal server error", "INTERNAL_ERROR"));
+        } catch (BadRequestAlertException e) {
+            auditLogger.error("Échec de la création de l'entreprise en raison d'une mauvaise demande : {}, Détails: {}", e.getMessage(), e.getProblemDetailWithCause());
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", e.getProblemDetailWithCause().toString());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
+
     }
+
 
 
 

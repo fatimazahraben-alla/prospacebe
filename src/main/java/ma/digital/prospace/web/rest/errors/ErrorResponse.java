@@ -2,13 +2,14 @@ package ma.digital.prospace.web.rest.errors;
 
 public class ErrorResponse {
     private String message;
-    private String errorCode;
+    private int statusCode;
+    private String error;
+    private String detail;
 
-    public ErrorResponse(String message, String errorCode) {
+    public ErrorResponse(String message, int statusCode, String error, String detail) {
         this.message = message;
-        this.errorCode = errorCode;
+        this.statusCode = statusCode;
+        this.error = error;
+        this.detail = detail;
     }
-
-    // Getters et setters
-
 }

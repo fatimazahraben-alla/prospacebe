@@ -1,5 +1,7 @@
 package ma.digital.prospace.service;
 import jakarta.servlet.http.HttpServletRequest;
+import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
+import ma.digital.prospace.web.rest.errors.EntrepriseBadRequestException;
 import ma.digital.prospace.web.rest.errors.EntrepriseCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -319,8 +321,7 @@ public class EntrepriseService {
 
     }
 
-    public void createCompany(EntrepriseRequest2 entrepriseRequest) throws EntrepriseCreationException {
-        try {
+    public void createCompany(EntrepriseRequest2 entrepriseRequest) throws BadRequestAlertException {
             switch (entrepriseRequest.getPerphysique_Permorale()) {
                 case PHYSICAL_PERSON:
                     handlePhysicalPerson(entrepriseRequest);
@@ -329,13 +330,11 @@ public class EntrepriseService {
                     handleMoralPerson(entrepriseRequest);
                     break;
                 default:
-                    auditLogger1.info("Type de personne non reconnu: " + entrepriseRequest.getPerphysique_Permorale());
-                    throw new IllegalArgumentException("Type de personne non reconnu: " + entrepriseRequest.getPerphysique_Permorale());
+                    auditLogger1.warn("Type de personne non reconnu: " + entrepriseRequest.getPerphysique_Permorale());
+                    throw new BadRequestAlertException("Type de personne non reconnu: ","Entreprise","perphysique_Permoraleerror");
 
             }
-        } catch (Exception e) {
-            throw new EntrepriseCreationException("Erreur lors de la création de l'entreprise", e);
-        }
+
     }
 
     private void handlePhysicalPerson(EntrepriseRequest2 entrepriseRequest) {
@@ -397,20 +396,35 @@ public class EntrepriseService {
                 } else {
                     log.info("Procuration non valide ou conditions de création non remplies.");
                     auditLogger1.warn("Tentative de création d'entreprise échouée via procuration pour {} - conditions non remplies.", accountConnected);
+                    throw new BadRequestAlertException(
+                            "Les conditions pour l'autorisation par procuration ne sont pas remplies.", // defaultMessage
+                            "procuration", // entityName
+                            "autorisationNonAccordee" // errorKey
+                    );
                 }
             }
         } else {
             log.info("PersonnephysiqueDTO est vide. Impossible de continuer le traitement.");
-            auditLogger1.warn("Tentative de création d'entreprise échouée - PersonnephysiqueDTO vide.");
+            auditLogger1.warn("Échec de la création de l'entreprise : aucune entreprise trouvée avec le tribunal {} et le numéro RC {}", entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
+            throw new BadRequestAlertException(
+                        "Échec de la création de l'entreprise : aucune entreprise trouvée avec le tribunal {} et le numéro RC {}", // defaultMessage
+                        "entrepirseWS", // entityName
+                        "tribunal ou NRC incorrectes" // errorKey
+                );
+
         }
 
     }
 
-    private void handleMoralPerson(EntrepriseRequest2 entrepriseRequest) throws EntrepriseCreationException {
+    private void handleMoralPerson(EntrepriseRequest2 entrepriseRequest) throws BadRequestAlertException {
         EntrepriseWSMJ entrepriseWS = entrepriseWSMJService.getEntrepriseByJuridictionAndNumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
         if (entrepriseWS == null) {
             auditLogger1.warn("Échec de la création de l'entreprise : aucune entreprise trouvée avec le tribunal {} et le numéro RC {}", entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
-            throw new EntrepriseCreationException("Aucune entreprise trouvée pour les critères donnés.");
+            throw new BadRequestAlertException(
+                    "Échec de la création de l'entreprise : aucune entreprise trouvée avec le tribunal {} et le numéro RC {}", // defaultMessage
+                    "entrepirseWS", // entityName
+                    "tribunal ou NRC incorrectes" // errorKey
+            );
         }
         else {
             Optional<ComptePro> compteOptional = CompteProRepository.findByCustomIdQuery(entrepriseRequest.getCOMPID());
@@ -433,13 +447,14 @@ public class EntrepriseService {
                         CompteProRepository.save(compte);
                         log.info("Enregistrement réussi de l'entreprise morale.");
                         auditLogger1.info("Nouvelle entreprise morale créée avec succès par {} pour le tribunal {} et le numéro RC {}", compIdString, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
-                    } catch (Exception e) {
+                    } catch (BadRequestAlertException e) {
                         log.error("Erreur lors de l'enregistrement de l'entreprise : " + e.getMessage());
                         auditLogger1.error("Échec de la création de l'entreprise morale par {} pour le tribunal {} et le numéro RC {}", compIdString, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC(), e);
                     }
                 } else {
-                    log.info("Vous n'êtes pas le manager.");
+                    auditLogger1.info("Vous n'êtes pas le manager.");
                     auditLogger1.warn("Tentative de création d'entreprise morale échouée pour {} - non manager.", compIdString);
+                    throw new BadRequestAlertException("Tentative de création d'entreprise morale échouée pour {} - non manager.","","");
                 }
             } else {
                 String accountConnected = UserId(compIdString);
@@ -467,6 +482,12 @@ public class EntrepriseService {
                 } else {
                     log.info("Condition non vérifiée.");
                     auditLogger1.warn("Tentative de création d'entreprise morale échouée via procuration pour {} - conditions non remplies.", accountConnected);
+                    throw new BadRequestAlertException(
+                            "Les conditions pour l'autorisation par procuration ne sont pas remplies.", // defaultMessage
+                            "procuration", // entityName
+                            "autorisationNonAccordee" // errorKey
+                    );
+                }
                 }
             }
 
@@ -476,7 +497,7 @@ public class EntrepriseService {
     }
 
 
-}
+
 
 
 
