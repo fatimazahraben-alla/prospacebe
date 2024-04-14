@@ -48,8 +48,7 @@
 
     <!-- Property to control root logging level -->
     <springProperty name="log.level" source="logging.level.root" defaultValue="INFO" />
-    <logger name="ma.digital.prospace.audit2" level="warn"/>
-    <logger name="ma.digital.prospace.audit" level="warn"/>
+
 
     <!-- Root logger configuration -->
     <ROOT level="${log.level}">

@@ -13,7 +13,7 @@
             </column>
             <column name="mail" type="varchar(50)"/>
             <column name="telephone" type="varchar(50)"/>
-            <column name="device_token" type="varchar(50)"/>
+            <column name="device_token" type="varchar(1000)"/>
             <column name="deviceOS" type="varchar(50)"/>
             <column name="device_version" type="varchar(50)"/>
             <column name="compte_pro_id" type="UUID">

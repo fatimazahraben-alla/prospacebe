@@ -445,8 +445,8 @@ public class EntrepriseService {
                         newEntreprise.setGerants(gerants);
                         compte.setEntrepriseGeree(newEntreprise);
                         CompteProRepository.save(compte);
-                        log.info("Enregistrement réussi de l'entreprise morale.");
                         auditLogger1.info("Nouvelle entreprise morale créée avec succès par {} pour le tribunal {} et le numéro RC {}", compIdString, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
+                        log.info("Enregistrement réussi de l'entreprise morale.");
                     } catch (BadRequestAlertException e) {
                         log.error("Erreur lors de l'enregistrement de l'entreprise : " + e.getMessage());
                         auditLogger1.error("Échec de la création de l'entreprise morale par {} pour le tribunal {} et le numéro RC {}", compIdString, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC(), e);

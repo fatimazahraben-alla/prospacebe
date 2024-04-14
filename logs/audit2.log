@@ -1,5 +1,14 @@
-2024-04-12 23:00:06,012 INFO [XNIO-1 task-5] m.d.p.audit2 [CompteProResource.java:200] Initiated mobile registration for compteId: 19bcecbc-7076-4b26-b709-c1a959c32f58
-2024-04-12 23:00:06,143 INFO [XNIO-1 task-5] m.d.p.audit2 [CompteProService.java:135] Initiating registration/update for compteId: 19bcecbc-7076-4b26-b709-c1a959c32f58
-2024-04-12 23:00:06,754 INFO [XNIO-1 task-5] m.d.p.audit2 [CompteProService.java:146] Creating new contact for compteId: 19bcecbc-7076-4b26-b709-c1a959c32f58
-2024-04-12 23:00:06,849 INFO [XNIO-1 task-5] m.d.p.audit2 [CompteProService.java:160] Completed registration/update for compteId: 19bcecbc-7076-4b26-b709-c1a959c32f58
-2024-04-12 23:00:06,860 INFO [XNIO-1 task-5] m.d.p.audit2 [CompteProResource.java:205] Completed mobile registration for compteId: 19bcecbc-7076-4b26-b709-c1a959c32f58
+2024-04-14 03:41:18,505 INFO [XNIO-1 task-3] m.d.p.audit2 [CompteProResource.java:200] Initiated mobile registration for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:41:18,543 INFO [XNIO-1 task-3] m.d.p.audit2 [CompteProService.java:135] Initiating registration/update for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:41:18,663 ERROR [XNIO-1 task-3] m.d.p.audit2 [CompteProResource.java:210] Failed mobile registration attempt for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:41:38,776 INFO [XNIO-1 task-3] m.d.p.audit2 [CompteProResource.java:200] Initiated mobile registration for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:41:38,778 INFO [XNIO-1 task-3] m.d.p.audit2 [CompteProService.java:135] Initiating registration/update for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:41:38,795 ERROR [XNIO-1 task-3] m.d.p.audit2 [CompteProResource.java:210] Failed mobile registration attempt for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:41:40,226 INFO [XNIO-1 task-3] m.d.p.audit2 [CompteProResource.java:200] Initiated mobile registration for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:41:40,226 INFO [XNIO-1 task-3] m.d.p.audit2 [CompteProService.java:135] Initiating registration/update for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:41:40,240 ERROR [XNIO-1 task-3] m.d.p.audit2 [CompteProResource.java:210] Failed mobile registration attempt for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:50:49,960 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProResource.java:200] Initiated mobile registration for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:50:49,987 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProService.java:135] Initiating registration/update for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:50:50,515 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProService.java:150] Updating existing contact for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:50:50,528 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProService.java:160] Completed registration/update for compteId: 4c973896-5761-41fc-8217-07c5d13a004b
+2024-04-14 03:50:50,671 ERROR [XNIO-1 task-2] m.d.p.audit2 [CompteProResource.java:210] Failed mobile registration attempt for compteId: 4c973896-5761-41fc-8217-07c5d13a004b

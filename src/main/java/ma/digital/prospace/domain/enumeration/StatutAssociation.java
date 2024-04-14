@@ -7,4 +7,8 @@ public enum StatutAssociation {
     ACCEPTED,
     CANCELED,
     PENDING,
+
+    ACTIVE,
+
+    INACTIVE
 }
