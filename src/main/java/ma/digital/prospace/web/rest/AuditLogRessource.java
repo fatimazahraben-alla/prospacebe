@@ -3,6 +3,7 @@ package ma.digital.prospace.web.rest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +26,7 @@ public class AuditLogRessource {
     private static final String PATH_TO_ESPACE_LOG = "logs/audit2.log";
 
     @GetMapping("/api/audit-logs")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<String> getAuditLogs(@RequestParam String logType, @RequestParam(required = false) String filter) {
         String filePath = "";
         switch (logType.toLowerCase()) {

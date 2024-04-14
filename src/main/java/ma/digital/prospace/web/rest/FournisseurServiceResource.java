@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import ma.digital.prospace.domain.FournisseurService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -51,66 +54,11 @@ public class FournisseurServiceResource {
     private final FournisseurServiceRepository fournisseurServiceRepository;
 
     public FournisseurServiceResource(
-        FournisseurServiceService fournisseurServiceService,
-        FournisseurServiceRepository fournisseurServiceRepository
+            FournisseurServiceService fournisseurServiceService,
+            FournisseurServiceRepository fournisseurServiceRepository
     ) {
         this.fournisseurServiceService = fournisseurServiceService;
         this.fournisseurServiceRepository = fournisseurServiceRepository;
-    }
-
-    /**
-     * {@code POST  /fournisseur-services} : Create a new fournisseurService.
-     *
-     * @param fournisseurService the fournisseurService to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new fournisseurService, or with status {@code 400 (Bad Request)} if the fournisseurService has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PostMapping("/fournisseur-services")
-    public ResponseEntity<FournisseurServiceDTO> createFournisseurService(@RequestBody FournisseurServiceDTO fournisseurService)
-        throws URISyntaxException {
-        log.debug("REST request to save FournisseurServiceDTO : {}", fournisseurService);
-        if (fournisseurService.getId() != null) {
-            throw new BadRequestAlertException("A new fournisseurService cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        FournisseurServiceDTO result = fournisseurServiceService.save(fournisseurService);
-        return ResponseEntity
-            .created(new URI("/api/fournisseur-services/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
-    }
-
-    /**
-     * {@code PUT  /fournisseur-services/:id} : Updates an existing fournisseurService.
-     *
-     * @param id the id of the fournisseurService to save.
-     * @param fournisseurService the fournisseurService to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated fournisseurService,
-     * or with status {@code 400 (Bad Request)} if the fournisseurService is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the fournisseurService couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PutMapping("/fournisseur-services/{id}")
-    public ResponseEntity<FournisseurServiceDTO> updateFournisseurService(
-        @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody FournisseurServiceDTO fournisseurService
-    ) throws URISyntaxException {
-        log.debug("REST request to update FournisseurServiceDTO : {}, {}", id, fournisseurService);
-        if (fournisseurService.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, fournisseurService.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
-
-        if (!fournisseurServiceRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-
-        FournisseurServiceDTO result = fournisseurServiceService.update(fournisseurService);
-        return ResponseEntity
-            .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, fournisseurService.getId().toString()))
-            .body(result);
     }
 
     /**
@@ -125,9 +73,10 @@ public class FournisseurServiceResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/fournisseur-services/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<FournisseurServiceDTO> partialUpdateFournisseurService(
-        @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody FournisseurServiceDTO fournisseurService
+            @PathVariable(value = "id", required = false) final Long id,
+            @RequestBody FournisseurServiceDTO fournisseurService
     ) throws URISyntaxException {
         log.debug("REST request to partial update FournisseurServiceDTO partially : {}, {}", id, fournisseurService);
         if (fournisseurService.getId() == null) {
@@ -144,8 +93,8 @@ public class FournisseurServiceResource {
         Optional<FournisseurServiceDTO> result = fournisseurServiceService.partialUpdate(fournisseurService);
 
         return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, fournisseurService.getId().toString())
+                result,
+                HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, fournisseurService.getId().toString())
         );
     }
 
@@ -156,8 +105,9 @@ public class FournisseurServiceResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of fournisseurServices in body.
      */
     @GetMapping("/fournisseur-services")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<FournisseurServiceDTO>> getAllFournisseurServices(
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+            @org.springdoc.api.annotations.ParameterObject Pageable pageable
     ) {
         log.debug("REST request to get a page of FournisseurServices");
         Page<FournisseurServiceDTO> page = fournisseurServiceService.findAll(pageable);
@@ -172,6 +122,7 @@ public class FournisseurServiceResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the fournisseurService, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/fournisseur-services/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<FournisseurServiceDTO> getFournisseurService(@PathVariable Long id) {
         log.debug("REST request to get FournisseurServiceDTO : {}", id);
         Optional<FournisseurServiceDTO> fournisseurService = fournisseurServiceService.findOne(id);
@@ -185,12 +136,27 @@ public class FournisseurServiceResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/fournisseur-services/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteFournisseurService(@PathVariable Long id) {
         log.debug("REST request to delete FournisseurServiceDTO : {}", id);
         fournisseurServiceService.delete(id);
         return ResponseEntity
-            .noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-            .build();
+                .noContent()
+                .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+                .build();
+    }
+    @PostMapping("/fournisseur-services")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<FournisseurServiceDTO> createFournisseurService(@RequestBody FournisseurServiceDTO fournisseurServiceDTO) {
+        FournisseurServiceDTO createdFournisseurService = fournisseurServiceService.save(fournisseurServiceDTO);
+        return new ResponseEntity<>(createdFournisseurService, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/fournisseur-services/{fournisseurID}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<FournisseurServiceDTO> updateFournisseurService(@PathVariable Long fournisseurID, @RequestBody FournisseurServiceDTO fournisseurServiceDTO) {
+        fournisseurServiceDTO.setId(fournisseurID);
+        FournisseurServiceDTO updatedFournisseurService = fournisseurServiceService.update(fournisseurServiceDTO);
+        return new ResponseEntity<>(updatedFournisseurService, HttpStatus.OK);
     }
 }
