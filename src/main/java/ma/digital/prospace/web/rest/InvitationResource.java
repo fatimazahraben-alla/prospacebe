@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api")
 public class InvitationResource {
@@ -20,11 +22,14 @@ public class InvitationResource {
     }
 
     @PostMapping("/invitations")
+    @PreAuthorize("hasAnyAuthority('ROLE_GESTIONNAIREESPACE', 'ROLE_GESTIONNAIREENTREPRISE')")
     public ResponseEntity<InvitationDTO> createInvitation(@RequestBody InvitationDTO invitationDTO) {
         InvitationDTO result = invitationService.createInvitation(invitationDTO);
         return ResponseEntity.ok(result);
     }
+
     @GetMapping("/invitations")
+    @PreAuthorize("hasAnyAuthority('ROLE_GESTIONNAIREESPACE', 'ROLE_GESTIONNAIREENTREPRISE')")
     public ResponseEntity<List<Invitation>> getAllInvitations() {
         List<Invitation> invitations = invitationService.getAllInvitations();
         return ResponseEntity.ok().body(invitations);
