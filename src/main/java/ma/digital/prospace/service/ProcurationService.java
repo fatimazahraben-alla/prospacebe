@@ -120,16 +120,22 @@ public class ProcurationService {
     }
 
     public ResponseEntity<ProcurationDTO> createProcuration(ProcurationDTO procurationDTO, Long invitationId) {
+        // Trouver le gestionnaire et l'utilisateur pour s'assurer qu'ils existent
         ComptePro gestionnaire = compteProRepository.findById(procurationDTO.getGestionnaireEspaceProId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Gestionnaire Espace Pro not found"));
         ComptePro utilisateur = compteProRepository.findById(procurationDTO.getUtilisateurProId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Utilisateur Pro not found"));
 
+        // Créer et sauvegarder la procuration
         Procuration procuration = procurationMapper.toEntity(procurationDTO);
+        procuration.setGestionnaireEspacePro(gestionnaire);
+        procuration.setUtilisateurPro(utilisateur);
         procuration = procurationRepository.save(procuration);
 
+        // Mettre à jour l'invitation et sauvegarder le changement
         invitationService.acceptInvitation(invitationId);
 
+        // Renvoyer la réponse avec le DTO de la procuration créée
         return ResponseEntity.ok(procurationMapper.toDto(procuration));
     }
 

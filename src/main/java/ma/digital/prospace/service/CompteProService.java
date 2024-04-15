@@ -166,8 +166,17 @@ public class CompteProService {
     }
 
     public CompteProDTO createAccount(String deviceToken, Long subId) {
+        if (subId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Le subId ne doit pas être nul");
+        }
+
+        // compte avec ce subId existe déjà
+        Optional<ComptePro> existingAccount = compteProRepository.findById(subId);
+        if (existingAccount.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Un compte avec cet ID existe déjà");
+        }
+
         ComptePro comptePro = new ComptePro();
-        comptePro.setId(subId);
         comptePro.setStatut(StatutCompte.VALIDE);
 
         comptePro = compteProRepository.save(comptePro);
@@ -184,10 +193,11 @@ public class CompteProService {
         try {
             String response = firebaseMessaging.send(message);
         } catch (FirebaseMessagingException e) {
-            throw new RuntimeException(e);
+            log.error("Échec de l'envoi de la notification Firebase", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Échec de l'envoi de la notification Firebase");
         }
 
-
+        // retournez le DTO avec l'ID généré par la base de données
         return compteProMapper.toDto(comptePro);
     }
 }

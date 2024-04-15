@@ -76,7 +76,7 @@ public class ComptePro implements Serializable {
     private String photo;
 
     @Transient
-    @Email
+    @Email(message = "L'adresse mail est invalide")
     @Column(name = "mail")
     private String mail;
 

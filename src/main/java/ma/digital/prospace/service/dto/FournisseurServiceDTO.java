@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * A DTO for the {@link ma.digital.prospace.domain.FournisseurServiceDTO} entity.
+ * A DTO for the {@link ma.digital.prospace.domain.FournisseurService} entity.
  */
 @Component
 @SuppressWarnings("common-java:DuplicatedBlocks")

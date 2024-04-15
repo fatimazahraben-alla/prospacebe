@@ -131,9 +131,6 @@ public class ProcurationResource {
     @PostMapping("/procurations")
     public ResponseEntity<ProcurationDTO> createProcuration(@RequestBody ProcurationDTO procurationDTO, @RequestParam Long invitationId)
             throws URISyntaxException {
-        if (procurationDTO.getId() != null) {
-            return ResponseEntity.badRequest().header("Error", "A new procuration cannot already have an ID").body(null);
-        }
         ResponseEntity<ProcurationDTO> result = procurationService.createProcuration(procurationDTO, invitationId);
         return ResponseEntity.created(new URI("/api/procurations/" + result.getBody().getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getBody().getId().toString()))

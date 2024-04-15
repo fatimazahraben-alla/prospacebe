@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -49,6 +50,7 @@ public class CompteProDTO implements Serializable {
 
     private String photo;
 
+    @Email(message = "L'adresse mail est invalide")
     private String mail;
 
     private String telephone;

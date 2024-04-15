@@ -3,7 +3,10 @@ package ma.digital.prospace.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import ma.digital.prospace.domain.enumeration.StatutInvitation;
+import ma.digital.prospace.domain.enumeration.TypePiece;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
@@ -19,11 +22,12 @@ public class Invitation implements Serializable {
     private Long id;
 
     @Column(name = "type_piece")
-    private String typePiece;
+    private TypePiece typePiece;
 
     @Column(name = "numero_piece")
     private String numeroPiece;
 
+    @Email
     @Column(name = "mail")
     private String mail;
 
@@ -54,11 +58,11 @@ public class Invitation implements Serializable {
         this.id = id;
     }
 
-    public String getTypePiece() {
+    public TypePiece getTypePiece() {
         return typePiece;
     }
 
-    public void setTypePiece(String typePiece) {
+    public void setTypePiece(TypePiece typePiece) {
         this.typePiece = typePiece;
     }
 

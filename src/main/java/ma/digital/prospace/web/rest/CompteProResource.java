@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import ma.digital.prospace.repository.CompteProRepository;
@@ -181,17 +182,21 @@ public class CompteProResource {
         }
     }
     @PostMapping("/compte-pro")
-    public ResponseEntity<CompteProDTO> createAccount(@RequestBody CreateAccountRequest createAccountRequest) {
+    public ResponseEntity<Object> createAccount(@RequestBody CreateAccountRequest createAccountRequest) {
         try {
+            if (createAccountRequest.getSubId() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Le subId ne doit pas être nul");
+            }
             CompteProDTO newComptePro = compteProService.createAccount(createAccountRequest.getDeviceToken(), createAccountRequest.getSubId());
-            return ResponseEntity.ok(newComptePro);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build(); // or handle more gracefully as needed
+            return ResponseEntity.status(HttpStatus.CREATED).body(newComptePro);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }
 
     static class CreateAccountRequest {
         private String deviceToken;
+        @NotNull(message = "Le subId ne doit pas être nul")
         private Long subId;
 
 

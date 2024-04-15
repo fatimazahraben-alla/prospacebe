@@ -1,8 +1,11 @@
 package ma.digital.prospace.service.dto;
 
 import ma.digital.prospace.domain.enumeration.StatutInvitation;
+import ma.digital.prospace.domain.enumeration.TypePiece;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
@@ -11,8 +14,10 @@ import java.util.Map;
 @Component
 public class InvitationDTO {
     private Long id;
-    private String typePiece;
+    private TypePiece typePiece;
     private String numeroPiece;
+
+    @Email(message = "L'adresse mail est invalide")
     private String mail;
     private String tel;
     private StatutInvitation statut;
@@ -28,11 +33,11 @@ public class InvitationDTO {
         this.id = id;
     }
 
-    public String getTypePiece() {
+    public TypePiece getTypePiece() {
         return typePiece;
     }
 
-    public void setTypePiece(String typePiece) {
+    public void setTypePiece(TypePiece typePiece) {
         this.typePiece = typePiece;
     }
 

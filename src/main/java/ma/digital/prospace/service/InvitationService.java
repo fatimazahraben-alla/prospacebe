@@ -41,77 +41,87 @@ public class InvitationService {
         this.firebaseMessaging = firebaseMessaging;
     }
 
-    public void acceptInvitation(Long invitationId) {
-        Invitation invitation = invitationRepository.findById(invitationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invitation not found with id: " + invitationId));
+    public InvitationDTO acceptInvitation(Long invitationId) {
+        Invitation invitation = fetchAndValidateInvitation(invitationId);
         invitation.setStatut(StatutInvitation.ACCEPTED);
         invitationRepository.save(invitation);
+        sendNotification(invitation, "Invitation Accepted", "Your invitation has been accepted.");
+        return invitationMapper.toDto(invitation);
+    }
 
-        //comptePro associated with this invitation
-        Long compteProId = invitation.getComptePro().getId();
-        Contact contact = contactRepository.findByCompteProId(compteProId);
+    public InvitationDTO cancelInvitation(Long invitationId) {
+        Invitation invitation = fetchAndValidateInvitation(invitationId);
+        invitation.setStatut(StatutInvitation.CANCELED);
+        invitationRepository.save(invitation);
+        sendNotification(invitation, "Invitation Canceled", "The invitation has been canceled.");
+        return invitationMapper.toDto(invitation);
+    }
 
-        if (contact == null) {
-            throw new EntityNotFoundException("Contact not found for ComptePro ID: " + compteProId);
-        }
+    private Invitation fetchAndValidateInvitation(Long invitationId) {
+        return invitationRepository.findById(invitationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invitation not found with id: " + invitationId));
+    }
 
-        try {
-            if (contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
-                sendFirebaseNotification(
-                        contact.getDeviceToken(),
-                        "Invitation Accepted",
-                        "Your invitation has been accepted."
-                );
-            } else {
-                //no device token
-                System.out.println("No device token available for contact with ComptePro ID: " + compteProId);
+    private void sendNotification(Invitation invitation, String title, String body) {
+        Contact contact = contactRepository.findByCompteProId(invitation.getComptePro().getId());
+        if (contact != null && contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
+            Notification notification = Notification.builder().setTitle(title).setBody(body).build();
+            Message message = Message.builder().setToken(contact.getDeviceToken()).setNotification(notification).build();
+            try {
+                firebaseMessaging.send(message);
+            } catch (FirebaseMessagingException e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
         }
     }
 
 
     public InvitationDTO createInvitation(InvitationDTO invitationDTO) {
+        // Vérifier l'existence du compte pro destinataire
+        ComptePro comptePro = compteProRepository.findById(invitationDTO.getCompteProDestinataireId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Le compte pro destinataire n'existe pas : " + invitationDTO.getCompteProDestinataireId()));
+
+        if (!isValidEmail(invitationDTO.getMail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Format de l'adresse e-mail invalide.");
+        }
 
         Invitation invitation = invitationMapper.toEntity(invitationDTO);
         invitation.setStatut(StatutInvitation.PENDING);
+        invitation.setComptePro(comptePro);
 
-        invitationRepository.save(invitation);
+        invitation = invitationRepository.save(invitation);
 
         Contact contact = contactRepository.findByCompteProId(invitationDTO.getCompteProDestinataireId());
-        if (contact == null) {
-            //contact is not found
-            throw new EntityNotFoundException("Contact not found for the provided compteProId");
-        }
-
-        //notification
-        String deviceToken = contact.getDeviceToken();
-        if (deviceToken != null && !deviceToken.isEmpty()) {
-            //send notification
-            sendFirebaseNotification(deviceToken, "Nouvelle Invitation", "Vous avez reçu une nouvelle invitation.");
+        if (contact != null && contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
+            sendFirebaseNotification(contact.getDeviceToken(), "Nouvelle Invitation", "Vous avez reçu une nouvelle invitation.");
         } else {
-            //email if token not available
+            //absence de token
         }
 
-        //return dto invitation
         return invitationMapper.toDto(invitation);
     }
 
+    private boolean isValidEmail(String email) {
+        return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    }
 
-
-    //Notification push
     private void sendFirebaseNotification(String deviceToken, String title, String body) {
-        Notification notification = Notification.builder()
-                .setTitle(title)
-                .setBody(body)
-                .build();
+        try {
+            Notification notification = Notification.builder()
+                    .setTitle(title)
+                    .setBody(body)
+                    .build();
 
-        Message message = Message.builder()
-                .setToken(deviceToken)
-                .setNotification(notification)
-                .build();
+            Message message = Message.builder()
+                    .setToken(deviceToken)
+                    .setNotification(notification)
+                    .build();
 
-        firebaseMessaging.sendAsync(message);
+            firebaseMessaging.send(message);
+        } catch (FirebaseMessagingException e) {
+            // Handle the exception (e.g. log it)
+            e.printStackTrace();
+        }
     }
     public List<Invitation> getAllInvitations() {
         return invitationRepository.findAll();
