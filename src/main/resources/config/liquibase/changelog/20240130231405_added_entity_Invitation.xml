@@ -10,12 +10,24 @@
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="type_piece" type="varchar(255)"/>
-            <column name="numero_piece" type="varchar(255)"/>
-            <column name="mail" type="varchar(255)"/>
-            <column name="tel" type="varchar(255)"/>
-            <column name="created_at" type="timestamp"/>
-            <column name="statut" type="varchar(255)"/>
+            <column name="type_piece" type="varchar(255)" >
+            <constraints nullable="true" />
+        </column>
+            <column name="numero_piece" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="mail" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="tel" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="true" />
+            </column>
+            <column name="statut" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="compte_pro_id" type="varchar(50)">
                 <constraints nullable="true" foreignKeyName="fk_invitation_compte_pro" references="compte_pro(id)"/>
             </column>
@@ -29,7 +41,7 @@
     <!-- Definition of the invitation_attributes table for storing key/value pairs -->
     <changeSet id="20240130231406_added_entity_InvitationAttributes" author="jhipster">
         <createTable tableName="invitation_attributes">
-            <column name="invitation_id" type="bigint">
+            <column name="invitation_id" type="UUID">
                 <constraints nullable="false" foreignKeyName="fk_invitation_attributes_invitation" references="invitation(id)"/>
             </column>
             <column name="key" type="varchar(255)">

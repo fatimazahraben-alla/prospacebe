@@ -117,7 +117,7 @@ public class AssociationResource {
             Session.Status sessionStatus = associationService.checkAuthenticationStep2(transactionId);
             return ResponseEntity.ok(sessionStatus);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 

@@ -1,5 +1,2 @@
 ﻿id;denomination;statut_juridique;tribunal;numero_rc;ice;activite;forme_juridique;date_immatriculation;Status_Perphysique_Permorale;etat
-3w970806-5761-41ec-8217-98h5d13s334b;Entreprise A;SARL;Tribunal de Commerce de Paris;123456789;ABC123456;Vente en ligne;Société à responsabilité limitée;2023-01-15;MORAL_PERSON;Actif
-4c970806-5761-41ec-8217-34c5d13s334b;Entreprise B;SA;Tribunal de Commerce de Lyon;987654321;XYZ987654;Services informatiques;Société anonyme;2022-11-20; MORAL_PERSON;Actif
-6f970806-5761-41ec-8217-78g5d13s334b;Entreprise C;SAS;Tribunal de Commerce de Marseille;654321789;MNO654321;Consulting;Société par actions simplifiée;2023-05-10;MORAL_PERSON;Inactif
-0h970806-5761-41ec-8217-09j5d13s334b;Entreprise D;EI;Tribunal de Commerce de Lille;456789123;DEF456789;Restauration;Entreprise individuelle;2022-09-05;MORAL_PERSON;Actif
+987e4567-e89b-12d3-a456-426614174003;Entreprise A;SARL;Tribunal de Commerce de Paris;123456789;ABC123456;Vente en ligne;Société à responsabilité limitée;2023-01-15;MORAL_PERSON;Actif

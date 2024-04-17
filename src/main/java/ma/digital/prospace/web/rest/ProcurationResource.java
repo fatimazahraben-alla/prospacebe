@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ma.digital.prospace.repository.ProcurationRepository;
 import ma.digital.prospace.service.ProcurationService;
@@ -130,17 +133,44 @@ public class ProcurationResource {
         Optional<ProcurationDTO> procuration = procurationService.findOne(id);
         return ResponseUtil.wrapOrNotFound(procuration);
     }
-
+    /**
+     * POST  /procurations : Create a new procuration.
+     *
+     * @param procurationDTO the procurationDTO to create
+     * @return the ResponseEntity with status 201 (Created) and with body the new procurationDTO,
+     * or with status 400 (Bad Request) if the procuration has not been created
+     */
     @PostMapping("/procurations")
-    public ResponseEntity<ProcurationDTO> createProcuration(@RequestBody ProcurationDTO procurationDTO, @RequestParam UUID invitationId)
-            throws URISyntaxException {
+    public ResponseEntity<ProcurationDTO> createProcuration(@RequestBody ProcurationDTO procurationDTO) {
         if (procurationDTO.getId() != null) {
-            return ResponseEntity.badRequest().header("Error", "A new procuration cannot already have an ID").body(null);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A new procuration cannot already have an ID");
         }
-        ResponseEntity<ProcurationDTO> result = procurationService.createProcuration(procurationDTO, invitationId);
-        return ResponseEntity.created(new URI("/api/procurations/" + result.getBody().getId()))
-                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getBody().getId().toString()))
-                .body(result.getBody());
+        try {
+            ProcurationDTO result = procurationService.createOrUpdateProcuration(procurationDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    /**
+     * PUT  /procurations : Updates an existing procuration.
+     *
+     * @param procurationDTO the procurationDTO to update
+     * @return the ResponseEntity with status 200 (OK) and with body the updated procurationDTO,
+     * or with status 400 (Bad Request) if the procuration has not been updated
+     */
+    @PutMapping("/procurations")
+    public ResponseEntity<ProcurationDTO> updateProcuration(@RequestBody ProcurationDTO procurationDTO) {
+        if (procurationDTO.getId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ID, id null");
+        }
+        try {
+            ProcurationDTO result = procurationService.createOrUpdateProcuration(procurationDTO);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @DeleteMapping("/procurations/{procurationID}")

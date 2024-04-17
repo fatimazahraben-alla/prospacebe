@@ -1,6 +1,7 @@
 package ma.digital.prospace.service.dto;
 
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
+import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -24,6 +25,8 @@ public class ProcurationDTO implements Serializable {
 
     private Instant dateFin;
 
+
+    private StatutInvitation statut;
     private String gestionnaireEspaceProId;
     private String gestionnaireEspaceProIdentifiant;
     private String utilisateurProId;
@@ -55,6 +58,13 @@ public class ProcurationDTO implements Serializable {
 
     public Instant getDateFin() {
         return dateFin;
+    }
+    public StatutInvitation getStatut() {
+        return statut;
+    }
+
+    public void setStatut(StatutInvitation statut) {
+        this.statut = statut;
     }
 
     public void setDateFin(Instant dateFin) {

@@ -20,7 +20,7 @@ public class Contact implements Serializable {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "id", updatable =true, nullable = false)
     private UUID id;
 
     @Size(max =50)

@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import ma.digital.prospace.domain.Entreprise;
 import ma.digital.prospace.web.rest.errors.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -81,19 +82,21 @@ public class EntrepriseResource {
      * or with status 400 (Bad Request) if the entreprise has already an ID
      */
     @PostMapping(value = "/entreprises", produces = "application/json")
-    @PreAuthorize("hasAuthority('ROLE_GESTIONNAIREESPACE')")
-    public ResponseEntity<?> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<Entreprise> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
         auditLogger.info("Tentative de création de l'entreprise : {}", entrepriseRequest);
         try {
-            entrepriseService.createCompany(entrepriseRequest);
-            auditLogger.info("Entreprise créée avec succès avec le NumRC : {}", entrepriseRequest.getNumeroRC());
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (BadRequestAlertException e) {
-            auditLogger.error("Échec de la création de l'entreprise en raison d'une mauvaise demande : {}, Détails: {}", e.getMessage(), e.getProblemDetailWithCause());
-            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", e.getProblemDetailWithCause().toString());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            Entreprise entreprise = entrepriseService.createCompany(entrepriseRequest);
+            if (entreprise == null) {
+                return ResponseEntity.badRequest().build();
+            } else {
+                auditLogger.info("Entreprise créée avec succès avec le NumRC : {}", entrepriseRequest.getNumeroRC());
+                return ResponseEntity.ok().body(entreprise);
+            }
+        } catch (Exception e) {
+            log.error("Échec de la création de l'entreprise en raison d'une mauvaise demande : {}, Détails: {}", entrepriseRequest.getNumeroRC(), entrepriseRequest.getTribunal());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-
     }
 
 

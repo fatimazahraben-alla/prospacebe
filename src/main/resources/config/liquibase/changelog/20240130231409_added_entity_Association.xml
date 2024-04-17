@@ -6,7 +6,7 @@
     <!-- Added the entity Association. -->
     <changeSet id="20240130231409-1" author="jhipster">
         <createTable tableName="association">
-            <column name="id" type="UUID">
+            <column name="id" type="UUID" >
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="date_effet" type="${datetimeType}">

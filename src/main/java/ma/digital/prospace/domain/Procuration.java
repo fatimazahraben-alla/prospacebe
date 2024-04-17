@@ -4,19 +4,14 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 
+import jakarta.persistence.*;
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
+import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -42,7 +37,9 @@ public class Procuration implements Serializable {
     @Column(name = "date_fin")
     private Instant dateFin;
 
-
+    @Column(name = "statut")
+    @Enumerated(EnumType.STRING)
+    private StatutInvitation statut;
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "entrepriseGeree", "mandataires", "mandants", "associations" }, allowSetters = true)
@@ -90,6 +87,13 @@ public class Procuration implements Serializable {
     }
     public void setDateFin(Instant dateFin) {
         this.dateFin = dateFin;
+    }
+    public StatutInvitation getStatut() {
+        return statut;
+    }
+
+    public void setStatut(StatutInvitation statut) {
+        this.statut = statut;
     }
 
     public ComptePro getGestionnaireEspacePro() {

@@ -221,10 +221,16 @@ public class AssociationService {
     /**
      * check if the session is finished and if ok (see transactionID header), return the account data plus the company data and associated roles, parameter a transactionID as data header.
      */
-    public Session.Status checkAuthenticationStep2(String transactionId) {
+    public Session.Status checkAuthenticationStep2(String transactionId) throws EntityNotFoundException {
         return sessionRepository.findByTransactionId(transactionId)
-                .map(Session::getStatus)
-                .orElseThrow(() -> new EntityNotFoundException("Session not completed or not found."));
+                .map(session -> {
+                    if (session.getStatus() == Session.Status.COMPLETED) {
+                        return session.getStatus();
+                    } else {
+                        throw new EntityNotFoundException("Session found but not completed. Status: " + session.getStatus());
+                    }
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Session not found with transaction ID: " + transactionId));
     }
     /**
      * create an association
