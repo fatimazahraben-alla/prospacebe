@@ -1,12 +1,12 @@
 package ma.digital.prospace.service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.Contact;
 import ma.digital.prospace.domain.enumeration.StatutCompte;
@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.apache.commons.lang3.StringUtils;
 import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.service.mapper.CompteProMapper;
@@ -126,7 +126,7 @@ public class CompteProService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<CompteProDTO> findOne(UUID id) {
+    public Optional<CompteProDTO> findOne(String id) {
         log.debug("Request to get ComptePro : {}", id);
         return compteProRepository.findById(id).map(compteProMapper::toDto);
     }
@@ -136,73 +136,36 @@ public class CompteProService {
      *
      * @param id the id of the entity.
      */
-    public void delete(UUID id) {
+    public void delete(String id) {
         log.debug("Request to delete ComptePro : {}", id);
         compteProRepository.deleteById(id);
-    }
-
-    public void registerContactDTO(MobileRegistrationDTO requestDTO) {
-        auditLogger.info("Initiating registration/update for compteId: {}", requestDTO.getCompteId());
-
-        ComptePro comptePro = compteProRepository.findById(requestDTO.getCompteId())
-                .orElseThrow(() -> {
-                    auditLogger.error("Failed to find compte with ID: {}", requestDTO.getCompteId());
-                    return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Compte not found");
-                });
-
-        Contact contact = contactRepository.findByCompteProId(requestDTO.getCompteId());
-
-        if (contact == null) {
-            auditLogger.info("Creating new contact for compteId: {}", requestDTO.getCompteId());
-            contact = new Contact();
-            contact.setComptePro(comptePro);
-        } else {
-            auditLogger.info("Updating existing contact for compteId: {}", requestDTO.getCompteId());
-        }
-
-        // Update contact fields
-        contact.setDeviceToken(requestDTO.getDeviceToken());
-        contact.setDeviceOS(requestDTO.getDeviceOS());
-        contact.setDeviceVersion(requestDTO.getDeviceVersion());
-
-        // Save or update the contact
-        contactRepository.save(contact);
-        auditLogger.info("Completed registration/update for compteId: {}", requestDTO.getCompteId());
     }
 
     /**
      * create an account
      */
-    public CompteProDTO createAccount(String deviceToken, UUID subId) {
-        auditLogger.info("Creating account with subId: {0}", subId);
-
-        ComptePro comptePro = new ComptePro();
-        comptePro.setId(subId);
-        comptePro.setStatut(StatutCompte.VALIDE);
-
-        comptePro = compteProRepository.save(comptePro);
-        auditLogger.info("Account saved with ID: {0}", comptePro.getId());
-
-        // Notification
-        Message message = Message.builder()
-                .setNotification(Notification.builder()
-                        .setTitle("Bienvenue")
-                        .setBody("Votre compte a été créé avec succès.")
-                        .build())
-                .setToken(deviceToken)
-                .build();
-
-        try {
-            String response = firebaseMessaging.send(message);
-            auditLogger.info("Notification sent, response: {0}", response);
-        } catch (FirebaseMessagingException e) {
-            auditLogger.warn("Failed to send notification", e);
-            throw new RuntimeException(e);
+    public CompteProDTO createAccountWithMobileRegistration(MobileRegistrationDTO registrationDTO) {
+        if (StringUtils.isEmpty(registrationDTO.getCompteId())) {
+            throw new IllegalArgumentException("Le subId ne doit pas être nul ou vide");
         }
 
-        CompteProDTO result = compteProMapper.toDto(comptePro);
-        auditLogger.info("Account DTO created with ID: {0}", result.getId());
-        return result;
+        if (compteProRepository.findById(registrationDTO.getCompteId()).isPresent()) {
+            throw new EntityExistsException("Un compte avec cet ID existe déjà");
+        }
+
+        ComptePro comptePro = new ComptePro();
+        comptePro.setId(registrationDTO.getCompteId());
+        comptePro.setStatut(StatutCompte.VALIDE);
+        comptePro = compteProRepository.save(comptePro);
+
+        Contact contact = new Contact();
+        contact.setComptePro(comptePro);
+        contact.setDeviceToken(registrationDTO.getDeviceToken());
+        contact.setDeviceOS(registrationDTO.getDeviceOS());
+        contact.setDeviceVersion(registrationDTO.getDeviceVersion());
+        contactRepository.save(contact);
+
+        return compteProMapper.toDto(comptePro);
     }
 }
 

@@ -6,7 +6,7 @@
     <!-- Added the entity Session. -->
     <changeSet id="20240501123456-1" author="jhipster">
         <createTable tableName="session">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="transaction_id" type="varchar(50)">

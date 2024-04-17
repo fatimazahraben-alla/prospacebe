@@ -2,6 +2,7 @@ package ma.digital.prospace.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -104,7 +105,7 @@ public class RoleeService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<RoleeDTO> findOne(Long id) {
+    public Optional<RoleeDTO> findOne(UUID id) {
         log.debug("Request to get Rolee : {}", id);
         return roleeRepository.findById(id).map(roleeMapper::toDto);
     }
@@ -114,7 +115,7 @@ public class RoleeService {
      *
      * @param id the id of the entity.
      */
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Rolee : {}", id);
         roleeRepository.deleteById(id);
     }

@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import ma.digital.prospace.domain.Rolee;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class RoleeResource {
      */
     @PatchMapping(value = "/rolees/{id}", consumes = { "application/json", "application/merge-patch+json" })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<RoleeDTO> partialUpdateRolee(@PathVariable(value = "id", required = false) final Long id, @RequestBody RoleeDTO rolee)
+    public ResponseEntity<RoleeDTO> partialUpdateRolee(@PathVariable(value = "id", required = false) final UUID id, @RequestBody RoleeDTO rolee)
             throws URISyntaxException {
         log.debug("REST request to partial update RoleeDTO partially : {}, {}", id, rolee);
         if (rolee.getId() == null) {
@@ -110,7 +111,7 @@ public class RoleeResource {
      */
     @GetMapping("/rolees/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<RoleeDTO> getRolee(@PathVariable Long id) {
+    public ResponseEntity<RoleeDTO> getRolee(@PathVariable UUID id) {
         log.debug("REST request to get RoleeDTO : {}", id);
         Optional<RoleeDTO> rolee = roleeService.findOne(id);
         return ResponseUtil.wrapOrNotFound(rolee);
@@ -124,7 +125,7 @@ public class RoleeResource {
      */
     @DeleteMapping("/rolees/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Void> deleteRolee(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteRolee(@PathVariable UUID id) {
         log.debug("REST request to delete RoleeDTO : {}", id);
         roleeService.delete(id);
         return ResponseEntity
@@ -141,7 +142,7 @@ public class RoleeResource {
 
     @PutMapping("/roles/{roleId}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<RoleeDTO> updateRolee(@PathVariable Long roleId, @Valid @RequestBody RoleeDTO roleeDTO) {
+    public ResponseEntity<RoleeDTO> updateRolee(@PathVariable UUID roleId, @Valid @RequestBody RoleeDTO roleeDTO) {
         roleeDTO.setId(roleId); // Set the ID from the path variable to the DTO
         RoleeDTO updatedRolee = roleeService.updateRolee(roleeDTO);
         return ResponseEntity.ok().body(updatedRolee);

@@ -6,11 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Spring Data JPA repository for the Entreprise entity.
  */
 
 @Repository
-public interface EntrepriseRepository extends JpaRepository<Entreprise, Long> {
+public interface EntrepriseRepository extends JpaRepository<Entreprise, UUID> {
 }

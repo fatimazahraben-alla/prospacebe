@@ -2,7 +2,9 @@ package ma.digital.prospace.domain;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.UUID;
 
+import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -15,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * A Procuration.
@@ -28,15 +31,18 @@ public class Procuration implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
     @Column(name = "date_effet")
     private Instant dateEffet;
 
     @Column(name = "date_fin")
     private Instant dateFin;
+
+
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "entrepriseGeree", "mandataires", "mandants", "associations" }, allowSetters = true)
@@ -48,16 +54,16 @@ public class Procuration implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Long getId() {
+    public UUID getId() {
         return this.id;
     }
 
-    public Procuration id(Long id) {
+    public Procuration id(UUID id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -82,7 +88,6 @@ public class Procuration implements Serializable {
         this.setDateFin(dateFin);
         return this;
     }
-
     public void setDateFin(Instant dateFin) {
         this.dateFin = dateFin;
     }

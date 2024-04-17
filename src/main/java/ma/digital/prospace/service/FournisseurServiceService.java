@@ -2,6 +2,7 @@ package ma.digital.prospace.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -104,7 +105,7 @@ public class FournisseurServiceService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<FournisseurServiceDTO> findOne(Long id) {
+    public Optional<FournisseurServiceDTO> findOne(UUID id) {
         log.debug("Request to get FournisseurService : {}", id);
         return fournisseurServiceRepository.findById(id).map(fournisseurServiceMapper::toDto);
     }
@@ -114,7 +115,7 @@ public class FournisseurServiceService {
      *
      * @param id the id of the entity.
      */
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete FournisseurService : {}", id);
         fournisseurServiceRepository.deleteById(id);
     }

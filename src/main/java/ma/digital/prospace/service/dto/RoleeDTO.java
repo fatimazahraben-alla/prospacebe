@@ -2,24 +2,25 @@ package ma.digital.prospace.service.dto;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 public class RoleeDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     private String nom;
 
     private String description;
 
-    private Long fournisseurServiceId;
+    private UUID fournisseurServiceId;
 
     // Getters and setters
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -39,11 +40,11 @@ public class RoleeDTO implements Serializable {
         this.description = description;
     }
 
-    public Long getFournisseurServiceId() {
+    public UUID getFournisseurServiceId() {
         return fournisseurServiceId;
     }
 
-    public void setFournisseurServiceId(Long fournisseurServiceId) {
+    public void setFournisseurServiceId(UUID fournisseurServiceId) {
         this.fournisseurServiceId = fournisseurServiceId;
     }
 

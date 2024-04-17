@@ -3,6 +3,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
+import ma.digital.prospace.domain.Session;
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import ma.digital.prospace.repository.*;
 import ma.digital.prospace.service.AssociationService;
@@ -73,7 +74,7 @@ public class AssociationResource {
     }
 
     @GetMapping("/associations/{id}")
-    public ResponseEntity<AssociationDTO> getAssociation(@PathVariable Long id) {
+    public ResponseEntity<AssociationDTO> getAssociation(@PathVariable UUID id) {
         log.debug("REST request to get Association : {}", id);
         AssociationDTO associationDTO = associationService.findOne(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid id"));
@@ -82,7 +83,7 @@ public class AssociationResource {
     }
 
     @DeleteMapping("/associations/{id}")
-    public ResponseEntity<Void> deleteAssociation(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAssociation(@PathVariable UUID id) {
         log.debug("REST request to delete Association : {}", id);
         associationService.delete(id);
         return ResponseEntity.noContent()
@@ -90,7 +91,7 @@ public class AssociationResource {
     }
 
     @GetMapping("/association/processAuthenticationStep2")
-    public ResponseEntity<CompteFSAssociationDTO> processAuthenticationStep2(@RequestParam UUID compteID, @RequestParam Long fs,
+    public ResponseEntity<CompteFSAssociationDTO> processAuthenticationStep2(@RequestParam String compteID, @RequestParam UUID fs,
                                                                              @RequestParam String transactionID) {
         CompteFSAssociationDTO responseDTO = associationService.processAuthenticationStep2(compteID, fs, transactionID);
         if (responseDTO != null) {
@@ -111,23 +112,22 @@ public class AssociationResource {
         }
     }
     @GetMapping("/association/checkAuthenticationStep2")
-    public ResponseEntity<CompteEntrepriseDTO> checkAuthenticationStep2(@RequestParam String transactionId) {
+    public ResponseEntity<Session.Status> checkAuthenticationStep2(@RequestParam String transactionId) {
         try {
-            CompteEntrepriseDTO compteEntrepriseDTO = associationService.checkAuthenticationStep2(transactionId);
-            return ResponseEntity.ok(compteEntrepriseDTO);
+            Session.Status sessionStatus = associationService.checkAuthenticationStep2(transactionId);
+            return ResponseEntity.ok(sessionStatus);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+
     @PostMapping("/associations")
     public ResponseEntity<AssociationDTO> createAssociation(@RequestBody AssociationDTO dto) {
         AssociationDTO createdDto = associationService.createAssociation(dto);
         return new ResponseEntity<>(createdDto, HttpStatus.CREATED);
     }
     @PutMapping("/associations")
-    public ResponseEntity<AssociationDTO> updateAssociationStatut(@RequestParam Long id, @RequestBody String statut) {
+    public ResponseEntity<AssociationDTO> updateAssociationStatut(@RequestParam UUID id, @RequestBody String statut) {
         StatutAssociation nouveauStatut;
         try {
             nouveauStatut = StatutAssociation.valueOf(statut);

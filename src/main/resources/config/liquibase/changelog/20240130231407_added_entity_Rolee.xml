@@ -9,7 +9,7 @@
     <!-- Added the entity Rolee -->
     <changeSet id="20240130231407-1" author="jhipster">
         <createTable tableName="rolee">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="nom" type="varchar(255)">
@@ -18,7 +18,7 @@
             <column name="description" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="fs_id" type="bigint">
+            <column name="fs_id" type="UUID">
                 <constraints nullable="true" />
             </column>
         </createTable>
@@ -31,7 +31,7 @@
                 separator=";"
                 tableName="rolee"
                 usePreparedStatements="true">
-            <column name="id" type="numeric"/>
+            <column name="id" type="UUID"/>
             <column name="nom" type="string"/>
             <column name="description" type="string"/>
         </loadData>

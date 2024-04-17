@@ -8,7 +8,7 @@
     <!-- Added the entity Contact. -->
     <changeSet id="20240501123457-1" author="jhipster">
         <createTable tableName="contact">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="mail" type="varchar(50)"/>
@@ -16,7 +16,7 @@
             <column name="device_token" type="varchar(1000)"/>
             <column name="deviceOS" type="varchar(50)"/>
             <column name="device_version" type="varchar(50)"/>
-            <column name="compte_pro_id" type="UUID">
+            <column name="compte_pro_id" type="varchar(50)">
                 <constraints nullable="false" foreignKeyName="fk_contact_comptePro" referencedTableName="compte_pro" referencedColumnNames="id"/>
             </column>
         </createTable>
@@ -28,13 +28,13 @@
                   separator=";"
                   tableName="contact"
                   usePreparedStatements="true">
-            <column name="id" type="NUMERIC"/>
+            <column name="id" type="UUID"/>
             <column name="mail" type="STRING"/>
             <column name="telephone" type="STRING"/>
             <column name="device_token" type="STRING"/>
             <column name="deviceOS" type="STRING"/>
             <column name="device_version" type="STRING"/>
-            <column name="compte_pro_id" type="UUID"/>
+            <column name="compte_pro_id" type="STRING"/>
         </loadData>
     </changeSet>
 

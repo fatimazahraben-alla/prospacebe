@@ -7,10 +7,11 @@ import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.Entreprise;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Spring Data JPA repository for the Rolee entity.
  */
 @Repository
-public interface RoleeRepository extends JpaRepository<Rolee, Long> {
+public interface RoleeRepository extends JpaRepository<Rolee, UUID> {
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 
@@ -24,6 +25,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "association")
@@ -33,8 +35,10 @@ public class Association implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
     @Column(name = "date_effet")
     private Date dateEffet;
     @Column(name = "date_fin")
@@ -56,11 +60,11 @@ public class Association implements Serializable {
 
 
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

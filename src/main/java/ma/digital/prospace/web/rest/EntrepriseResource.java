@@ -111,7 +111,7 @@ public class EntrepriseResource {
      */
     @PutMapping("/entreprises/{id}")
     public ResponseEntity<EntrepriseDTO> updateEntreprise(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @RequestBody EntrepriseDTO entreprise
     ) throws URISyntaxException {
         log.debug("REST request to update EntrepriseDTO : {}, {}", id, entreprise);
@@ -146,7 +146,7 @@ public class EntrepriseResource {
      */
     @PatchMapping(value = "/entreprises/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<EntrepriseDTO> partialUpdateEntreprise(
-        @PathVariable(value = "id", required = false) final Long id,
+        @PathVariable(value = "id", required = false) final UUID id,
         @RequestBody EntrepriseDTO entreprise
     ) throws URISyntaxException {
         log.debug("REST request to partial update EntrepriseDTO partially : {}, {}", id, entreprise);
@@ -190,7 +190,7 @@ public class EntrepriseResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the entreprise, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/entreprises/{id}")
-    public ResponseEntity<EntrepriseDTO> getEntreprise(@PathVariable Long id) {
+    public ResponseEntity<EntrepriseDTO> getEntreprise(@PathVariable UUID id) {
         log.debug("REST request to get EntrepriseDTO : {}", id);
         Optional<EntrepriseDTO> entreprise = entrepriseService.findOne(id);
         return ResponseUtil.wrapOrNotFound(entreprise);
@@ -203,7 +203,7 @@ public class EntrepriseResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/entreprises/{id}")
-    public ResponseEntity<Void> deleteEntreprise(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteEntreprise(@PathVariable UUID id) {
         log.debug("REST request to delete EntrepriseDTO : {}", id);
         entrepriseService.delete(id);
         return ResponseEntity

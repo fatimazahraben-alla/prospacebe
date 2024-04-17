@@ -1,4 +1,4 @@
 ﻿id;date_effet;date_fin;mail;telephone;statut;entreprise_id;compte_id;role_id
-1;;;test@example.com;123456789;ACTIVE;1;4c973896-5761-41fc-8217-07c5d13a004b;1
-2;;;test2@example.com;987654321;INACTIVE;2;4c973896-5761-41fc-8217-07c5d13a004b;2
+4c973896-5761-41fc-8217-07c5d13a06op;;;test@example.com;123456789;ACTIVE;4c973896-5761-cd72-8217-07c5d13a004b;E892991;4c973896-fg23-41fc-8217-07c5d13a004b
+4c970806-5761-41ec-8217-07c5d13s334b;;;test2@example.com;987654321;INACTIVE;4c973896-5761-41fc-8217-02c5d13a004b;G892811;9c973896-5761-41fc-8217-07c5d13a004b
 

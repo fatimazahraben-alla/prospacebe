@@ -1,5 +1,6 @@
 package ma.digital.prospace.service.dto;
 
+import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class ProcurationDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     private String nom;
 
@@ -23,16 +24,16 @@ public class ProcurationDTO implements Serializable {
 
     private Instant dateFin;
 
-    private UUID gestionnaireEspaceProId;
+    private String gestionnaireEspaceProId;
     private String gestionnaireEspaceProIdentifiant;
-    private UUID utilisateurProId;
+    private String utilisateurProId;
     private String utilisateurProIdentifiant;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -60,14 +61,13 @@ public class ProcurationDTO implements Serializable {
         this.dateFin = dateFin;
     }
 
-    public UUID getGestionnaireEspaceProId() {
+    public String getGestionnaireEspaceProId() {
         return gestionnaireEspaceProId;
     }
 
-    public void setGestionnaireEspaceProId(UUID gestionnaireEspaceProId) {
+    public void setGestionnaireEspaceProId(String gestionnaireEspaceProId) {
         this.gestionnaireEspaceProId = gestionnaireEspaceProId;
     }
-
     public String getGestionnaireEspaceProIdentifiant() {
         return gestionnaireEspaceProIdentifiant;
     }
@@ -76,11 +76,11 @@ public class ProcurationDTO implements Serializable {
         this.gestionnaireEspaceProIdentifiant = gestionnaireEspaceProIdentifiant;
     }
 
-    public UUID getUtilisateurProId() {
+    public String getUtilisateurProId() {
         return utilisateurProId;
     }
 
-    public void setUtilisateurProId(UUID utilisateurProId) {
+    public void setUtilisateurProId(String utilisateurProId) {
         this.utilisateurProId = utilisateurProId;
     }
 

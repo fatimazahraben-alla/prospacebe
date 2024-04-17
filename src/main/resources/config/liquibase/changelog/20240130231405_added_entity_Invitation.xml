@@ -7,7 +7,7 @@
     <!-- Definition of the invitation table -->
     <changeSet id="20240130231405_added_entity_Invitation" author="jhipster">
         <createTable tableName="invitation">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="type_piece" type="varchar(255)"/>
@@ -16,11 +16,11 @@
             <column name="tel" type="varchar(255)"/>
             <column name="created_at" type="timestamp"/>
             <column name="statut" type="varchar(255)"/>
-            <column name="compte_pro_id" type="UUID">
+            <column name="compte_pro_id" type="varchar(50)">
                 <constraints nullable="true" foreignKeyName="fk_invitation_compte_pro" references="compte_pro(id)"/>
             </column>
             <!-- New column for destinataire account -->
-            <column name="compte_pro_destinataire_id" type="UUID">
+            <column name="compte_pro_destinataire_id" type="varchar(50)">
                 <constraints nullable="true" foreignKeyName="fk_invitation_compte_pro_destinataire" references="compte_pro(id)"/>
             </column>
         </createTable>
@@ -45,14 +45,14 @@
                 file="config/liquibase/fake-data/invitation.csv"
                 separator=";"
                 tableName="invitation">
-            <column name="id" type="numeric"/>
+            <column name="id" type="UUID"/>
             <column name="type_piece" type="string"/>
             <column name="numero_piece" type="string"/>
             <column name="mail" type="string"/>
             <column name="tel" type="string"/>
             <column name="created_at" type="timestamp"/>
             <column name="statut" type="string"/>
-            <column name="compte_pro_id" type="UUID"/>
+            <column name="compte_pro_id" type="string"/>
             <!-- Assume no fake data for compte_pro_destinataire_id for simplicity -->
         </loadData>
     </changeSet>

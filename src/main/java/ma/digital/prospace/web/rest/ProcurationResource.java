@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
@@ -45,7 +46,7 @@ public class ProcurationResource {
     }
     @PutMapping("/procurations/{id}")
     public ResponseEntity<ProcurationDTO> updateProcuration(
-            @PathVariable(value = "id", required = false) final Long id,
+            @PathVariable(value = "id", required = false) final UUID id,
             @RequestBody ProcurationDTO procuration
     ) throws URISyntaxException {
         log.debug("REST request to update ProcurationDTO : {}, {}", id, procuration);
@@ -80,7 +81,7 @@ public class ProcurationResource {
      */
     @PatchMapping(value = "/procurations/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<ProcurationDTO> partialUpdateProcuration(
-            @PathVariable(value = "id", required = false) final Long id,
+            @PathVariable(value = "id", required = false) final UUID id,
             @RequestBody ProcurationDTO procuration
     ) throws URISyntaxException {
         log.debug("REST request to partial update ProcurationDTO partially : {}, {}", id, procuration);
@@ -124,14 +125,14 @@ public class ProcurationResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the procuration, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/procurations/{id}")
-    public ResponseEntity<ProcurationDTO> getProcuration(@PathVariable Long id) {
+    public ResponseEntity<ProcurationDTO> getProcuration(@PathVariable UUID id) {
         log.debug("REST request to get ProcurationDTO : {}", id);
         Optional<ProcurationDTO> procuration = procurationService.findOne(id);
         return ResponseUtil.wrapOrNotFound(procuration);
     }
 
     @PostMapping("/procurations")
-    public ResponseEntity<ProcurationDTO> createProcuration(@RequestBody ProcurationDTO procurationDTO, @RequestParam Long invitationId)
+    public ResponseEntity<ProcurationDTO> createProcuration(@RequestBody ProcurationDTO procurationDTO, @RequestParam UUID invitationId)
             throws URISyntaxException {
         if (procurationDTO.getId() != null) {
             return ResponseEntity.badRequest().header("Error", "A new procuration cannot already have an ID").body(null);
@@ -143,7 +144,7 @@ public class ProcurationResource {
     }
 
     @DeleteMapping("/procurations/{procurationID}")
-    public ResponseEntity<Void> deleteProcuration(@PathVariable Long procurationID) {
+    public ResponseEntity<Void> deleteProcuration(@PathVariable UUID procurationID) {
         procurationService.deleteProcuration(procurationID);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, procurationID.toString())).build();
     }

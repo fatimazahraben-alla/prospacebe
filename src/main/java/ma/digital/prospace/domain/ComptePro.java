@@ -33,9 +33,9 @@ public class ComptePro implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "id", strategy = "org.hibernate.id.UUIDGenerator")
-    private UUID id;
+    @Size(max = 50)
+    @Column(name = "id", nullable = false, unique = true)
+    private String id;
 
     @Size(max = 100)
     @Column(name = "identifiant")
@@ -46,31 +46,31 @@ public class ComptePro implements Serializable {
     @Column(name = "typeidentifiant", length = 10)
     private typeidentifiant typeidentifiant;
 
-
+    @Transient
     @NotNull
     @Size(max = 50)
     @Column(name = "nom_ar", length = 50, nullable = true)
     private String nomAr;
 
-
+    @Transient
     @NotNull
     @Size(max = 50)
     @Column(name = "nom_fr", length = 50, nullable = true)
     private String nomFr;
 
-
+    @Transient
     @NotNull
     @Size(max = 50)
     @Column(name = "prenom_ar", length = 50, nullable = true)
     private String prenomAr;
 
-
+    @Transient
     @NotNull
     @Size(max = 50)
     @Column(name = "prenom_fr", length = 50, nullable = true)
     private String prenomFr;
 
-
+    @Transient
     @Size(max = 50)
     @Column(name = "adresse", length = 50)
     private String adresse;
@@ -80,11 +80,11 @@ public class ComptePro implements Serializable {
     @Column(name = "photo", nullable = true)
     private String photo;
 
-
+    @Transient
     @Column(name = "mail")
     private String mail;
 
-
+    @Transient
     @Column(name = "telephone")
     private String telephone;
 
@@ -124,11 +124,11 @@ public class ComptePro implements Serializable {
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 

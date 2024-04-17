@@ -13,22 +13,22 @@ import java.util.UUID;
 
 @Component
 public class InvitationDTO {
-    private Long id;
+    private UUID id;
     private String typePiece;
     private String numeroPiece;
     private String mail;
     private String tel;
     private StatutInvitation statut;
-    private UUID compteProId;
+    private String compteProId;
 
-    private UUID compteProDestinataireId;
+    private String compteProDestinataireId;
 
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -72,19 +72,19 @@ public class InvitationDTO {
         this.statut = statut;
     }
 
-    public UUID getCompteProId() {
+    public String getCompteProId() {
         return compteProId;
     }
 
-    public void setCompteProId(UUID compteProId) {
+    public void setCompteProId(String compteProId) {
         this.compteProId = compteProId;
     }
 
-    public UUID getCompteProDestinataireId() {
+    public String getCompteProDestinataireId() {
         return compteProDestinataireId;
     }
 
-    public void setCompteProDestinataireId(UUID compteProDestinataireId) {
+    public void setCompteProDestinataireId(String compteProDestinataireId) {
         this.compteProDestinataireId = compteProDestinataireId;
     }
 }

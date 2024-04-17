@@ -15,16 +15,16 @@ import java.util.UUID;
 @Component
 public class AssociationDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
-    private UUID compteID;
+    private String compteID;
 
     @NotNull
-    private Long entrepriseID;
+    private UUID entrepriseID;
 
     @NotNull
-    private Long roleID;
+    private UUID roleID;
 
     private String telephone;
 
@@ -34,39 +34,39 @@ public class AssociationDTO implements Serializable {
 
     private Instant dateEffet;
 
-    private Long fs;
+    private UUID fs;
 
     private StatutAssociation statut;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public UUID getCompteID() {
+    public String getCompteID() {
         return compteID;
     }
 
-    public void setCompteID(UUID compteID) {
+    public void setCompteID(String compteID) {
         this.compteID = compteID;
     }
 
-    public Long getEntrepriseID() {
+    public UUID getEntrepriseID() {
         return entrepriseID;
     }
 
-    public void setEntrepriseID(Long entrepriseID) {
+    public void setEntrepriseID(UUID entrepriseID) {
         this.entrepriseID = entrepriseID;
     }
 
-    public Long getRoleID() {
+    public UUID getRoleID() {
         return roleID;
     }
 
-    public void setRoleID(Long roleID) {
+    public void setRoleID(UUID roleID) {
         this.roleID = roleID;
     }
 
@@ -102,11 +102,11 @@ public class AssociationDTO implements Serializable {
         this.dateEffet = dateEffet;
     }
 
-    public Long getFs() {
+    public UUID getFs() {
         return fs;
     }
 
-    public void setFs(Long fs) {
+    public void setFs(UUID fs) {
         this.fs = fs;
     }
 

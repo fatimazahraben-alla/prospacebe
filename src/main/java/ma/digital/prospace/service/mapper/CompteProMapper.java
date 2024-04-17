@@ -17,7 +17,7 @@ public interface CompteProMapper extends EntityMapper<CompteProDTO, ComptePro> {
     ComptePro toEntity(CompteProDTO compteProDTO);
     CompteProDTO toDto(ComptePro comptePro);
 
-    default ComptePro fromId(UUID id) {
+    default ComptePro fromId(String id) {
         if (id == null) {
             return null;
         }

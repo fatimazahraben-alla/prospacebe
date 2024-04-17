@@ -3,18 +3,22 @@ package ma.digital.prospace.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import ma.digital.prospace.domain.enumeration.StatutInvitation;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(name = "invitation")
 public class Invitation implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
     @Column(name = "type_piece")
     private String typePiece;
@@ -45,10 +49,10 @@ public class Invitation implements Serializable {
 
 
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

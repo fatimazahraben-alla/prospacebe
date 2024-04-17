@@ -4,25 +4,26 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
- * A DTO for the {@link ma.digital.prospace.domain.FournisseurServiceDTO} entity.
+ * A DTO for the {@link ma.digital.prospace.domain.FournisseurService} entity.
  */
 @Component
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class FournisseurServiceDTO	 implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     private String nom;
 
     private String description;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

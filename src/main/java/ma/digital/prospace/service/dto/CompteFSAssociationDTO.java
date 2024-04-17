@@ -17,25 +17,25 @@ import java.util.UUID;
 @Component
 public class CompteFSAssociationDTO {
     @NotNull
-    private UUID compteID;
+    private String compteID;
     @NotNull
-    private Long fs;
+    private UUID fs;
     @NotNull
     private List<String> entreprises;
 
-    public UUID getCompteID() {
+    public String getCompteID() {
         return compteID;
     }
 
-    public void setCompteID(UUID compteID) {
+    public void setCompteID(String compteID) {
         this.compteID = compteID;
     }
 
-    public Long getFs() {
+    public UUID getFs() {
         return fs;
     }
 
-    public void setFs(Long fs) {
+    public void setFs(UUID fs) {
         this.fs = fs;
     }
 

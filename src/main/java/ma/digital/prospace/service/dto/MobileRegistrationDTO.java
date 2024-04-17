@@ -17,16 +17,16 @@ public class MobileRegistrationDTO {
     @Size(max = 50, message = "Le champ 'deviceVersion' ne peut pas dépasser {max} caractères")
     private String deviceVersion;
 
-    public UUID getCompteId() {
+    public String getCompteId() {
         return compteId;
     }
 
-    public void setCompteId(UUID compteId) {
+    public void setCompteId(String compteId) {
         this.compteId = compteId;
     }
 
     @NotNull
-    private UUID compteId;
+    private String compteId;
 
 
 

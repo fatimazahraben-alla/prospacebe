@@ -164,7 +164,7 @@ public class EntrepriseService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<EntrepriseDTO> findOne(Long id) {
+    public Optional<EntrepriseDTO> findOne(UUID id) {
         log.debug("Request to get Entreprise : {}", id);
         return entrepriseRepository.findById(id).map(entrepriseMapper::toDto);
     }
@@ -174,7 +174,7 @@ public class EntrepriseService {
      *
      * @param id the id of the entity.
      */
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Entreprise : {}", id);
         entrepriseRepository.deleteById(id);
     }
@@ -243,7 +243,7 @@ public class EntrepriseService {
     }
 
 
-    private boolean checkManager(ComptePro comptePro, EntrepriseWSMJ entreprise, UUID CompID) {
+    private boolean checkManager(ComptePro comptePro, EntrepriseWSMJ entreprise, String CompID) {
         List<DirigeantPMDTO> dirigeantsPM = entreprise.getPersonneRc().getDirigeantsPM();
         for (DirigeantPMDTO dirigeant : dirigeantsPM) {
             List<RepresentantDTO> representants = dirigeant.getRepresentants();
@@ -286,7 +286,7 @@ public class EntrepriseService {
     }
 
 
-    private boolean checkDirigeantsWS(EntrepriseWSMJ entrepriseWSMJ, DIRIGEANTDTO dirigeantdto, UUID accountid) {
+    private boolean checkDirigeantsWS(EntrepriseWSMJ entrepriseWSMJ, DIRIGEANTDTO dirigeantdto, String accountid) {
         try {
             Optional<ComptePro> compteOptional = CompteProRepository.findByCustomIdQuery(accountid);
             ComptePro compte = compteOptional.orElse(null);
@@ -313,7 +313,7 @@ public class EntrepriseService {
         return false;
     }
 
-    private boolean checkPp(PersonnephysiqueDTO personnephysiqueDTO, UUID accountid) {
+    private boolean checkPp(PersonnephysiqueDTO personnephysiqueDTO, String accountid) {
         Optional<ComptePro> compteOptional = CompteProRepository.findByCustomIdQuery(accountid);
         ComptePro compte = compteOptional.orElse(null);
         if (personnephysiqueDTO.getPersonneRc().getCommercant().getNumPiece().equals(compte.getIdentifiant())) {
@@ -345,7 +345,7 @@ public class EntrepriseService {
         if (personnephysiqueDTO != null) {
             Optional<ComptePro> compteOptional = CompteProRepository.findByCustomIdQuery(entrepriseRequest.getCOMPID());
             ComptePro compte = compteOptional.orElse(null);
-            UUID compIdUUID = entrepriseRequest.getCOMPID();
+            String compIdUUID = entrepriseRequest.getCOMPID();
             String compIdString = compIdUUID.toString();
             if (isCurrentUser(compIdString)) {
                 if (checkManagerPp(compte, personnephysiqueDTO)) {
@@ -375,7 +375,7 @@ public class EntrepriseService {
 
             } else {
                 String accountConnected = UserId(compIdString);
-                UUID accountConnectedId = UUID.fromString(accountConnected);
+                String accountConnectedId = accountConnected;
                 if (procurationRepository.checkProcurationForCompteAndGestionnaire(entrepriseRequest.getCOMPID(), accountConnectedId) && checkPp(personnephysiqueDTO, entrepriseRequest.getCOMPID())) {
                     Entreprise newEntreprise2 = new Entreprise();
                     newEntreprise2.setNumeroRC(entrepriseRequest.getNumeroRC());
@@ -432,7 +432,7 @@ public class EntrepriseService {
         else {
             Optional<ComptePro> compteOptional = CompteProRepository.findByCustomIdQuery(entrepriseRequest.getCOMPID());
             ComptePro compte = compteOptional.orElse(null);
-            UUID compIdUUID = entrepriseRequest.getCOMPID();
+            String compIdUUID = entrepriseRequest.getCOMPID();
             String compIdString = compIdUUID.toString();
             if (isCurrentUser(compIdString)) {
                 if (checkManager(compte, entrepriseWS, entrepriseRequest.getCOMPID())) {
@@ -461,7 +461,7 @@ public class EntrepriseService {
                 }
             } else {
                 String accountConnected = UserId(compIdString);
-                UUID accountConnectedId = UUID.fromString(accountConnected);
+                String accountConnectedId = accountConnected;
                 DIRIGEANTDTO dirigeants = entrepriseWSMJService.getDirigeantBycodeJuridictionAndnumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
                 if (procurationRepository.checkProcurationForCompteAndGestionnaire(entrepriseRequest.getCOMPID(), accountConnectedId) && checkDirigeantsWS(entrepriseWS, dirigeants, entrepriseRequest.getCOMPID())) {
                     Entreprise newEntreprise2 = new Entreprise();

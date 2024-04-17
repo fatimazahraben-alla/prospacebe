@@ -11,12 +11,12 @@ import java.util.UUID;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ProcurationRepository extends JpaRepository<Procuration, Long> {
+public interface ProcurationRepository extends JpaRepository<Procuration, UUID> {
     @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Procuration p " +
             "WHERE p.utilisateurPro.id = :compteId " +
             "AND p.gestionnaireEspacePro.id = :connectedAccount")
-    boolean checkProcurationForCompteAndGestionnaire(UUID compteId, UUID connectedAccount);
+    boolean checkProcurationForCompteAndGestionnaire(String compteId, String connectedAccount);
 
 
-    Procuration findProcurationByUtilisateurProIdAndGestionnaireEspaceProId(UUID utilisateurProId, UUID gestionnaireEspaceProId);
+    Procuration findProcurationByUtilisateurProIdAndGestionnaireEspaceProId(String utilisateurProId, String gestionnaireEspaceProId);
 }

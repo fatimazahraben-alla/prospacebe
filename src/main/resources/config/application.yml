@@ -176,7 +176,7 @@ spring:
         registration:
           oidc:
             client-id: prospace-mobile-client
-            client-secret: e6NTL8U1TueWyF7RH3DJsjPiNvY06nX0
+            client-secret: JdiiLl9xhOgZjlyZvHIx6dAJMcEqTB33
             scope: openid, profile, email, offline_access # last one for refresh tokens
 server:
   servlet:

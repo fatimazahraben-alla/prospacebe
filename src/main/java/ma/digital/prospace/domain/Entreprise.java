@@ -5,13 +5,16 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import jakarta.persistence.*;
 import ma.digital.prospace.domain.enumeration.Statut;
+import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.validation.constraints.NotNull;
 
@@ -24,44 +27,45 @@ public class Entreprise implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
     @Transient
     @Column(name = "denomination")
     private String denomination;
 
-
+    @Transient
     @Column(name = "statut_juridique")
     private String statutJuridique;
 
-
+    @Transient
     @Column(name = "tribunal")
     private String tribunal;
-
+    @Transient
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "Status_Perphysique_Permorale", length = 50, nullable = true)
     private Statut Status_Perphysique_Permorale;
 
-
+    @Transient
     @Column(name = "numero_rc")
     private String numeroRC;
 
-
+    @Transient
     @Column(name = "ice")
     private String ice;
 
-
+    @Transient
     @Column(name = "activite")
     private String activite;
 
-
+    @Transient
     @Column(name = "forme_juridique")
     private String formeJuridique;
 
-
+    @Transient
     @Column(name = "date_immatriculation")
     private Date dateImmatriculation;
 
@@ -76,11 +80,11 @@ public class Entreprise implements Serializable {
     @JsonIgnoreProperties(value = { "entreprise", "compte", "role" }, allowSetters = true)
     private Set<Association> associations = new HashSet<>();
 
-    public Long getId() {
+    public UUID getId() {
         return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -160,6 +164,8 @@ public class Entreprise implements Serializable {
     public Set<ComptePro> getGerants() {
         return this.gerants;
     }
+
+
 
     public void setGerants(Set<ComptePro> comptePros) {
         if (this.gerants != null) {

@@ -43,7 +43,7 @@ public class InvitationService {
         this.firebaseMessaging = firebaseMessaging;
     }
 
-    public void acceptInvitation(Long invitationId) {
+    public void acceptInvitation(UUID invitationId) {
         Invitation invitation = invitationRepository.findById(invitationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invitation not found with id: " + invitationId));
         invitation.setStatut(StatutInvitation.ACCEPTED);
@@ -51,7 +51,7 @@ public class InvitationService {
 
         //comptePro associated with this invitation
 
-        UUID compIdUUID = invitation.getComptePro().getId();
+        String compIdUUID = invitation.getComptePro().getId();
         Contact contact = contactRepository.findByCompteProId(compIdUUID);
 
         if (contact == null) {
@@ -75,46 +75,51 @@ public class InvitationService {
 
 
     public InvitationDTO createInvitation(InvitationDTO invitationDTO) {
+        // Vérifier l'existence du compte pro destinataire
+        ComptePro comptePro = compteProRepository.findById(invitationDTO.getCompteProDestinataireId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Le compte pro destinataire n'existe pas : " + invitationDTO.getCompteProDestinataireId()));
+
+        if (!isValidEmail(invitationDTO.getMail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Format de l'adresse e-mail invalide.");
+        }
 
         Invitation invitation = invitationMapper.toEntity(invitationDTO);
         invitation.setStatut(StatutInvitation.PENDING);
+        invitation.setComptePro(comptePro);
 
-        invitationRepository.save(invitation);
+        invitation = invitationRepository.save(invitation);
 
         Contact contact = contactRepository.findByCompteProId(invitationDTO.getCompteProDestinataireId());
-        if (contact == null) {
-            //contact is not found
-            throw new EntityNotFoundException("Contact not found for the provided compteProId");
-        }
-
-        //notification
-        String deviceToken = contact.getDeviceToken();
-        if (deviceToken != null && !deviceToken.isEmpty()) {
-            //send notification
-            sendFirebaseNotification(deviceToken, "Nouvelle Invitation", "Vous avez reçu une nouvelle invitation.");
+        if (contact != null && contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
+            sendFirebaseNotification(contact.getDeviceToken(), "Nouvelle Invitation", "Vous avez reçu une nouvelle invitation.");
         } else {
-            //email if token not available
+            //absence de token
         }
 
-        //return dto invitation
         return invitationMapper.toDto(invitation);
     }
 
+    private boolean isValidEmail(String email) {
+        return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    }
 
-
-    //Notification push
     private void sendFirebaseNotification(String deviceToken, String title, String body) {
-        Notification notification = Notification.builder()
-                .setTitle(title)
-                .setBody(body)
-                .build();
+        try {
+            Notification notification = Notification.builder()
+                    .setTitle(title)
+                    .setBody(body)
+                    .build();
 
-        Message message = Message.builder()
-                .setToken(deviceToken)
-                .setNotification(notification)
-                .build();
+            Message message = Message.builder()
+                    .setToken(deviceToken)
+                    .setNotification(notification)
+                    .build();
 
-        firebaseMessaging.sendAsync(message);
+            firebaseMessaging.send(message);
+        } catch (FirebaseMessagingException e) {
+            // Handle the exception (e.g. log it)
+            e.printStackTrace();
+        }
     }
     public List<Invitation> getAllInvitations() {
         return invitationRepository.findAll();

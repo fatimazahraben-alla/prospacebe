@@ -5,11 +5,11 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import jakarta.persistence.EntityExistsException;
 import ma.digital.prospace.service.dto.ContactDTO;
 import ma.digital.prospace.service.dto.MobileRegistrationDTO;
 import org.slf4j.Logger;
@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,7 +76,7 @@ public class CompteProResource {
      */
     @PutMapping("/compte-pros/{id}")
     public ResponseEntity<CompteProDTO> updateComptePro(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody CompteProDTO comptePro
     ) throws URISyntaxException {
         log.debug("REST request to update CompteProDTO : {}, {}", id, comptePro);
@@ -110,7 +111,7 @@ public class CompteProResource {
      */
     @PatchMapping(value = "/compte-pros/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<CompteProDTO> partialUpdateComptePro(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody CompteProDTO comptePro
     ) throws URISyntaxException {
         log.debug("REST request to partial update CompteProDTO partially : {}, {}", id, comptePro);
@@ -154,7 +155,7 @@ public class CompteProResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the comptePro, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/compte-pros/{id}")
-    public ResponseEntity<CompteProDTO> getComptePro(@PathVariable UUID id) {
+    public ResponseEntity<CompteProDTO> getComptePro(@PathVariable String id) {
         log.debug("REST request to get CompteProDTO : {}", id);
         Optional<CompteProDTO> comptePro = compteProService.findOne(id);
         return ResponseUtil.wrapOrNotFound(comptePro);
@@ -167,7 +168,7 @@ public class CompteProResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/compte-pros/{id}")
-    public ResponseEntity<Void> deleteComptePro(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteComptePro(@PathVariable String id) {
         log.debug("REST request to delete CompteProDTO : {}", id);
         compteProService.delete(id);
         return ResponseEntity
@@ -175,55 +176,18 @@ public class CompteProResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
-    @PostMapping("/compte-pros/registerMobile")
-    public ResponseEntity<MobileRegistrationDTO> registerMobile(@Valid @RequestBody MobileRegistrationDTO mobileRegistrationDTO) {
+    @PostMapping("/compte-pros")
+    public ResponseEntity<CompteProDTO> createAccount(@RequestBody MobileRegistrationDTO registrationDTO) {
         try {
-            log.info("Attempting to register or update mobile registration for compteId: {}", mobileRegistrationDTO.getCompteId());
-            auditLogger.info("Initiated mobile registration for compteId: {}", mobileRegistrationDTO.getCompteId());
-
-            compteProService.registerContactDTO(mobileRegistrationDTO);
-
-            log.info("Successful mobile registration for compteId: {}", mobileRegistrationDTO.getCompteId());
-            auditLogger.info("Completed mobile registration for compteId: {}", mobileRegistrationDTO.getCompteId());
-
-            return ResponseEntity.ok().body(mobileRegistrationDTO);
+            CompteProDTO newComptePro = compteProService.createAccountWithMobileRegistration(registrationDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newComptePro);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (EntityExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         } catch (Exception e) {
-            log.error("Failed to register or update mobile for compteId: {}, error: {}", mobileRegistrationDTO.getCompteId(), e.getMessage());
-            auditLogger.error("Failed mobile registration attempt for compteId: {}", mobileRegistrationDTO.getCompteId());
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    @PostMapping("/compte-pro")
-    public ResponseEntity<CompteProDTO> createAccount(@RequestBody CreateAccountRequest createAccountRequest) {
-        try {
-            CompteProDTO newComptePro = compteProService.createAccount(createAccountRequest.getDeviceToken(), createAccountRequest.getSubId());
-            return ResponseEntity.ok(newComptePro);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build(); // or handle more gracefully as needed
-        }
-    }
-
-    static class CreateAccountRequest {
-        private String deviceToken;
-        private UUID subId;
-
-
-        public String getDeviceToken() {
-            return deviceToken;
-        }
-
-        public void setDeviceToken(String deviceToken) {
-            this.deviceToken = deviceToken;
-        }
-
-        public UUID getSubId() {
-            return subId;
-        }
-
-        public void setSubId(UUID subId) {
-            this.subId = subId;
-        }
-    }
-
 
 }

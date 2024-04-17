@@ -122,7 +122,7 @@ public class SecurityConfiguration {
         if (env.acceptsProfiles(Profiles.of(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT))) {
             http
                     .csrf(csrf -> csrf.ignoringRequestMatchers(antMatcher("/h2-console/**")))
-                    .authorizeHttpRequests(authz -> authz.requestMatchers(antMatcher("/h2-console/**")).permitAll());
+                    .authorizeHttpRequests(authz -> authz.requestMatchers(antMatcher("/h2-console/**")).authenticated());
         }
         return http.build();
     }
@@ -150,7 +150,7 @@ public class SecurityConfiguration {
 
     /**
      * Map authorities from "groups" or "roles" claim in ID Token.
-     *
+     $*
      * @return a {@link GrantedAuthoritiesMapper} that maps groups from
      * the IdP to Spring Security Authorities.
      */

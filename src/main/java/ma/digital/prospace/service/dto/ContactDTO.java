@@ -4,17 +4,19 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.UUID;
+
 @Component
 public class ContactDTO {
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    private Long id;
+    private UUID id;
 
 
     @NotNull(message = "Le champ 'deviceToken' ne peut pas être nul")

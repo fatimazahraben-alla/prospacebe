@@ -106,12 +106,12 @@ public class AssociationService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<AssociationDTO> findOne(Long id) {
+    public Optional<AssociationDTO> findOne(UUID id) {
         log.debug("Request to get Association : {}", id);
         return associationRepository.findById(id).map(associationMapper::toDto);
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Association : {}", id);
         associationRepository.deleteById(id);
     }
@@ -151,7 +151,7 @@ public class AssociationService {
         }
     }
 
-    public CompteFSAssociationDTO processAuthenticationStep2(UUID compteID, Long fs, String transactionID) {
+    public CompteFSAssociationDTO processAuthenticationStep2(String compteID, UUID fs, String transactionID) {
         List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteID);
         if (associations != null && !associations.isEmpty()) {
             Session session = new Session();
@@ -198,9 +198,7 @@ public class AssociationService {
     public void pushCompteEntreprise(CompteEntrepriseDTO compteEntrepriseDTO) throws JsonProcessingException {
         CompteProDTO compteProDTO = compteEntrepriseDTO.getComptePro();
         EntrepriseDTO entrepriseDTO = compteEntrepriseDTO.getEntreprise();
-        List<String> roleNames = associationRepository.findRoleNamesByCompteProIdAndEntrepriseId(
-                compteProDTO.getId(),
-                entrepriseDTO.getId());
+        List<String> roleNames = compteEntrepriseDTO.getRoles();
 
         // Create a data map containing the information from DTOs and the roles list
         Map<String, Object> dataMap = new HashMap<>();
@@ -223,25 +221,10 @@ public class AssociationService {
     /**
      * check if the session is finished and if ok (see transactionID header), return the account data plus the company data and associated roles, parameter a transactionID as data header.
      */
-    public CompteEntrepriseDTO checkAuthenticationStep2(String transactionId) throws JsonProcessingException {
-        Session session = sessionRepository.findByTransactionId(transactionId)
-                .filter(s -> s.getStatus() == Session.Status.COMPLETED)
+    public Session.Status checkAuthenticationStep2(String transactionId) {
+        return sessionRepository.findByTransactionId(transactionId)
+                .map(Session::getStatus)
                 .orElseThrow(() -> new EntityNotFoundException("Session not completed or not found."));
-
-        // Convertir la chaîne JSON en objet Map<String, Object>
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> dataMap = objectMapper.readValue(session.getJsonData(), new TypeReference<Map<String, Object>>() {});
-        // Extraire les données de la map et les convertir en objets DTO
-        EntrepriseDTO entrepriseDTO = objectMapper.convertValue(dataMap.get("entreprise"), EntrepriseDTO.class);
-        CompteProDTO compteProDTO = objectMapper.convertValue(dataMap.get("comptePro"), CompteProDTO.class);
-        List<String> roles = objectMapper.convertValue(dataMap.get("roles"), new TypeReference<List<String>>() {});
-        // Créer un objet CompteEntrepriseDTO à partir des objets DTO obtenus
-        CompteEntrepriseDTO compteEntrepriseDTO = new CompteEntrepriseDTO();
-        compteEntrepriseDTO.setEntreprise(entrepriseDTO);
-        compteEntrepriseDTO.setComptePro(compteProDTO);
-        compteEntrepriseDTO.setRoles(roles);
-
-        return compteEntrepriseDTO;
     }
     /**
      * create an association
@@ -259,7 +242,7 @@ public class AssociationService {
     /**
      * update an association accepter ou annuler association
      */
-    public AssociationDTO updateStatut(Long associationId, StatutAssociation nouveauStatut) {
+    public AssociationDTO updateStatut(UUID associationId, StatutAssociation nouveauStatut) {
         Association association = associationRepository.findById(associationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Association not found with id " + associationId));
 

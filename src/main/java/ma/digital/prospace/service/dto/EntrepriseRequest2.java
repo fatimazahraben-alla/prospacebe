@@ -11,7 +11,7 @@ public class EntrepriseRequest2 {
 
     private String ice;
 
-    private UUID COMPID;
+    private String COMPID;
 
     private Statut Perphysique_Permorale;
 
@@ -45,11 +45,11 @@ public class EntrepriseRequest2 {
         this.ice = ice;
     }
 
-    public UUID getCOMPID() {
+    public String getCOMPID() {
         return COMPID;
     }
 
-    public void setCOMPID(UUID COMPID) {
+    public void setCOMPID(String COMPID) {
         this.COMPID = COMPID;
     }
 

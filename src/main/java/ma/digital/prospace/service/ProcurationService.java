@@ -2,6 +2,8 @@ package ma.digital.prospace.service;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
+
 import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.Procuration;
 import ma.digital.prospace.repository.CompteProRepository;
@@ -108,7 +110,7 @@ public class ProcurationService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<ProcurationDTO> findOne(Long id) {
+    public Optional<ProcurationDTO> findOne(UUID id) {
         log.debug("Request to get Procuration : {}", id);
         return procurationRepository.findById(id).map(procurationMapper::toDto);
     }
@@ -118,12 +120,12 @@ public class ProcurationService {
      *
      * @param id the id of the entity.
      */
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Procuration : {}", id);
         procurationRepository.deleteById(id);
     }
 
-    public ResponseEntity<ProcurationDTO> createProcuration(ProcurationDTO procurationDTO, Long invitationId) {
+    public ResponseEntity<ProcurationDTO> createProcuration(ProcurationDTO procurationDTO, UUID invitationId) {
         ComptePro gestionnaire = compteProRepository.findById(procurationDTO.getGestionnaireEspaceProId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Gestionnaire Espace Pro not found"));
         ComptePro utilisateur = compteProRepository.findById(procurationDTO.getUtilisateurProId())
@@ -137,7 +139,7 @@ public class ProcurationService {
         return ResponseEntity.ok(procurationMapper.toDto(procuration));
     }
 
-    public void deleteProcuration(Long procurationId) {
+    public void deleteProcuration(UUID procurationId) {
         Procuration procuration = procurationRepository.findById(procurationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Procuration not found"));
         procuration.setDateFin(Instant.now());

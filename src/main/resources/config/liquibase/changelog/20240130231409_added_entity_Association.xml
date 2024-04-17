@@ -6,7 +6,7 @@
     <!-- Added the entity Association. -->
     <changeSet id="20240130231409-1" author="jhipster">
         <createTable tableName="association">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="date_effet" type="${datetimeType}">
@@ -24,13 +24,13 @@
             <column name="statut" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="entreprise_id" type="bigint">
+            <column name="entreprise_id" type="UUID">
                 <constraints nullable="true" />
             </column>
-            <column name="compte_id" type="UUID">
+            <column name="compte_id" type="varchar(50)">
                 <constraints nullable="true" />
             </column>
-            <column name="role_id" type="bigint">
+            <column name="role_id" type="UUID">
                 <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
@@ -51,15 +51,15 @@
                 separator=";"
                 tableName="association"
                 usePreparedStatements="true">
-            <column name="id" type="NUMERIC"/>
+            <column name="id" type="UUID"/>
             <column name="date_effet" type="DATE"/>
             <column name="date_fin" type="DATE"/>
             <column name="mail" type="STRING"/>
             <column name="telephone" type="STRING"/>
             <column name="statut" type="STRING"/>
-            <column name="entreprise_id" type="bigint"/>
-            <column name="compte_id" type="UUID"/>
-            <column name="role_id" type="bigint"/>
+            <column name="entreprise_id" type="UUID"/>
+            <column name="compte_id" type="STRING"/>
+            <column name="role_id" type="UUID"/>
 
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>

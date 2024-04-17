@@ -13,6 +13,7 @@ import ma.digital.prospace.service.mapper.ContactMapper;
 import ma.digital.prospace.service.dto.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Implementation for managing {@link Contact}.
@@ -83,7 +84,7 @@ public class ContactService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<ContactDTO> findOne(Long id) {
+    public Optional<ContactDTO> findOne(UUID id) {
         log.debug("Request to get Contact : {}", id);
         return contactRepository.findById(id).map(contactMapper::toDto);
     }
@@ -93,7 +94,7 @@ public class ContactService {
      *
      * @param id the id of the entity.
      */
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Contact : {}", id);
         contactRepository.deleteById(id);
     }

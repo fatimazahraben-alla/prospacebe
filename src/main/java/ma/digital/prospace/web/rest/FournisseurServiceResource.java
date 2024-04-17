@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import ma.digital.prospace.domain.FournisseurService;
 import org.slf4j.Logger;
@@ -75,7 +76,7 @@ public class FournisseurServiceResource {
     @PatchMapping(value = "/fournisseur-services/{id}", consumes = { "application/json", "application/merge-patch+json" })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<FournisseurServiceDTO> partialUpdateFournisseurService(
-            @PathVariable(value = "id", required = false) final Long id,
+            @PathVariable(value = "id", required = false) final UUID id,
             @RequestBody FournisseurServiceDTO fournisseurService
     ) throws URISyntaxException {
         log.debug("REST request to partial update FournisseurServiceDTO partially : {}, {}", id, fournisseurService);
@@ -123,7 +124,7 @@ public class FournisseurServiceResource {
      */
     @GetMapping("/fournisseur-services/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<FournisseurServiceDTO> getFournisseurService(@PathVariable Long id) {
+    public ResponseEntity<FournisseurServiceDTO> getFournisseurService(@PathVariable UUID id) {
         log.debug("REST request to get FournisseurServiceDTO : {}", id);
         Optional<FournisseurServiceDTO> fournisseurService = fournisseurServiceService.findOne(id);
         return ResponseUtil.wrapOrNotFound(fournisseurService);
@@ -137,7 +138,7 @@ public class FournisseurServiceResource {
      */
     @DeleteMapping("/fournisseur-services/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Void> deleteFournisseurService(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteFournisseurService(@PathVariable UUID id) {
         log.debug("REST request to delete FournisseurServiceDTO : {}", id);
         fournisseurServiceService.delete(id);
         return ResponseEntity
@@ -154,7 +155,7 @@ public class FournisseurServiceResource {
 
     @PutMapping("/fournisseur-services/{fournisseurID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<FournisseurServiceDTO> updateFournisseurService(@PathVariable Long fournisseurID, @RequestBody FournisseurServiceDTO fournisseurServiceDTO) {
+    public ResponseEntity<FournisseurServiceDTO> updateFournisseurService(@PathVariable UUID fournisseurID, @RequestBody FournisseurServiceDTO fournisseurServiceDTO) {
         fournisseurServiceDTO.setId(fournisseurID);
         FournisseurServiceDTO updatedFournisseurService = fournisseurServiceService.update(fournisseurServiceDTO);
         return new ResponseEntity<>(updatedFournisseurService, HttpStatus.OK);

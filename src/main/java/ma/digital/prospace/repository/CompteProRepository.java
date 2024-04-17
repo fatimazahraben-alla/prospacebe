@@ -12,13 +12,12 @@ import java.util.UUID;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface CompteProRepository extends JpaRepository<ComptePro, UUID> {
+public interface CompteProRepository extends JpaRepository<ComptePro, String> {
     Optional<ComptePro> findByIdentifiant(String identifiant);
-    Optional<ComptePro> findById(UUID Id);
+    Optional<ComptePro> findById(String Id);
 
     @Query(value = "SELECT * FROM compte_pro WHERE id = :id", nativeQuery = true)
-    Optional<ComptePro> findByCustomIdQuery(UUID id);
+    Optional<ComptePro> findByCustomIdQuery(String id);
 
-    ComptePro findByAndPrenomFr(String loginuser);
 
 }

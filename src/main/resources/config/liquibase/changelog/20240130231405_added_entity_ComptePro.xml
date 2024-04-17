@@ -6,7 +6,7 @@
     <!-- Added the entity ComptePro. -->
     <changeSet id="20240130231405-1" author="jhipster">
         <createTable tableName="compte_pro">
-            <column name="id" type="UUID" >
+            <column name="id" type="varchar(50)" >
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="identifiant" type="varchar(10)">
@@ -51,7 +51,7 @@
             <column name="typeidentifiant" type="varchar(10)">
                 <constraints nullable="true" />
             </column>
-            <column name="entreprise_geree_id" type="bigint">
+            <column name="entreprise_geree_id" type="UUID">
                 <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->

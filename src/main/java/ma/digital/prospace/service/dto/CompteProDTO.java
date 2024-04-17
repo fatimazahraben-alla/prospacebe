@@ -17,7 +17,7 @@ import java.util.UUID;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class CompteProDTO implements Serializable {
 
-    private UUID id;
+    private String id;
 
     @NotNull
     @Size(max = 10)
@@ -54,21 +54,11 @@ public class CompteProDTO implements Serializable {
 
     private StatutCompte statut;
 
-    private  Long compteEntreprise;
-
-    public Long getCompteEntreprise() {
-        return compteEntreprise;
-    }
-
-    public void setCompteEntreprise(Long compteEntreprise) {
-        this.compteEntreprise = compteEntreprise;
-    }
-
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
