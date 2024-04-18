@@ -166,18 +166,18 @@ spring:
   output:
     ansi:
       console-available: true
-  security:
-    oauth2:
-      client:
-        provider:
-          oidc:
-            issuer-uri:  http://localhost:8080/realms/jhipster
-            jwk-set-uri: http://localhost:8080/realms/jhipster/protocol/openid-connect/certs
-        registration:
-          oidc:
-            client-id: prospace-mobile-client
-            client-secret: JdiiLl9xhOgZjlyZvHIx6dAJMcEqTB33
-            scope: openid, profile, email, offline_access # last one for refresh tokens
+  #security:
+    #oauth2:
+      #client:
+        #provider:
+          #oidc:
+            #issuer-uri:  http://localhost:8080/realms/jhipster
+            #jwk-set-uri: http://localhost:8080/realms/jhipster/protocol/openid-connect/certs
+        #registration:
+          #oidc:
+            #client-id: prospace-mobile-client
+            #client-secret: JdiiLl9xhOgZjlyZvHIx6dAJMcEqTB33
+            #scope: openid, profile, email, offline_access # last one for refresh tokens
 server:
   servlet:
     session:
