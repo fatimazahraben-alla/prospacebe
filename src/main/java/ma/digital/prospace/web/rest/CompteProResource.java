@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -75,6 +76,7 @@ public class CompteProResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/compte-pros/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<CompteProDTO> updateComptePro(
         @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody CompteProDTO comptePro
@@ -141,6 +143,7 @@ public class CompteProResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of comptePros in body.
      */
     @GetMapping("/compte-pros")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<List<CompteProDTO>> getAllComptePros(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of ComptePros");
         Page<CompteProDTO> page = compteProService.findAll(pageable);
@@ -155,6 +158,7 @@ public class CompteProResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the comptePro, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/compte-pros/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<CompteProDTO> getComptePro(@PathVariable String id) {
         log.debug("REST request to get CompteProDTO : {}", id);
         Optional<CompteProDTO> comptePro = compteProService.findOne(id);
@@ -168,6 +172,7 @@ public class CompteProResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/compte-pros/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> deleteComptePro(@PathVariable String id) {
         log.debug("REST request to delete CompteProDTO : {}", id);
         compteProService.delete(id);
@@ -177,6 +182,7 @@ public class CompteProResource {
             .build();
     }
     @PostMapping("/compte-pros")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<CompteProDTO> createAccount(@RequestBody MobileRegistrationDTO registrationDTO) {
         try {
             CompteProDTO newComptePro = compteProService.createAccountWithMobileRegistration(registrationDTO);

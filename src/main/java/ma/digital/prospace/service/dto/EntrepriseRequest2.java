@@ -9,15 +9,10 @@ public class EntrepriseRequest2 {
 
     private String tribunal;
     private String numeroRC;
-
-
-
     private typeidentifiant indentifianttype;
     private String CIN;
     private String ice;
-
     private String COMPID;
-
     private Statut Perphysique_Permorale;
 
 

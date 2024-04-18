@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
+import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -48,6 +50,7 @@ public class ProcurationResource {
         this.procurationRepository = procurationRepository;
     }
     @PutMapping("/procurations/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<ProcurationDTO> updateProcuration(
             @PathVariable(value = "id", required = false) final UUID id,
             @RequestBody ProcurationDTO procuration
@@ -114,6 +117,7 @@ public class ProcurationResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of procurations in body.
      */
     @GetMapping("/procurations")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<List<ProcurationDTO>> getAllProcurations(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Procurations");
         Page<ProcurationDTO> page = procurationService.findAll(pageable);
@@ -128,6 +132,7 @@ public class ProcurationResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the procuration, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/procurations/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<ProcurationDTO> getProcuration(@PathVariable UUID id) {
         log.debug("REST request to get ProcurationDTO : {}", id);
         Optional<ProcurationDTO> procuration = procurationService.findOne(id);
@@ -140,40 +145,34 @@ public class ProcurationResource {
      * @return the ResponseEntity with status 201 (Created) and with body the new procurationDTO,
      * or with status 400 (Bad Request) if the procuration has not been created
      */
+
+
     @PostMapping("/procurations")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<ProcurationDTO> createProcuration(@RequestBody ProcurationDTO procurationDTO) {
-        if (procurationDTO.getId() != null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A new procuration cannot already have an ID");
-        }
         try {
-            ProcurationDTO result = procurationService.createOrUpdateProcuration(procurationDTO);
+            ProcurationDTO result = procurationService.createProcuration(procurationDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
-    /**
-     * PUT  /procurations : Updates an existing procuration.
-     *
-     * @param procurationDTO the procurationDTO to update
-     * @return the ResponseEntity with status 200 (OK) and with body the updated procurationDTO,
-     * or with status 400 (Bad Request) if the procuration has not been updated
-     */
-    @PutMapping("/procurations")
-    public ResponseEntity<ProcurationDTO> updateProcuration(@RequestBody ProcurationDTO procurationDTO) {
-        if (procurationDTO.getId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ID, id null");
-        }
+    @PostMapping("/procurations/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<ProcurationDTO> acceptProcuration(@PathVariable UUID id) {
         try {
-            ProcurationDTO result = procurationService.createOrUpdateProcuration(procurationDTO);
+            ProcurationDTO result = procurationService.acceptProcuration(id);
             return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
     @DeleteMapping("/procurations/{procurationID}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> deleteProcuration(@PathVariable UUID procurationID) {
         procurationService.deleteProcuration(procurationID);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, procurationID.toString())).build();

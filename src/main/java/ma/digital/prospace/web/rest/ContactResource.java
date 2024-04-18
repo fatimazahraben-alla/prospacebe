@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -62,6 +63,7 @@ public class ContactResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/contacts")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<ContactDTO> createContact(@Valid @RequestBody ContactDTO contactDTO) throws URISyntaxException {
         log.debug("REST request to save ContactDTO : {}", contactDTO);
         if (contactDTO.getId() != null) {
@@ -85,6 +87,7 @@ public class ContactResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/contacts/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<ContactDTO> updateContact(
             @PathVariable(value = "id", required = false) final Long id,
             @Valid @RequestBody ContactDTO contactDTO
@@ -143,6 +146,7 @@ public class ContactResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of contacts in body.
      */
     @GetMapping("/contacts")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<List<ContactDTO>> getAllContacts(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Contacts");
         Page<ContactDTO> page = contactService.findAll(pageable);

@@ -1,5 +1,7 @@
 package ma.digital.prospace.service;
 import jakarta.servlet.http.HttpServletRequest;
+import ma.digital.prospace.domain.Procuration;
+import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import ma.digital.prospace.web.rest.errors.EntrepriseBadRequestException;
 import ma.digital.prospace.web.rest.errors.EntrepriseCreationException;
@@ -375,7 +377,8 @@ public class EntrepriseService {
 
             } else {
                 String accountConnectedId = UserId(compIdString);
-                if (procurationRepository.checkProcurationForCompteAndGestionnaire(entrepriseRequest.getCOMPID(), accountConnectedId) && checkPp(personnephysiqueDTO, entrepriseRequest.getCOMPID())) {
+                Procuration procuration = procurationRepository.findProcurationByUtilisateurProIdAndGestionnaireEspaceProId(entrepriseRequest.getCOMPID(), accountConnectedId);
+                if ( procuration.getStatut() == StatutInvitation.ACCEPTED  && checkPp(personnephysiqueDTO, entrepriseRequest.getCOMPID())) {
                     Entreprise newEntreprise2 = new Entreprise();
                     newEntreprise2.setEtat(personnephysiqueDTO.getPersonneRc().getEtat());
                     newEntreprise2.setStatus_Perphysique_Permorale(entrepriseRequest.getPerphysique_Permorale());
@@ -471,7 +474,8 @@ public class EntrepriseService {
             } else {
                 String accountConnectedId = UserId(compIdString);
                 DIRIGEANTDTO dirigeants = entrepriseWSMJService.getDirigeantBycodeJuridictionAndnumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
-                if (procurationRepository.checkProcurationForCompteAndGestionnaire(entrepriseRequest.getCOMPID(), accountConnectedId) && checkDirigeantsWS(entrepriseRequest,entrepriseWS, dirigeants)) {
+                Procuration procuration = procurationRepository.findProcurationByUtilisateurProIdAndGestionnaireEspaceProId(entrepriseRequest.getCOMPID(), accountConnectedId);
+                if ( procuration.getStatut() == StatutInvitation.ACCEPTED && checkDirigeantsWS(entrepriseRequest,entrepriseWS, dirigeants)) {
                     Entreprise newEntreprise2 = new Entreprise();
                     newEntreprise2.setStatus_Perphysique_Permorale(entrepriseRequest.getPerphysique_Permorale());
                     newEntreprise2.setEtat(entrepriseWS.getPersonneRc().getIdentification().getEtat());

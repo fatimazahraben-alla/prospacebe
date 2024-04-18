@@ -11,7 +11,6 @@ import ma.digital.prospace.domain.Procuration;
 import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.repository.ContactRepository;
-import ma.digital.prospace.repository.InvitationRepository;
 import ma.digital.prospace.repository.ProcurationRepository;
 import ma.digital.prospace.service.dto.ProcurationDTO;
 import ma.digital.prospace.service.mapper.ProcurationMapper;
@@ -20,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -38,16 +36,12 @@ public class ProcurationService {
     private final FirebaseNotificationService firebaseNotificationService;
     private final ContactRepository contactRepository;
     private final ProcurationMapper procurationMapper;
-    private final InvitationRepository invitationRepository;
-    private final InvitationService invitationService;
     private final CompteProRepository compteProRepository;
 
-    public ProcurationService(ProcurationRepository procurationRepository, ProcurationMapper procurationMapper, InvitationRepository invitationRepository, InvitationService invitationService, CompteProRepository compteProRepository, FirebaseNotificationService firebaseNotificationService, ContactRepository contactRepository) {
+    public ProcurationService(ProcurationRepository procurationRepository, ProcurationMapper procurationMapper, CompteProRepository compteProRepository, FirebaseNotificationService firebaseNotificationService, ContactRepository contactRepository) {
         this.procurationRepository = procurationRepository;
         this.procurationMapper = procurationMapper;
-        this.invitationRepository = invitationRepository;
         this.compteProRepository = compteProRepository;
-        this.invitationService = invitationService;
         this.firebaseNotificationService = firebaseNotificationService;
         this.contactRepository = contactRepository;
     }
@@ -132,39 +126,49 @@ public class ProcurationService {
         procurationRepository.deleteById(id);
     }
 
-    public ProcurationDTO createOrUpdateProcuration(ProcurationDTO procurationDTO) {
+    public ProcurationDTO createProcuration(ProcurationDTO procurationDTO) {
         ComptePro gestionnaire = compteProRepository.findById(procurationDTO.getGestionnaireEspaceProId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Gestionnaire Espace Pro not found"));
-        ComptePro utilisateur = compteProRepository.findById(procurationDTO.getUtilisateurProId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Utilisateur Pro not found"));
+                .orElseThrow(() -> new RuntimeException("Gestionnaire Espace Pro introuvable"));
 
+        ComptePro utilisateur = compteProRepository.findById(procurationDTO.getUtilisateurProId())
+                .orElseThrow(() -> new RuntimeException("Utilisateur Pro introuvable"));
+
+        // Mapper DTO a l'entité
         Procuration procuration = procurationMapper.toEntity(procurationDTO);
+        procuration.setGestionnaireEspacePro(gestionnaire);
+        procuration.setUtilisateurPro(utilisateur);
+        procuration.setStatut(StatutInvitation.PENDING);
         procuration = procurationRepository.save(procuration);
 
-        // Set status
-        procuration.setStatut(procuration.getId() == null ? StatutInvitation.PENDING : StatutInvitation.ACCEPTED);
-
         // notification
-        if (StatutInvitation.ACCEPTED.equals(procuration.getStatut())) {
-            Contact contact = contactRepository.findByCompteProId(gestionnaire.getId());
-            if (contact != null && contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
-                try {
-                    firebaseNotificationService.sendNotification(
-                            contact.getDeviceToken(),
-                            "Invitation Accepted",
-                            "Invitation to manage the pro space has been accepted."
-                    );
-                } catch (Exception e) {
-                    System.err.println("Failed to send notification: " + e.getMessage());
-                }
-            } else {
-                System.out.println("No device token available for contact with ComptePro ID: " + gestionnaire.getId());
-            }
-        }
+        sendNotification(gestionnaire.getId(), "Nouvelle demande de procuration", "Vous avez reçu une nouvelle demande de procuration de la part de " + utilisateur.getNomFr());
 
         return procurationMapper.toDto(procuration);
     }
 
+    public ProcurationDTO acceptProcuration(UUID procurationId) {
+        Procuration procuration = procurationRepository.findById(procurationId)
+                .orElseThrow(() -> new RuntimeException("Procuration non trouvée"));
+        procuration.setStatut(StatutInvitation.ACCEPTED);
+        procuration = procurationRepository.save(procuration);
+
+        sendNotification(procuration.getUtilisateurPro().getId(), "Procuration acceptée", "Votre demande de procuration a été acceptée par " + procuration.getGestionnaireEspacePro().getNomFr());
+
+        return procurationMapper.toDto(procuration);
+    }
+
+    private void sendNotification(String compteProId, String title, String message) {
+        Contact contact = contactRepository.findByCompteProId(compteProId);
+        if (contact != null && contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
+            try {
+                firebaseNotificationService.sendNotification(contact.getDeviceToken(), title, message);
+            } catch (FirebaseMessagingException e) {
+                throw new RuntimeException("Échec de l'envoi de la notification Firebase", e);
+            }
+        } else {
+            throw new RuntimeException("Contact introuvable pour l'ID de ComptePro : " + compteProId);
+        }
+    }
 
     public void deleteProcuration(UUID procurationId) {
         Procuration procuration = procurationRepository.findById(procurationId)

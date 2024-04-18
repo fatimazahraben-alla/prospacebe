@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -66,6 +67,7 @@ public class AssociationResource {
     }*/
 
     @GetMapping("/associations")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Page<AssociationDTO>> getAllAssociations(Pageable pageable) {
         log.debug("REST request to get a page of Associations");
         Page<AssociationDTO> page = associationService.findAll(pageable);
@@ -74,6 +76,7 @@ public class AssociationResource {
     }
 
     @GetMapping("/associations/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<AssociationDTO> getAssociation(@PathVariable UUID id) {
         log.debug("REST request to get Association : {}", id);
         AssociationDTO associationDTO = associationService.findOne(id)
@@ -83,6 +86,7 @@ public class AssociationResource {
     }
 
     @DeleteMapping("/associations/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> deleteAssociation(@PathVariable UUID id) {
         log.debug("REST request to delete Association : {}", id);
         associationService.delete(id);
@@ -91,6 +95,7 @@ public class AssociationResource {
     }
 
     @GetMapping("/association/processAuthenticationStep2")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<CompteFSAssociationDTO> processAuthenticationStep2(@RequestParam String compteID, @RequestParam UUID fs,
                                                                              @RequestParam String transactionID) {
         CompteFSAssociationDTO responseDTO = associationService.processAuthenticationStep2(compteID, fs, transactionID);
@@ -101,6 +106,7 @@ public class AssociationResource {
         }
     }
     @PostMapping("/association/pushCompteEntreprise")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> pushCompteEntreprise(@RequestBody CompteEntrepriseDTO compteEntrepriseDTO) {
         try {
             associationService.pushCompteEntreprise(compteEntrepriseDTO);
@@ -112,6 +118,7 @@ public class AssociationResource {
         }
     }
     @GetMapping("/association/checkAuthenticationStep2")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Session.Status> checkAuthenticationStep2(@RequestParam String transactionId) {
         try {
             Session.Status sessionStatus = associationService.checkAuthenticationStep2(transactionId);
@@ -122,11 +129,13 @@ public class AssociationResource {
     }
 
     @PostMapping("/associations")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<AssociationDTO> createAssociation(@RequestBody AssociationDTO dto) {
         AssociationDTO createdDto = associationService.createAssociation(dto);
         return new ResponseEntity<>(createdDto, HttpStatus.CREATED);
     }
     @PutMapping("/associations")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<AssociationDTO> updateAssociationStatut(@RequestParam UUID id, @RequestBody String statut) {
         StatutAssociation nouveauStatut;
         try {

@@ -1,2 +1,0 @@
-id;type_piece;numero_piece;mail;tel;created_at;statut;compte_pro_id;compte_pro_destinataire_id
-f85c0c8e-ef7a-434e-8988-0bf445de1267;CIN;123456;example@example.com;1234567890;2024-01-30 23:14:05;PENDING;bc9e4357-a91c-12d3-a456-426617440002;123e4567-e89b-12d3-a456-426614174000
