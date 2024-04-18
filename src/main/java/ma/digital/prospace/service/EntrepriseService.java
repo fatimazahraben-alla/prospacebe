@@ -61,8 +61,8 @@ public class EntrepriseService {
     private final AssociationRepository associationRepository;
     private CompteProRepository CompteProRepository;
 
-    @Autowired
-    private JwtDecoder jwtDecoder;
+    //@Autowired
+    //private JwtDecoder jwtDecoder;
 
     private final UserService userService;
     @Autowired

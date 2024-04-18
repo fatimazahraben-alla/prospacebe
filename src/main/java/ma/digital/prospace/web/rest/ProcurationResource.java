@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import jakarta.persistence.EntityNotFoundException;
+import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -170,6 +171,10 @@ public class ProcurationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+
+
+
 
     @DeleteMapping("/procurations/{procurationID}")
     @PreAuthorize("hasAuthority('ROLE_USER')")

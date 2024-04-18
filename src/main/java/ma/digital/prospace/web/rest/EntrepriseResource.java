@@ -54,8 +54,8 @@ public class EntrepriseResource {
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
-    @Autowired
-    private JwtDecoder jwtDecoder;
+    //@Autowired
+    //private JwtDecoder jwtDecoder;
 
     private final EntrepriseService entrepriseService;
     @Autowired
