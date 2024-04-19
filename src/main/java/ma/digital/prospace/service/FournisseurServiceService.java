@@ -105,7 +105,7 @@ public class FournisseurServiceService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<FournisseurServiceDTO> findOne(UUID id) {
+    public Optional<FournisseurServiceDTO> findOne(String id) {
         log.debug("Request to get FournisseurService : {}", id);
         return fournisseurServiceRepository.findById(id).map(fournisseurServiceMapper::toDto);
     }
@@ -115,7 +115,7 @@ public class FournisseurServiceService {
      *
      * @param id the id of the entity.
      */
-    public void delete(UUID id) {
+    public void delete(String id) {
         log.debug("Request to delete FournisseurService : {}", id);
         fournisseurServiceRepository.deleteById(id);
     }

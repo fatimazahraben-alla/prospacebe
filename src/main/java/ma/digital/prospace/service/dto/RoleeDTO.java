@@ -12,7 +12,7 @@ public class RoleeDTO implements Serializable {
 
     private String description;
 
-    private UUID fournisseurServiceId;
+    private String fournisseurServiceId;
 
     // Getters and setters
 
@@ -40,11 +40,11 @@ public class RoleeDTO implements Serializable {
         this.description = description;
     }
 
-    public UUID getFournisseurServiceId() {
+    public String getFournisseurServiceId() {
         return fournisseurServiceId;
     }
 
-    public void setFournisseurServiceId(UUID fournisseurServiceId) {
+    public void setFournisseurServiceId(String fournisseurServiceId) {
         this.fournisseurServiceId = fournisseurServiceId;
     }
 

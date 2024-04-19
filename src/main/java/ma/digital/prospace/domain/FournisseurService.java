@@ -19,6 +19,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.validation.constraints.Size;
+
 /**
  * A FournisseurService.
  */
@@ -31,10 +33,9 @@ public class FournisseurService implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    @Size(max = 50)
+    @Column(name = "id", nullable = false, unique = true)
+    private String id;
 
     @Column(name = "nom")
     private String nom;
@@ -49,16 +50,16 @@ public class FournisseurService implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public UUID getId() {
+    public String getId() {
         return this.id;
     }
 
-    public FournisseurService id(UUID id) {
+    public FournisseurService id(String id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 

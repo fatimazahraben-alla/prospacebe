@@ -13,17 +13,17 @@ import java.util.UUID;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class FournisseurServiceDTO	 implements Serializable {
 
-    private UUID id;
+    private String id;
 
     private String nom;
 
     private String description;
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 

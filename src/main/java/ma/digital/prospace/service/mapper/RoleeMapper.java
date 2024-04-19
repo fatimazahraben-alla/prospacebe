@@ -25,7 +25,7 @@ public interface RoleeMapper {
         
     }
 
-    default FournisseurService map(UUID value) {
+    default FournisseurService map(String value) {
         if (value == null) {
             return null;
         }

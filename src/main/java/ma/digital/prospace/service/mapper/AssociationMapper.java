@@ -15,6 +15,7 @@ public interface AssociationMapper extends EntityMapper<AssociationDTO, Associat
 
     @Mapping(target = "compteID", source = "compte.id")
     @Mapping(target = "entrepriseID", source = "entreprise.id")
+    @Mapping(target = "roleID", source = "role.id")
     @Mapping(target = "dateEffet", source = "dateEffet")
     @Mapping(target = "dateFin", source = "dateFin")
     @Mapping(target = "mail", source = "mail")
@@ -23,6 +24,7 @@ public interface AssociationMapper extends EntityMapper<AssociationDTO, Associat
 
     @Mapping(source = "compteID", target = "compte.id")
     @Mapping(source = "entrepriseID", target = "entreprise.id")
+    @Mapping(target = "role.id", source = "roleID")
     @Mapping(source = "dateEffet", target = "dateEffet")
     @Mapping(source = "dateFin", target = "dateFin")
     @Mapping(source = "mail", target = "mail")

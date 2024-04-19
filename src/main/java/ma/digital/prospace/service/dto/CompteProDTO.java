@@ -1,5 +1,6 @@
 package ma.digital.prospace.service.dto;
 
+import jakarta.persistence.Column;
 import ma.digital.prospace.domain.enumeration.StatutCompte;
 import ma.digital.prospace.domain.enumeration.typeidentifiant;
 import org.springframework.stereotype.Component;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -27,31 +29,13 @@ public class CompteProDTO implements Serializable {
     @Size(max = 25)
     private typeidentifiant typeidentifiant;
 
-    @NotNull
-    @Size(max = 50)
-    private String nomAr;
 
-    @NotNull
-    @Size(max = 50)
-    private String nomFr;
 
-    @NotNull
-    @Size(max = 50)
-    private String prenomAr;
+    private Date createdAt;
 
-    @NotNull
-    @Size(max = 50)
-    private String prenomFr;
+    private Date updatedAt;
 
-    @Size(max = 50)
-    private String address; // Modification du nom de la variable
-
-    private String photo; // Modification du type de la variable
-
-    private String mail;
-
-    private String telephone;
-
+    private boolean deleted;
     private StatutCompte statut;
 
     public String getId() {
@@ -78,70 +62,29 @@ public class CompteProDTO implements Serializable {
         this.typeidentifiant = typeidentifiant;
     }
 
-    public String getNomAr() {
-        return nomAr;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setNomAr(String nomAr) {
-        this.nomAr = nomAr;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getNomFr() {
-        return nomFr;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setNomFr(String nomFr) {
-        this.nomFr = nomFr;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public String getPrenomAr() {
-        return prenomAr;
+    public boolean isDeleted() {
+        return deleted;
     }
 
-    public void setPrenomAr(String prenomAr) {
-        this.prenomAr = prenomAr;
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
-
-    public String getPrenomFr() {
-        return prenomFr;
-    }
-
-    public void setPrenomFr(String prenomFr) {
-        this.prenomFr = prenomFr;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
-    public String getMail() {
-        return mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
-
-    public String getTelephone() {
-        return telephone;
-    }
-
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
-
     public StatutCompte getStatut() {
         return statut;
     }

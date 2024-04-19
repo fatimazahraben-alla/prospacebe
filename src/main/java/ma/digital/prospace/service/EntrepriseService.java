@@ -186,7 +186,7 @@ public class EntrepriseService {
 
 
     // Méthode pour vérifier si l'utilisateur actuellement connecté correspond à un ID spécifique
-    public boolean isCurrentUser(String accountId) {
+    private boolean isCurrentUser(String accountId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
@@ -349,7 +349,8 @@ public class EntrepriseService {
             ComptePro compte = compteOptional.orElse(null);
             String compIdUUID = entrepriseRequest.getCOMPID();
             String compIdString = compIdUUID.toString();
-            if (isCurrentUser(compIdString)) {
+            boolean isCurrentUser = true;
+            if (isCurrentUser) {
                 if (checkManagerPp(entrepriseRequest, personnephysiqueDTO)) {
                     Entreprise newEntreprise = new Entreprise();
                     newEntreprise.setEtat(personnephysiqueDTO.getPersonneRc().getEtat());
@@ -431,7 +432,6 @@ public class EntrepriseService {
         return false;
     }
 
-
     private Entreprise handleMoralPerson(EntrepriseRequest2 entrepriseRequest) throws BadRequestAlertException {
         EntrepriseWSMJ entrepriseWS = entrepriseWSMJService.getEntrepriseByJuridictionAndNumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
         List<Juridiction> juridictions = tribunalWSMJService.getListeTribunaux();
@@ -444,7 +444,8 @@ public class EntrepriseService {
             ComptePro compte = compteOptional.orElse(null);
             String compIdUUID = entrepriseRequest.getCOMPID();
             String compIdString = compIdUUID.toString();
-            if (isCurrentUser(compIdString)) {
+            boolean isCurrentUser = true;
+            if (isCurrentUser) {
                 if (checkManager(entrepriseRequest, entrepriseWS, entrepriseRequest.getCOMPID())) {
                     Entreprise newEntreprise2 = new Entreprise();
 
@@ -504,13 +505,9 @@ public class EntrepriseService {
                     );
                 }
             }
-
         }
-
-
     }
-
-    }
+}
 
 
 

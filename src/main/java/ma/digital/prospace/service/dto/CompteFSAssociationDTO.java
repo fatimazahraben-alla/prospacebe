@@ -19,7 +19,7 @@ public class CompteFSAssociationDTO {
     @NotNull
     private String compteID;
     @NotNull
-    private UUID fs;
+    private String fs;
     @NotNull
     private List<String> entreprises;
 
@@ -31,11 +31,11 @@ public class CompteFSAssociationDTO {
         this.compteID = compteID;
     }
 
-    public UUID getFs() {
+    public String getFs() {
         return fs;
     }
 
-    public void setFs(UUID fs) {
+    public void setFs(String fs) {
         this.fs = fs;
     }
 

@@ -150,8 +150,30 @@ public class AssociationService {
             super(message, cause);
         }
     }
+    private EntrepriseDTO convertToDTO(Entreprise entreprise) {
+        EntrepriseDTO dto = new EntrepriseDTO();
+        dto.setId(entreprise.getId());
+        dto.setEtat(entreprise.getEtat());
 
-    public CompteFSAssociationDTO processAuthenticationStep2(String compteID, UUID fs, String transactionID) {
+        return dto;
+    }
+
+    public CompteFSAssociationDTO processAuthenticationStep2(String compteID, String fs, String transactionID) {
+        Optional<Session> optionalSession = sessionRepository.findByTransactionId(transactionID);
+        if (optionalSession.isPresent()) {
+            Session existingSession = optionalSession.get();
+            if (existingSession.getStatus() == Session.Status.COMPLETED) {
+                return null;
+            }
+        } else {
+
+            return processWithCurrentLogic(compteID, fs, transactionID); // Or you can throw an exception or return a default response
+        }
+        return processWithCurrentLogic(compteID, fs, transactionID);
+    }
+
+
+    private CompteFSAssociationDTO processWithCurrentLogic(String compteID, String fs, String transactionID) {
         List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteID);
         if (associations != null && !associations.isEmpty()) {
             Session session = new Session();
@@ -162,14 +184,15 @@ public class AssociationService {
             List<String> entrepriseList = new ArrayList<>();
             for (Association association : associations) {
                 Entreprise entreprise = association.getEntreprise();
-                String entrepriseString = Objects.toString(entreprise, null);
+                EntrepriseDTO entrepriseDTO = convertToDTO(entreprise); // Convert Entreprise to EntrepriseDTO
+                String entrepriseString = Objects.toString(entrepriseDTO, null);
                 entrepriseList.add(entrepriseString);
             }
             CompteFSAssociationDTO responseDTO = new CompteFSAssociationDTO();
             responseDTO.setCompteID(compteID);
             responseDTO.setFs(fs);
             responseDTO.setEntreprises(entrepriseList);
-             // String devicetoken =  "fGe7ud_0RceyA-GZyBXJV2:APA91bEacIJWRhkniNtGOc73zMV-KlC3sSojMh6pitdNOnxf-sA_qWs3ThABFOOHd9jtwGcBulXcn9bCsVgfwjHUII43_IdmCEjQWk-q1iuVShaDc5D_xaE-0MMX1A24uuDFXHpzwdH3";
+            // String devicetoken =  "fGe7ud_0RceyA-GZyBXJV2:APA91bEacIJWRhkniNtGOc73zMV-KlC3sSojMh6pitdNOnxf-sA_qWs3ThABFOOHd9jtwGcBulXcn9bCsVgfwjHUII43_IdmCEjQWk-q1iuVShaDc5D_xaE-0MMX1A24uuDFXHpzwdH3";
             Contact contact = contactRepository.findByCompteProId(compteID);
             String devicetoken = contact.getDeviceToken();
             try {
@@ -180,11 +203,11 @@ public class AssociationService {
                     return responseDTO;
                 }
             } catch (Exception e) {
-                logger.info("******verifier device token*******");
+                logger.info("***verifier device token**");
                 logger.info("Une erreur est survenue lors de la récupération du device token");
 
             }
-            logger.info("**acunne device token n'est trouvé*");
+            logger.info("*acunne device token n'est trouvé");
             return null;
         } else {
             return null; // Retourne null si aucune association n'est trouvée
@@ -218,6 +241,7 @@ public class AssociationService {
         sessionRepository.save(session);
     }
 
+
     /**
      * check if the session is finished and if ok (see transactionID header), return the account data plus the company data and associated roles, parameter a transactionID as data header.
      */
@@ -241,7 +265,7 @@ public class AssociationService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Compte not found")));
         association.setEntreprise(entrepriseRepository.findById(dto.getEntrepriseID())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Entreprise not found")));
-        association.setStatut(StatutAssociation.PENDING);
+        association.setStatut(dto.getStatut());
         association = associationRepository.save(association);
         return associationMapper.toDto(association);
     }

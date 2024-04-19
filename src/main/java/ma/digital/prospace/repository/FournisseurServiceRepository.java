@@ -11,6 +11,6 @@ import java.util.UUID;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface FournisseurServiceRepository extends JpaRepository<FournisseurService, UUID> {
+public interface FournisseurServiceRepository extends JpaRepository<FournisseurService, String> {
 }
 

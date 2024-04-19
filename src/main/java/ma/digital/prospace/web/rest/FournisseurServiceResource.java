@@ -76,7 +76,7 @@ public class FournisseurServiceResource {
     @PatchMapping(value = "/fournisseur-services/{id}", consumes = { "application/json", "application/merge-patch+json" })
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<FournisseurServiceDTO> partialUpdateFournisseurService(
-            @PathVariable(value = "id", required = false) final UUID id,
+            @PathVariable(value = "id", required = false) final String id,
             @RequestBody FournisseurServiceDTO fournisseurService
     ) throws URISyntaxException {
         log.debug("REST request to partial update FournisseurServiceDTO partially : {}, {}", id, fournisseurService);
@@ -124,7 +124,7 @@ public class FournisseurServiceResource {
      */
     @GetMapping("/fournisseur-services/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<FournisseurServiceDTO> getFournisseurService(@PathVariable UUID id) {
+    public ResponseEntity<FournisseurServiceDTO> getFournisseurService(@PathVariable String id) {
         log.debug("REST request to get FournisseurServiceDTO : {}", id);
         Optional<FournisseurServiceDTO> fournisseurService = fournisseurServiceService.findOne(id);
         return ResponseUtil.wrapOrNotFound(fournisseurService);
@@ -138,7 +138,7 @@ public class FournisseurServiceResource {
      */
     @DeleteMapping("/fournisseur-services/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Void> deleteFournisseurService(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteFournisseurService(@PathVariable String id) {
         log.debug("REST request to delete FournisseurServiceDTO : {}", id);
         fournisseurServiceService.delete(id);
         return ResponseEntity
@@ -155,7 +155,7 @@ public class FournisseurServiceResource {
 
     @PutMapping("/fournisseur-services/{fournisseurID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<FournisseurServiceDTO> updateFournisseurService(@PathVariable UUID fournisseurID, @RequestBody FournisseurServiceDTO fournisseurServiceDTO) {
+    public ResponseEntity<FournisseurServiceDTO> updateFournisseurService(@PathVariable String fournisseurID, @RequestBody FournisseurServiceDTO fournisseurServiceDTO) {
         fournisseurServiceDTO.setId(fournisseurID);
         FournisseurServiceDTO updatedFournisseurService = fournisseurServiceService.update(fournisseurServiceDTO);
         return new ResponseEntity<>(updatedFournisseurService, HttpStatus.OK);

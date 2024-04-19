@@ -94,9 +94,9 @@ public class AssociationResource {
                 .build();
     }
 
-    @GetMapping("/association/processAuthenticationStep2")
+    @PostMapping("/association/processAuthenticationStep2")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<CompteFSAssociationDTO> processAuthenticationStep2(@RequestParam String compteID, @RequestParam UUID fs,
+    public ResponseEntity<CompteFSAssociationDTO> processAuthenticationStep2(@RequestParam String compteID, @RequestParam String fs,
                                                                              @RequestParam String transactionID) {
         CompteFSAssociationDTO responseDTO = associationService.processAuthenticationStep2(compteID, fs, transactionID);
         if (responseDTO != null) {

@@ -34,7 +34,6 @@ public class AssociationDTO implements Serializable {
 
     private Instant dateEffet;
 
-    private UUID fs;
 
     private StatutAssociation statut;
 
@@ -102,13 +101,6 @@ public class AssociationDTO implements Serializable {
         this.dateEffet = dateEffet;
     }
 
-    public UUID getFs() {
-        return fs;
-    }
-
-    public void setFs(UUID fs) {
-        this.fs = fs;
-    }
 
     public StatutAssociation getStatut() {
         return statut;
@@ -142,7 +134,6 @@ public class AssociationDTO implements Serializable {
                 ", mail='" + mail + '\'' +
                 ", dateFin=" + dateFin +
                 ", dateEffet=" + dateEffet +
-                ", fs=" + fs +
                 ", statut=" + statut +
                 '}';
     }

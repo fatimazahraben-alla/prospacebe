@@ -1,6 +1,7 @@
 package ma.digital.prospace.service;
 
 import ma.digital.prospace.repository.ContactRepository;
+import ma.digital.prospace.service.mapper.RoleeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -97,6 +98,16 @@ public class ContactService {
     public void delete(UUID id) {
         log.debug("Request to delete Contact : {}", id);
         contactRepository.deleteById(id);
+    }
+    public ContactDTO createContact(ContactDTO contactDTO){
+        Contact contact = contactMapper.toEntity(contactDTO);
+        contact = contactRepository.save(contact);
+        return contactMapper.toDto(contact);
+    }
+    public ContactDTO updateContact(ContactDTO contactDTO){
+        Contact contact = contactMapper.toEntity(contactDTO);
+        contact = contactRepository.save(contact);
+        return contactMapper.toDto(contact);
     }
 
     public Optional<ContactDTO> partialUpdate(ContactDTO contactDTO) {
