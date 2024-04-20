@@ -21,14 +21,6 @@ public class CompteProDTO implements Serializable {
 
     private String id;
 
-    @NotNull
-    @Size(max = 10)
-    private String identifiant;
-
-    @NotNull
-    @Size(max = 25)
-    private typeidentifiant typeidentifiant;
-
 
 
     private Date createdAt;
@@ -46,21 +38,8 @@ public class CompteProDTO implements Serializable {
         this.id = id;
     }
 
-    public String getIdentifiant() {
-        return identifiant;
-    }
 
-    public void setIdentifiant(String identifiant) {
-        this.identifiant = identifiant;
-    }
 
-    public ma.digital.prospace.domain.enumeration.typeidentifiant getTypeidentifiant() {
-        return typeidentifiant;
-    }
-
-    public void setTypeidentifiant(ma.digital.prospace.domain.enumeration.typeidentifiant typeidentifiant) {
-        this.typeidentifiant = typeidentifiant;
-    }
 
     public Date getCreatedAt() {
         return createdAt;

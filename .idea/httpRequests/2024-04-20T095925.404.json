@@ -1,0 +1,9 @@
+{
+  "type": "https://www.jhipster.tech/problem/problem-with-message",
+  "title": "Not Found",
+  "status": 404,
+  "detail": "No static resource votre-endpoint.",
+  "instance": "/votre-endpoint",
+  "message": "error.http.404",
+  "path": "/votre-endpoint"
+}

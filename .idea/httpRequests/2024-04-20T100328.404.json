@@ -1,0 +1,9 @@
+{
+  "type": "https://www.jhipster.tech/problem/problem-with-message",
+  "title": "Not Found",
+  "status": 404,
+  "detail": "No static resource api.",
+  "instance": "/api",
+  "message": "error.http.404",
+  "path": "/api"
+}

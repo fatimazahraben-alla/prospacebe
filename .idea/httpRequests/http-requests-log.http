@@ -1,4 +1,327 @@
 GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: *
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T101920.200.json
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T101909.200.json
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8035/api
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T101855.200.json
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8033/api
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T101834.200.json
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8033/api
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T101414.403.txt
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8091/api
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T101341.200.json
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8080/api
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T101333.403.txt
+
+###
+
+OPTIONS http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Access-Control-Request-Method: GET
+Access-Control-Request-Headers: authorization
+Origin: http://localhost:8080/api
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T101308.403.txt
+
+###
+
+OPTIONS http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Access-Control-Request-Method: GET
+Access-Control-Request-Headers: authorization
+Origin: http://localhost:8091/api
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+###
+
+OPTIONS http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Access-Control-Request-Method: GET
+Access-Control-Request-Headers: authorization
+Origin: http://localhost:8091/api
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+###
+
+OPTIONS http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Access-Control-Request-Method: GET
+Access-Control-Request-Headers: authorization
+Origin: http://example.com
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T101221.403.txt
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T101030.403.txt
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8080
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T101020.403.txt
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8090
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T100833.403.txt
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8090
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T100530.500.json
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8080
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T100500.500.json
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8091
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T100433.200.json
+
+###
+
+GET http://localhost:8091/api
+Origin: http://localhost:8091
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T100328.404.json
+
+###
+
+GET http://localhost:8091/api
+Origin: http://localhost:8091
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T100225.404.json
+
+###
+
+GET http://localhost:8091/api
+Origin: http://localhost:8080
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T100202.500.json
+
+###
+
+GET http://localhost:8091
+Origin: http://localhost:8080
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T100151.404.json
+
+###
+
+GET http://localhost:8091/votre-endpoint
+Origin: http://localhost:8080
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T100144.404.json
+
+###
+
+GET http://localhost:8091/votre-endpoint
+Origin: http://localhost:8080
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T095925.404.json
+
+###
+
+GET http://localhost:8091/votre-endpoint
+Origin: http://example.com
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T095847.404.json
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8090
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T095627.500.json
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin:
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T095608.403.txt
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8066
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T095553.500.json
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8066
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T065038.403.txt
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
+Origin: http://localhost:8090
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-20T064943.200.json
+
+###
+
+GET http://localhost:8091/api/fournisseur-services?page=0&size=1&sort=
 Origin: http://localhost:8090
 Connection: Keep-Alive
 User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
@@ -226,118 +549,6 @@ Cookie: XSRF-TOKEN=dbf9bb57-a2cf-4bd1-82b4-449790a9bef5
 Accept-Encoding: br,deflate,gzip,x-gzip
 
 <> 2024-04-09T234357.200.txt
-
-###
-
-GET http://localhost:8091/api/user-info
-Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ0LW56Z0c3LWxrSW05UVVmem8zQTRPSVh3VkJkSWdnOFpCTURaekxzcW5NIn0.eyJleHAiOjE3MTI3MDY0NTEsImlhdCI6MTcxMjcwNjE1MSwianRpIjoiMzRiYzNiZjgtN2FiYi00YzNjLWJiN2MtM2EyMTU4NzI1NjkwIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qaGlwc3RlciIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI0Yzk3Mzg5Ni01NzYxLTQxZmMtODIxNy0wN2M1ZDEzYTAwNGIiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJ3ZWJfYXBwIiwic2Vzc2lvbl9zdGF0ZSI6IjMzZmQzNWQ4LWJjNGMtNDhkZC1iZjYwLWYzYWYwOGFlYzk2NyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiUk9MRV9HRVNUSU9OTkFJUkVFU1BBQ0UiLCJST0xFX1VTRVIiLCJvZmZsaW5lX2FjY2VzcyIsIlJPTEVfQURNSU4iLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjMzZmQzNWQ4LWJjNGMtNDhkZC1iZjYwLWYzYWYwOGFlYzk2NyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJyb2xlcyI6WyJST0xFX0dFU1RJT05OQUlSRUVTUEFDRSIsIlJPTEVfVVNFUiIsIm9mZmxpbmVfYWNjZXNzIiwiUk9MRV9BRE1JTiIsInVtYV9hdXRob3JpemF0aW9uIl0sIm5hbWUiOiJBZG1pbiBBZG1pbmlzdHJhdG9yIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4iLCJnaXZlbl9uYW1lIjoiQWRtaW4iLCJmYW1pbHlfbmFtZSI6IkFkbWluaXN0cmF0b3IiLCJlbWFpbCI6ImFkbWluQGxvY2FsaG9zdCJ9.Hjn-KJ5jrWDWfKKpFEeruhQqpxViVYGsPkkZaCE4_GpwT8Kmg6q3995lfyBGspOqXFXnYYtuGH2Ti42C6wQHvc4m3OzXRMWy_UUohCf-SjetM412qk2TSVh5teXVPTNm0qFZHuzK4mRR6xT8Fas5UnVa972vZ9I7VVIG39-ptZiy4-ueIw0RyLwJv4tu-pv0LMfccMRw0jnRJwqVu1vG8crc-uzUdr67M2rcZrQkphsqa3vl8g3IUHABl1jtkrJeW6q0H5X9T8eWO7TbZNP8ayobW7kmFiysxT0VU03xJeN0SYi3fVJa77_hezBTxiJFTm0IWCfskWhJPkcW8o9PZQ
-Connection: Keep-Alive
-User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
-Accept-Encoding: br,deflate,gzip,x-gzip
-
-<> 2024-04-09T234327.200.txt
-
-###
-
-POST http://localhost:8080/realms/jhipster/protocol/openid-connect/token
-Content-Type: application/x-www-form-urlencoded
-Content-Length: 114
-Connection: Keep-Alive
-User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
-Accept-Encoding: br,deflate,gzip,x-gzip
-
-grant_type=password&username=admin&password=admin&client_id=web_app&client_secret=iI1pQOLrCiYTvKI5l7EyckPrNbR7nvy4
-
-<> 2024-04-09T234231.200.json
-
-###
-
-GET http://localhost:8091/api/user-info
-Authorization: Bearer
-Connection: Keep-Alive
-User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
-Accept-Encoding: br,deflate,gzip,x-gzip
-
-###
-
-GET http://localhost:8091/api/user-info
-Authorization: Bearer
-Connection: Keep-Alive
-User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
-Accept-Encoding: br,deflate,gzip,x-gzip
-
-###
-
-GET http://localhost:8091/api/user-info
-Authorization: Bearer
-Connection: Keep-Alive
-User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
-Accept-Encoding: br,deflate,gzip,x-gzip
-
-###
-
-POST http://localhost:8080/realms/jhipster/protocol/openid-connect/token
-Content-Type: application/x-www-form-urlencoded
-Content-Length: 749
-Connection: Keep-Alive
-User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
-Accept-Encoding: br,deflate,gzip,x-gzip
-
-grant_type=refresh_token&client_id=web_app&client_secret=iI1pQOLrCiYTvKI5l7EyckPrNbR7nvy4&refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIxMmQwNTkwOC1kZjk0LTQwYmEtODU3NS1hMDY3NTM1ZDU1YmEifQ.eyJleHAiOjE3MTI2OTgwMDAsImlhdCI6MTcxMjY5NjIwMCwianRpIjoiZDI1NWUwMzItYjJjOS00ODhmLWEwZjctZGRmODc5YmVmNWU1IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qaGlwc3RlciIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvamhpcHN0ZXIiLCJzdWIiOiI0Yzk3Mzg5Ni01NzYxLTQxZmMtODIxNy0wN2M1ZDEzYTAwNGIiLCJ0eXAiOiJSZWZyZXNoIiwiYXpwIjoid2ViX2FwcCIsInNlc3Npb25fc3RhdGUiOiI0YWZiMmIzMi0wYjc1LTQ4ZjAtYTcxOC0zZjQ3NWUxZjQ3ZjciLCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJzaWQiOiI0YWZiMmIzMi0wYjc1LTQ4ZjAtYTcxOC0zZjQ3NWUxZjQ3ZjcifQ.Rg-yo1QPk5O5VUypVTGIBVWyEmi9g0KiXQXeXpDyWnM
-
-<> 2024-04-09T210608.200.json
-
-###
-
-POST http://localhost:8080/realms/jhipster/protocol/openid-connect/token
-Content-Type: application/x-www-form-urlencoded
-Content-Length: 702
-Connection: Keep-Alive
-User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
-Accept-Encoding: br,deflate,gzip,x-gzip
-
-grant_type=refresh_token&client_id=web_app&refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIxMmQwNTkwOC1kZjk0LTQwYmEtODU3NS1hMDY3NTM1ZDU1YmEifQ.eyJleHAiOjE3MTI2OTgwMDAsImlhdCI6MTcxMjY5NjIwMCwianRpIjoiZDI1NWUwMzItYjJjOS00ODhmLWEwZjctZGRmODc5YmVmNWU1IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qaGlwc3RlciIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvamhpcHN0ZXIiLCJzdWIiOiI0Yzk3Mzg5Ni01NzYxLTQxZmMtODIxNy0wN2M1ZDEzYTAwNGIiLCJ0eXAiOiJSZWZyZXNoIiwiYXpwIjoid2ViX2FwcCIsInNlc3Npb25fc3RhdGUiOiI0YWZiMmIzMi0wYjc1LTQ4ZjAtYTcxOC0zZjQ3NWUxZjQ3ZjciLCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJzaWQiOiI0YWZiMmIzMi0wYjc1LTQ4ZjAtYTcxOC0zZjQ3NWUxZjQ3ZjcifQ.Rg-yo1QPk5O5VUypVTGIBVWyEmi9g0KiXQXeXpDyWnM
-
-<> 2024-04-09T210450.401.json
-
-###
-
-POST http://localhost:8080/realms/jhipster/protocol/openid-connect/token
-Content-Type: application/x-www-form-urlencoded
-Content-Length: 702
-Connection: Keep-Alive
-User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
-Accept-Encoding: br,deflate,gzip,x-gzip
-
-grant_type=refresh_token&client_id=web_app&refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIxMmQwNTkwOC1kZjk0LTQwYmEtODU3NS1hMDY3NTM1ZDU1YmEifQ.eyJleHAiOjE3MTI2OTgwMDAsImlhdCI6MTcxMjY5NjIwMCwianRpIjoiZDI1NWUwMzItYjJjOS00ODhmLWEwZjctZGRmODc5YmVmNWU1IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9qaGlwc3RlciIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvamhpcHN0ZXIiLCJzdWIiOiI0Yzk3Mzg5Ni01NzYxLTQxZmMtODIxNy0wN2M1ZDEzYTAwNGIiLCJ0eXAiOiJSZWZyZXNoIiwiYXpwIjoid2ViX2FwcCIsInNlc3Npb25fc3RhdGUiOiI0YWZiMmIzMi0wYjc1LTQ4ZjAtYTcxOC0zZjQ3NWUxZjQ3ZjciLCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJzaWQiOiI0YWZiMmIzMi0wYjc1LTQ4ZjAtYTcxOC0zZjQ3NWUxZjQ3ZjcifQ.Rg-yo1QPk5O5VUypVTGIBVWyEmi9g0KiXQXeXpDyWnM
-
-<> 2024-04-09T210446.401.json
-
-###
-
-POST http://localhost:8080/realms/jhipster/protocol/openid-connect/token
-Content-Type: application/x-www-form-urlencoded
-Content-Length: 114
-Connection: Keep-Alive
-User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
-Accept-Encoding: br,deflate,gzip,x-gzip
-
-grant_type=password&username=admin&password=admin&client_id=web_app&client_secret=iI1pQOLrCiYTvKI5l7EyckPrNbR7nvy4
-
-<> 2024-04-09T205640.200.json
-
-###
-
-POST http://localhost:8080/realms/jhipster/protocol/openid-connect/token
-Content-Type: application/x-www-form-urlencoded
-Content-Length: 114
-Connection: Keep-Alive
-User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
-Accept-Encoding: br,deflate,gzip,x-gzip
-
-grant_type=password&username=admin&password=admin&client_id=web_app&client_secret=iI1pQOLrCiYTvKI5l7EyckPrNbR7nvy4
-
-<> 2024-04-09T205632.200.json
 
 ###
 

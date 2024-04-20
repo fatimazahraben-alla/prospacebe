@@ -1,3 +1,1 @@
 id;transaction_id;created_at;json_data;status
-dd0ffb5c-f040-4d9c-9010-26582436d5ab;TRX123;2024-05-01T08:30:00Z;{"key":"value"};IN_PROGRESS
-4707270a-96cc-4d5f-9ad4-e9b36f4ed82b;TRX456;2024-05-02T09:45:00Z;{"key":"value2"};COMPLETED
