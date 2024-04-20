@@ -1,5 +1,6 @@
 package ma.digital.prospace.service;
 
+import java.util.Date;
 import java.util.Optional;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -156,10 +157,13 @@ public class CompteProService {
         ComptePro comptePro = new ComptePro();
         comptePro.setId(registrationDTO.getCompteId());
         comptePro.setStatut(StatutCompte.VALIDE);
+        comptePro.setCreatedAt(new Date());
+        comptePro.setDeleted(false);
         comptePro = compteProRepository.save(comptePro);
 
         Contact contact = new Contact();
         contact.setComptePro(comptePro);
+
         contact.setDeviceToken(registrationDTO.getDeviceToken());
         contact.setDeviceOS(registrationDTO.getDeviceOS());
         contact.setDeviceVersion(registrationDTO.getDeviceVersion());
