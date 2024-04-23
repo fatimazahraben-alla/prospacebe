@@ -12,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.Contact;
 import ma.digital.prospace.domain.enumeration.StatutCompte;
 import ma.digital.prospace.repository.ContactRepository;
+import ma.digital.prospace.repository.ProcurationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class CompteProService {
     private static final Logger auditLogger = LoggerFactory.getLogger("ma.digital.prospace.audit2");
 
     private final CompteProRepository compteProRepository;
-
+    private final ProcurationRepository procurationRepository;
     private final CompteProMapper compteProMapper;
 
     private final ContactRepository contactRepository;
@@ -45,12 +46,13 @@ public class CompteProService {
     @Autowired
     private final FirebaseMessaging firebaseMessaging;
 
-    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository, FirebaseNotificationService firebaseNotificationService, FirebaseMessaging firebaseMessaging) {
+    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository, FirebaseNotificationService firebaseNotificationService, FirebaseMessaging firebaseMessaging, ProcurationRepository procurationRepository) {
         this.compteProRepository = compteProRepository;
         this.compteProMapper = compteProMapper;
         this.contactRepository = contactRepository;
         this.firebaseNotificationService = firebaseNotificationService;
         this.firebaseMessaging = firebaseMessaging;
+        this.procurationRepository = procurationRepository;
     }
 
     /**
@@ -137,9 +139,39 @@ public class CompteProService {
      *
      * @param id the id of the entity.
      */
-    public void delete(String id) {
+    /*public void delete(String id) {
         log.debug("Request to delete ComptePro : {}", id);
+        Contact contact = contactRepository.findByCompteProId(id);
+        if (contact != null) {
+            contactRepository.delete(contact);
+        }
         compteProRepository.deleteById(id);
+    }*/
+    public String delete(String id) {
+        if (!compteProRepository.existsById(id)) {
+            return "not_found";
+        }
+
+        ComptePro comptePro = compteProRepository.findById(id).orElse(null);
+        if (comptePro == null) {
+            return "already_deleted";
+        }
+
+        // Remove all related entities
+        // Remove all procurations related to this ComptePro
+        procurationRepository.deleteAll(procurationRepository.findByGestionnaireEspaceProId(id));
+        procurationRepository.deleteAll(procurationRepository.findByUtilisateurProId(id));
+        //associationRepository.deleteAll(associationRepository.findByCompteProId(id));
+        // Then delete the associated contact
+        Contact contact = contactRepository.findByCompteProId(id);
+        if (contact != null) {
+            contactRepository.delete(contact);
+        }
+
+        // Finally delete the ComptePro
+        compteProRepository.deleteById(id);
+
+        return "deleted";
     }
 
     /**

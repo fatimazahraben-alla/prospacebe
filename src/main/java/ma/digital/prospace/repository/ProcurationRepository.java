@@ -4,6 +4,7 @@ import ma.digital.prospace.domain.Procuration;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -19,4 +20,10 @@ public interface ProcurationRepository extends JpaRepository<Procuration, UUID> 
 
 
     Procuration findProcurationByUtilisateurProIdAndGestionnaireEspaceProId(String utilisateurProId, String gestionnaireEspaceProId);
+    List<Procuration> findByGestionnaireEspaceProId(String gestionnaireEspaceProId);
+    List<Procuration> findByUtilisateurProId(String utilisateurProId);
+
+    @Modifying
+    @Query("DELETE FROM Procuration p WHERE p.gestionnaireEspacePro.id = :compteId OR p.utilisateurPro.id = :compteId")
+    void deleteByCompteProId(String compteId);
 }

@@ -174,12 +174,17 @@ public class CompteProResource {
     @DeleteMapping("/compte-pros/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> deleteComptePro(@PathVariable String id) {
-        log.debug("REST request to delete CompteProDTO : {}", id);
-        compteProService.delete(id);
-        return ResponseEntity
-            .noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-            .build();
+        String result = compteProService.delete(id);
+        switch (result) {
+            case "deleted":
+                return ResponseEntity.noContent().header("X-comptePro-deletion", "Votre compte professionnel a été supprimé avec succès.").build();
+            case "already_deleted":
+                return ResponseEntity.status(HttpStatus.GONE).header("X-comptePro-deletion", "Ce compte professionnel a déjà été supprimé précédemment.").build();
+            case "not_found":
+                return ResponseEntity.notFound().header("X-comptePro-deletion", "Aucun compte professionnel trouvé avec cet identifiant.").build();
+            default:
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("X-comptePro-deletion", "Erreur interne du serveur lors de la tentative de suppression du compte professionnel.").build();
+        }
     }
     @PostMapping("/compte-pros")
     @PreAuthorize("hasAuthority('ROLE_USER')")

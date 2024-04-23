@@ -146,8 +146,6 @@ public class ProcurationResource {
      * @return the ResponseEntity with status 201 (Created) and with body the new procurationDTO,
      * or with status 400 (Bad Request) if the procuration has not been created
      */
-
-
     @PostMapping("/procurations")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<ProcurationDTO> createProcuration(@RequestBody ProcurationDTO procurationDTO) {
@@ -158,24 +156,20 @@ public class ProcurationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-
-    @PostMapping("/procurations/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<ProcurationDTO> acceptProcuration(@PathVariable UUID id) {
+    @PatchMapping("/procurations/{id}/status")
+    public ResponseEntity<ProcurationDTO> updateProcurationStatus(
+            @PathVariable UUID id,
+            @RequestParam("status") String status) {
         try {
-            ProcurationDTO result = procurationService.acceptProcuration(id);
+            StatutInvitation statut = StatutInvitation.valueOf(status);
+            ProcurationDTO result = procurationService.changeProcurationStatus(id, statut);
             return ResponseEntity.ok(result);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
         }
     }
-
-
-
-
-
     @DeleteMapping("/procurations/{procurationID}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> deleteProcuration(@PathVariable UUID procurationID) {

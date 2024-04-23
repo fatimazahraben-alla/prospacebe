@@ -146,16 +146,27 @@ public class ProcurationService {
         return procurationMapper.toDto(procuration);
     }
 
-    public ProcurationDTO acceptProcuration(UUID procurationId) {
-        Procuration procuration = procurationRepository.findById(procurationId)
+    public ProcurationDTO changeProcurationStatus(UUID id, StatutInvitation statut) {
+        Procuration procuration = procurationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Procuration non trouvée"));
-        procuration.setStatut(StatutInvitation.ACCEPTED);
-        procuration = procurationRepository.save(procuration);
+        procuration.setStatut(statut);
+        Procuration savedProcuration = procurationRepository.save(procuration);
 
-        sendNotification(procuration.getUtilisateurPro().getId(), "Procuration acceptée", "Votre demande de procuration a été acceptée par " + procuration.getGestionnaireEspacePro().getNomFr());
+        // Envoi de notification
+        String title;
+        String message;
+        if (statut == StatutInvitation.ACCEPTED) {
+            title = "Procuration acceptée";
+            message = String.format("Votre demande de procuration a été acceptée par %s.", savedProcuration.getUtilisateurPro().getNomFr());
+        } else {
+            title = "Procuration refusée";
+            message = String.format("Votre demande de procuration a été refusée par %s.", savedProcuration.getUtilisateurPro().getNomFr());
+        }
+        sendNotification(savedProcuration.getGestionnaireEspacePro().getId(), title, message);
 
-        return procurationMapper.toDto(procuration);
+        return procurationMapper.toDto(savedProcuration);
     }
+
 
     private void sendNotification(String compteProId, String title, String message) {
         Contact contact = contactRepository.findByCompteProId(compteProId);
