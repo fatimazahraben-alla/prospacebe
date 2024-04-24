@@ -117,7 +117,7 @@ public class AssociationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-    @GetMapping("/association/checkAuthenticationStep2")
+    @GetMapping("/association/NotUsedcheckAuthenticationStep2")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Session.Status> checkAuthenticationStep2(@RequestParam String transactionId) {
         try {

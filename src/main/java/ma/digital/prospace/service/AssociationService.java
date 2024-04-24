@@ -161,13 +161,16 @@ public class AssociationService {
     public CompteFSAssociationDTO processAuthenticationStep2(String compteID, String fs, String transactionID) {
         Optional<Session> optionalSession = sessionRepository.findByTransactionId(transactionID);
         if (optionalSession.isPresent()) {
+            CompteFSAssociationDTO responseDTO = new CompteFSAssociationDTO();
+            responseDTO.setCompteID(compteID);
+            responseDTO.setFs(fs);
             Session existingSession = optionalSession.get();
             if (existingSession.getStatus() == Session.Status.COMPLETED) {
-                return null;
+                responseDTO.setStatut(Session.Status.COMPLETED.toString());
             }
-        } else {
+            return responseDTO;
 
-            return processWithCurrentLogic(compteID, fs, transactionID); // Or you can throw an exception or return a default response
+            //return processWithCurrentLogic(compteID, fs, transactionID); // Or you can throw an exception or return a default response
         }
         return processWithCurrentLogic(compteID, fs, transactionID);
     }

@@ -1,6 +1,7 @@
 package ma.digital.prospace.service.dto;
 
 import lombok.Data;
+import ma.digital.prospace.domain.Session;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
@@ -22,6 +23,16 @@ public class CompteFSAssociationDTO {
     private String fs;
     @NotNull
     private List<String> entreprises;
+
+    public String getStatut() {
+        return statut;
+    }
+
+    public void setStatut(String statut) {
+        this.statut = statut;
+    }
+
+    private String statut = Session.Status.IN_PROGRESS.toString();
 
     public String getCompteID() {
         return compteID;

@@ -2,8 +2,10 @@ package ma.digital.prospace.service.dto;
 
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import ma.digital.prospace.domain.enumeration.StatutInvitation;
+import ma.digital.prospace.domain.enumeration.typeidentifiant;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.Email;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -18,7 +20,45 @@ import java.util.UUID;
 public class ProcurationDTO implements Serializable {
 
     private UUID id;
+    private typeidentifiant typePiece;
 
+    public typeidentifiant getTypePiece() {
+        return typePiece;
+    }
+
+    public void setTypePiece(typeidentifiant typePiece) {
+        this.typePiece = typePiece;
+    }
+
+    public String getNumeroPiece() {
+        return numeroPiece;
+    }
+
+    public void setNumeroPiece(String numeroPiece) {
+        this.numeroPiece = numeroPiece;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    private String numeroPiece;
+
+    @Email(message = "L'adresse mail est invalide")
+    private String mail;
+    private String tel;
     private String nom;
 
     private Instant dateEffet;

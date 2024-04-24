@@ -1,8 +1,13 @@
 package ma.digital.prospace.service;
 
+import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -40,19 +45,20 @@ public class CompteProService {
     private final CompteProRepository compteProRepository;
     private final ProcurationRepository procurationRepository;
     private final CompteProMapper compteProMapper;
-
+    private final AuditLogService auditLogService;
     private final ContactRepository contactRepository;
     private final FirebaseNotificationService firebaseNotificationService;
     @Autowired
     private final FirebaseMessaging firebaseMessaging;
 
-    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository, FirebaseNotificationService firebaseNotificationService, FirebaseMessaging firebaseMessaging, ProcurationRepository procurationRepository) {
+    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository, FirebaseNotificationService firebaseNotificationService, FirebaseMessaging firebaseMessaging, ProcurationRepository procurationRepository, AuditLogService auditLogService) {
         this.compteProRepository = compteProRepository;
         this.compteProMapper = compteProMapper;
         this.contactRepository = contactRepository;
         this.firebaseNotificationService = firebaseNotificationService;
         this.firebaseMessaging = firebaseMessaging;
         this.procurationRepository = procurationRepository;
+        this.auditLogService = auditLogService;
     }
 
     /**
@@ -78,6 +84,7 @@ public class CompteProService {
         log.debug("Request to update ComptePro : {}", compteProDTO);
         ComptePro comptePro = compteProMapper.toEntity(compteProDTO);
         comptePro = compteProRepository.save(comptePro);
+
         return compteProMapper.toDto(comptePro);
     }
 
@@ -191,17 +198,21 @@ public class CompteProService {
         comptePro.setStatut(StatutCompte.VALIDE);
         comptePro.setCreatedAt(new Date());
         comptePro.setDeleted(false);
-        comptePro = compteProRepository.save(comptePro);
+        ComptePro savedComptePro = compteProRepository.save(comptePro); // Save and store the returned ComptePro
 
         Contact contact = new Contact();
-        contact.setComptePro(comptePro);
-
+        contact.setComptePro(savedComptePro);
         contact.setDeviceToken(registrationDTO.getDeviceToken());
         contact.setDeviceOS(registrationDTO.getDeviceOS());
         contact.setDeviceVersion(registrationDTO.getDeviceVersion());
         contactRepository.save(contact);
 
-        return compteProMapper.toDto(comptePro);
+        // Audit Log
+        Map<String, Object> data = new HashMap<>();
+        data.put("actionDetail", "Create new ComptePro");
+        CompteProDTO createdCompteProDTO = compteProMapper.toDto(savedComptePro);
+        auditLogService.logAudit("CREATE_COMPTE_PRO", "admin", savedComptePro.getId(), "@IP", "test", data, createdCompteProDTO);
+
+        return createdCompteProDTO;
     }
 }
-
