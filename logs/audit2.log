@@ -1,2 +1,3 @@
 2024-04-24 10:13:06,728 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProService.java:120] Performed a retrieval of all ComptePros - Page: 0, Size: 20
 2024-04-24 10:27:50,331 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProService.java:205] [2024-04-24T09:27:50.331349900Z] Action: CREATE_ACCOUNT, User: admin, UserID: compteId007, IP: 192.168.1.1, UserAgent: Mozilla/5.0, Description: Création de compte
+2024-04-24 13:46:52,280 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProService.java:127] Performed a retrieval of all ComptePros - Page: 0, Size: 20
