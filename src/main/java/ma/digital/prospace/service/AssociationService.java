@@ -158,7 +158,7 @@ public class AssociationService {
         return dto;
     }
 
-    public CompteFSAssociationDTO processAuthenticationStep2(String compteID, String fs, String transactionID) {
+    public CompteFSAssociationDTO processAuthenticationStep2(String compteID, String fs, String transactionID) throws JsonProcessingException {
         Optional<Session> optionalSession = sessionRepository.findByTransactionId(transactionID);
         if (optionalSession.isPresent()) {
             CompteFSAssociationDTO responseDTO = new CompteFSAssociationDTO();
@@ -166,6 +166,18 @@ public class AssociationService {
             responseDTO.setFs(fs);
             Session existingSession = optionalSession.get();
             if (existingSession.getStatus() == Session.Status.COMPLETED) {
+                // Convertir la chaîne JSON en objet Map<String, Object>
+                ObjectMapper objectMapper = new ObjectMapper();
+                Map<String, Object> dataMap = objectMapper.readValue(existingSession.getJsonData(), new TypeReference<Map<String, Object>>() {});
+                // Extraire les données de la map et les convertir en objets DTO
+                EntrepriseDTO entrepriseDTO = objectMapper.convertValue(dataMap.get("entreprise"), EntrepriseDTO.class);
+                CompteProDTO compteProDTO = objectMapper.convertValue(dataMap.get("comptePro"), CompteProDTO.class);
+                List<String> roles = objectMapper.convertValue(dataMap.get("roles"), new TypeReference<List<String>>() {});
+                // Créer un objet CompteEntrepriseDTO à partir des objets DTO obtenus
+                CompteEntrepriseDTO compteEntrepriseDTO = new CompteEntrepriseDTO();
+                responseDTO.setEntreprise(entrepriseDTO);
+                responseDTO.setComptePro(compteProDTO);
+                responseDTO.setRoles(roles);
                 responseDTO.setStatut(Session.Status.COMPLETED.toString());
             }
             return responseDTO;

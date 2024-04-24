@@ -25,9 +25,7 @@ public interface  ProcurationMapper extends EntityMapper<ProcurationDTO, Procura
     ProcurationMapper INSTANCE = Mappers.getMapper(ProcurationMapper.class);
 
     @Mapping(source = "gestionnaireEspacePro.id", target = "gestionnaireEspaceProId")
-    @Mapping(source = "gestionnaireEspacePro.identifiant", target = "gestionnaireEspaceProIdentifiant")
     @Mapping(source = "utilisateurPro.id", target = "utilisateurProId")
-    @Mapping(source = "utilisateurPro.identifiant", target = "utilisateurProIdentifiant")
     ProcurationDTO toDto(Procuration entity);
 
     @Mapping(source = "gestionnaireEspaceProId", target = "gestionnaireEspacePro.id")
@@ -44,14 +42,14 @@ public interface  ProcurationMapper extends EntityMapper<ProcurationDTO, Procura
         return instant != null ? instant.atZone(ZoneOffset.UTC).toLocalDate() : null;
     }
 
-    default void partialUpdate(Procuration entity, ProcurationDTO dto) {
+    /*default void partialUpdate(Procuration entity, ProcurationDTO dto) {
         if (dto.getDateEffet() != null) {
             entity.setDateEffet((dto.getDateEffet()));
         }
         if (dto.getDateFin() != null) {
             entity.setDateFin((dto.getDateFin()));
         }
-    }
+    }*/
 
     @Named("compteProId")
     @BeanMapping(ignoreByDefault = true)

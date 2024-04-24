@@ -22,7 +22,98 @@ public class CompteProDTO implements Serializable {
     private String id;
 
 
+    @NotNull
+    @Size(max = 10)
+    private String identifiant;
 
+    @NotNull
+    @Size(max = 25)
+    private String typeIdentifiant;
+
+    @NotNull
+    @Size(max = 50)
+    private String nomAr;
+
+    @NotNull
+    @Size(max = 50)
+    private String nomFr;
+
+    @NotNull
+    @Size(max = 50)
+    private String prenomAr;
+
+    public String getIdentifiant() {
+        return identifiant;
+    }
+
+    public void setIdentifiant(String identifiant) {
+        this.identifiant = identifiant;
+    }
+
+    public String getTypeIdentifiant() {
+        return typeIdentifiant;
+    }
+
+    public void setTypeIdentifiant(String typeIdentifiant) {
+        this.typeIdentifiant = typeIdentifiant;
+    }
+
+    public String getNomAr() {
+        return nomAr;
+    }
+
+    public void setNomAr(String nomAr) {
+        this.nomAr = nomAr;
+    }
+
+    public String getNomFr() {
+        return nomFr;
+    }
+
+    public void setNomFr(String nomFr) {
+        this.nomFr = nomFr;
+    }
+
+    public String getPrenomAr() {
+        return prenomAr;
+    }
+
+    public void setPrenomAr(String prenomAr) {
+        this.prenomAr = prenomAr;
+    }
+
+    public String getPrenomFr() {
+        return prenomFr;
+    }
+
+    public void setPrenomFr(String prenomFr) {
+        this.prenomFr = prenomFr;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    @NotNull
+    @Size(max = 50)
+    private String prenomFr;
+
+    @Size(max = 50)
+    private String address;
+
+    private String photo;
     private Date createdAt;
 
     private Date updatedAt;
