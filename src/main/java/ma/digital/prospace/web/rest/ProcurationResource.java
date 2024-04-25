@@ -170,10 +170,26 @@ public class ProcurationResource {
             return ResponseEntity.status(e.getStatusCode()).build();
         }
     }
-    @DeleteMapping("/procurations/{procurationID}")
+    @DeleteMapping("/procurations/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<Void> deleteProcuration(@PathVariable UUID procurationID) {
-        procurationService.deleteProcuration(procurationID);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, procurationID.toString())).build();
+    public ResponseEntity<Void> deleteProcuration(@PathVariable UUID id) {
+        log.debug("REST request to delete Procuration : {}", id);
+        try {
+            procurationService.deleteProcuration(id);
+            return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+        } catch (FirebaseMessagingException e) {
+            log.error("Notification sending failed for Procuration ID {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } catch (ResponseStatusException e) {
+            log.error("Procuration deletion failed for ID {}: {}", id, e.getReason());
+            return ResponseEntity.status(e.getStatusCode()).build();
+        }
     }
+    @GetMapping("/procurations/espacePro/{espaceProId}")
+    public ResponseEntity<List<ProcurationDTO>> getAllProcurationsByUtilisateurPro(@PathVariable String espaceProId) {
+        log.debug("REST request to get Procurations for UtilisateurPro ID: {}", espaceProId);
+        List<ProcurationDTO> result = procurationService.findAllProcurationsByUtilisateurPro(espaceProId);
+        return ResponseEntity.ok().body(result);
+    }
+
 }

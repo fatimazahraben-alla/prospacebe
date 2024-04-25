@@ -1,8 +1,10 @@
 package ma.digital.prospace.service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import ma.digital.prospace.domain.ComptePro;
@@ -181,10 +183,33 @@ public class ProcurationService {
         }
     }
 
-    public void deleteProcuration(UUID procurationId) {
+    public void deleteProcuration(UUID procurationId) throws FirebaseMessagingException {
         Procuration procuration = procurationRepository.findById(procurationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Procuration not found"));
-        procuration.setDateFin(Instant.now());
-        procurationRepository.save(procuration);
+
+        // Vérifier le statut de la procuration avant de procéder à la suppression
+        if (!procuration.getStatut().equals(StatutInvitation.ACCEPTED)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seules les procurations acceptées peuvent être révoquées");
+        }
+
+        // Envoi de notifications avant la suppression
+        String messageToGestionnaire = String.format("Vous n'avez plus de procuration sur l'espace pro de %s.",
+                (procuration.getUtilisateurPro().getNomFr() +" "+procuration.getUtilisateurPro().getPrenomFr()));
+        sendNotification(procuration.getGestionnaireEspacePro().getId(), "Fin de procuration", messageToGestionnaire);
+
+        String messageToUtilisateur = String.format("%s n'est plus gestionnaire de votre espace pro.",
+                (procuration.getGestionnaireEspacePro().getNomFr()+" "+ procuration.getGestionnaireEspacePro().getPrenomFr()));
+        sendNotification(procuration.getUtilisateurPro().getId(), "Changement de gestionnaire", messageToUtilisateur);
+
+        // Suppression effective de la procuration
+        procurationRepository.deleteById(procurationId);
+    }
+
+    public List<ProcurationDTO> findAllProcurationsByUtilisateurPro(String utilisateurProId) {
+        log.debug("Request to get all Procurations for UtilisateurPro ID: {}", utilisateurProId);
+        List<Procuration> procurations = procurationRepository.findByUtilisateurProId(utilisateurProId);
+        return procurations.stream()
+                .map(procurationMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

@@ -11,8 +11,8 @@ public class CompteEntrepriseDTO implements Serializable {
 
     private CompteProDTO comptePro;
     private EntrepriseDTO entreprise;
-
-
+    private List<String> roles;
+    private String transactionId;
     public CompteProDTO getComptePro() {
         return comptePro;
     }
@@ -37,10 +37,6 @@ public class CompteEntrepriseDTO implements Serializable {
         this.transactionId = transactionId;
     }
 
-
-
-    private String transactionId;
-
     public List<String> getRoles() {
         return roles;
     }
@@ -48,8 +44,6 @@ public class CompteEntrepriseDTO implements Serializable {
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
-
-    private List<String> roles;
 
 
 
