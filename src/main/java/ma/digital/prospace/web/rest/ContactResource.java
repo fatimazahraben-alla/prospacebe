@@ -9,12 +9,15 @@ import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import ma.digital.prospace.repository.CompteProRepository;
+import ma.digital.prospace.service.dto.ProcurationDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,9 +53,10 @@ public class ContactResource {
     private String applicationName;
 
     private final ContactService contactService;
-
-    public ContactResource(ContactService contactService) {
+    private final CompteProRepository compteProRepository;
+    public ContactResource(ContactService contactService, CompteProRepository compteProRepository) {
         this.contactService = contactService;
+        this.compteProRepository = compteProRepository;
     }
 
     /**
@@ -157,7 +161,16 @@ public class ContactResource {
     /**
      * {@code GET  /contacts/:id} : get the "id" contact.
      *
-     * @param id the id of the contactDTO to retrieve.
+     * @param espaceProId the id of the contactDTO to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the contactDTO, or with status {@code 404 (Not Found)}.
      */
+    @GetMapping("/contacts/espacePro/{espaceProId}")
+    public ResponseEntity<?> getAllProcurationsByUtilisateurPro(@PathVariable String espaceProId) {
+        if (!compteProRepository.existsById(espaceProId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Compte Pro not found");
+        }
+
+        ContactDTO contactDTO = contactService.findContactByComptePro(espaceProId);
+        return ResponseEntity.ok(contactDTO);
+    }
 }

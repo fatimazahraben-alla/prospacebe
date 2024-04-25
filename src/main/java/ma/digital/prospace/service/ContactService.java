@@ -1,5 +1,6 @@
 package ma.digital.prospace.service;
 
+import ma.digital.prospace.domain.Procuration;
 import ma.digital.prospace.repository.ContactRepository;
 import ma.digital.prospace.service.mapper.RoleeMapper;
 import org.slf4j.Logger;
@@ -13,8 +14,10 @@ import ma.digital.prospace.domain.Contact;
 import ma.digital.prospace.service.mapper.ContactMapper;
 import ma.digital.prospace.service.dto.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing {@link Contact}.
@@ -109,7 +112,11 @@ public class ContactService {
         contact = contactRepository.save(contact);
         return contactMapper.toDto(contact);
     }
-
+    public ContactDTO findContactByComptePro(String compteProId) {
+        log.debug("Request to get contact for UtilisateurPro ID: {}", compteProId);
+        Contact contact = contactRepository.findByCompteProId(compteProId);
+        return contactMapper.toDto(contact);
+    }
     public Optional<ContactDTO> partialUpdate(ContactDTO contactDTO) {
         return null;
     }
