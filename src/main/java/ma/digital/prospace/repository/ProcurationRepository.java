@@ -18,7 +18,7 @@ public interface ProcurationRepository extends JpaRepository<Procuration, UUID> 
             "AND p.gestionnaireEspacePro.id = :connectedAccount")
     boolean checkProcurationForCompteAndGestionnaire(String compteId, String connectedAccount);
 
-
+    boolean existsByGestionnaireEspaceProIdAndUtilisateurProId(String gestionnaireEspaceProId, String utilisateurProId);
     Procuration findProcurationByUtilisateurProIdAndGestionnaireEspaceProId(String utilisateurProId, String gestionnaireEspaceProId);
     List<Procuration> findByGestionnaireEspaceProId(String gestionnaireEspaceProId);
     List<Procuration> findByUtilisateurProId(String utilisateurProId);

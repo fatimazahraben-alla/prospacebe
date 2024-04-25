@@ -2,10 +2,7 @@ package ma.digital.prospace.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import jakarta.persistence.EntityNotFoundException;
@@ -88,7 +85,7 @@ public class ProcurationResource {
      * or with status {@code 500 (Internal Server Error)} if the procuration couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/procurations/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/Not_Used-procurations/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<ProcurationDTO> partialUpdateProcuration(
             @PathVariable(value = "id", required = false) final UUID id,
             @RequestBody ProcurationDTO procuration
@@ -150,12 +147,16 @@ public class ProcurationResource {
      */
     @PostMapping("/procurations")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<ProcurationDTO> createProcuration(@RequestBody ProcurationDTO procurationDTO) {
+    public ResponseEntity<Object> createProcuration(@RequestBody ProcurationDTO procurationDTO) {
         try {
             ProcurationDTO result = procurationService.createProcuration(procurationDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "An error occurred while creating procuration"));
         }
     }
     @PatchMapping("/procurations/{id}/status")

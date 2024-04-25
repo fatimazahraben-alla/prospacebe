@@ -128,26 +128,35 @@ public class ProcurationService {
         procurationRepository.deleteById(id);
     }
 
+
+
     public ProcurationDTO createProcuration(ProcurationDTO procurationDTO) {
+        // Check if a procuration already exists with the same gestionnaire and utilisateur
+        boolean exists = procurationRepository.existsByGestionnaireEspaceProIdAndUtilisateurProId(
+                procurationDTO.getGestionnaireEspaceProId(),
+                procurationDTO.getUtilisateurProId()
+        );
+
+        if (exists) {
+            throw new IllegalStateException("Procuration existe déjà entre le gestionnaire et l'Espace Pro.");
+        }
+
         ComptePro gestionnaire = compteProRepository.findById(procurationDTO.getGestionnaireEspaceProId())
                 .orElseThrow(() -> new RuntimeException("Gestionnaire Espace Pro introuvable"));
 
         ComptePro utilisateur = compteProRepository.findById(procurationDTO.getUtilisateurProId())
                 .orElseThrow(() -> new RuntimeException("Utilisateur Pro introuvable"));
 
-        // Mapper DTO a l'entité
         Procuration procuration = procurationMapper.toEntity(procurationDTO);
         procuration.setGestionnaireEspacePro(gestionnaire);
         procuration.setUtilisateurPro(utilisateur);
         procuration.setStatut(StatutInvitation.PENDING);
-        procuration = procurationRepository.save(procuration);
+        Procuration savedProcuration = procurationRepository.save(procuration);
 
-        // notification
         sendNotification(gestionnaire.getId(), "Nouvelle demande de procuration", "Vous avez reçu une nouvelle demande de procuration de la part de " + utilisateur.getNomFr());
 
-        return procurationMapper.toDto(procuration);
+        return procurationMapper.toDto(savedProcuration);
     }
-
     public ProcurationDTO changeProcurationStatus(UUID id, StatutInvitation statut) {
         Procuration procuration = procurationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Procuration non trouvée"));
@@ -199,7 +208,7 @@ public class ProcurationService {
 
         String messageToUtilisateur = String.format("%s n'est plus gestionnaire de votre espace pro.",
                 (procuration.getGestionnaireEspacePro().getNomFr()+" "+ procuration.getGestionnaireEspacePro().getPrenomFr()));
-        sendNotification(procuration.getUtilisateurPro().getId(), "Changement de gestionnaire", messageToUtilisateur);
+        sendNotification(procuration.getUtilisateurPro().getId(), "Gestionnaire parti", messageToUtilisateur);
 
         // Suppression effective de la procuration
         procurationRepository.deleteById(procurationId);
