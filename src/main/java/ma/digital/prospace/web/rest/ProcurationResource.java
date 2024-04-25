@@ -10,6 +10,7 @@ import java.util.UUID;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.enumeration.StatutInvitation;
+import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,10 +46,11 @@ public class ProcurationResource {
 
     private final ProcurationService procurationService;
     private final ProcurationRepository procurationRepository;
-
-    public ProcurationResource(ProcurationService procurationService, ProcurationRepository procurationRepository) {
+    private final CompteProRepository compteProRepository;
+    public ProcurationResource(ProcurationService procurationService, ProcurationRepository procurationRepository, CompteProRepository compteProRepository) {
         this.procurationService = procurationService;
         this.procurationRepository = procurationRepository;
+        this.compteProRepository = compteProRepository;
     }
     @PutMapping("/procurations/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -185,11 +187,17 @@ public class ProcurationResource {
             return ResponseEntity.status(e.getStatusCode()).build();
         }
     }
-    @GetMapping("/procurations/espacePro/{espaceProId}")
-    public ResponseEntity<List<ProcurationDTO>> getAllProcurationsByUtilisateurPro(@PathVariable String espaceProId) {
-        log.debug("REST request to get Procurations for UtilisateurPro ID: {}", espaceProId);
-        List<ProcurationDTO> result = procurationService.findAllProcurationsByUtilisateurPro(espaceProId);
-        return ResponseEntity.ok().body(result);
-    }
 
+    @GetMapping("/procurations/espacePro/{espaceProId}")
+    public ResponseEntity<?> getAllProcurationsByUtilisateurPro(@PathVariable String espaceProId) {
+        if (!compteProRepository.existsById(espaceProId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Compte Pro not found");
+        }
+
+        List<ProcurationDTO> procurations = procurationService.findAllProcurationsByUtilisateurPro(espaceProId);
+        if (procurations.isEmpty()) {
+            return ResponseEntity.ok("Vous n'avez pas des mandataires");
+        }
+        return ResponseEntity.ok(procurations);
+    }
 }
