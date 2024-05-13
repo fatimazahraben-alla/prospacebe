@@ -35,7 +35,7 @@ import tech.jhipster.web.util.ResponseUtil;
 public class ProcurationResource {
 
     private final Logger log = LoggerFactory.getLogger(ProcurationResource.class);
-
+    private static final Logger auditLogger = LoggerFactory.getLogger("ma.digital.prospace.audit3");
     private static final String ENTITY_NAME = "procuration";
 
     @Value("${jhipster.clientApp.name}")
@@ -188,13 +188,31 @@ public class ProcurationResource {
             return ResponseEntity.status(e.getStatusCode()).build();
         }
     }
-
+    @DeleteMapping("/procurations/{utilisateurProId}/{gestionnaireEspaceProId}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<Void> removeDelegation(
+            @PathVariable String utilisateurProId,
+            @PathVariable String gestionnaireEspaceProId) {
+        log.debug("REST request to remove delegation: UtilisateurPro ID: {}, GestionnaireEspacePro ID: {}", utilisateurProId, gestionnaireEspaceProId);
+        try {
+            procurationService.removeDelegation(utilisateurProId, gestionnaireEspaceProId);
+            return ResponseEntity.noContent().build();
+        } catch (FirebaseMessagingException e) {
+            log.error("Failed to send notification: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (ResponseStatusException e) {
+            log.error("Error removing delegation", e);
+            return ResponseEntity.status(e.getStatusCode()).build();
+        } catch (Exception e) {
+            log.error("Error removing delegation", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
     @GetMapping("/procurations/espacePro/{espaceProId}")
     public ResponseEntity<?> getAllProcurationsByUtilisateurPro(@PathVariable String espaceProId) {
         if (!compteProRepository.existsById(espaceProId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Compte Pro not found");
         }
-
         List<ProcurationDTO> procurations = procurationService.findAllProcurationsByUtilisateurPro(espaceProId);
         if (procurations.isEmpty()) {
             return ResponseEntity.ok("Vous n'avez pas des mandataires");

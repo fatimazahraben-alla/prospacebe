@@ -1,5 +1,6 @@
 package ma.digital.prospace.web.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,10 +11,12 @@ import ma.digital.prospace.service.AssociationService;
 import ma.digital.prospace.service.dto.AssociationDTO;
 import ma.digital.prospace.service.dto.CompteEntrepriseDTO;
 import ma.digital.prospace.service.dto.CompteFSAssociationDTO;
+import ma.digital.prospace.service.dto.RoleRequestDTO;
 import ma.digital.prospace.service.mapper.AssociationMapper;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -74,17 +78,21 @@ public class AssociationResource {
         return ResponseEntity.ok()
                 .body(page);
     }
-
     @GetMapping("/associations/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<AssociationDTO> getAssociation(@PathVariable UUID id) {
+    public ResponseEntity<?> getAssociation(@PathVariable UUID id) {
         log.debug("REST request to get Association : {}", id);
-        AssociationDTO associationDTO = associationService.findOne(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid id"));
-        return ResponseEntity.ok()
-                .body(associationDTO);
+        try {
+            AssociationDTO associationDTO = associationService.findOne(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Association not found"));
+            return ResponseEntity.ok().body(associationDTO);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(Collections.singletonMap("error", e.getReason()));
+        } catch (Exception e) {
+            log.error("Error retrieving association with id {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Internal server error: " + e.getMessage()));
+        }
     }
-
     @DeleteMapping("/associations/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> deleteAssociation(@PathVariable UUID id) {
@@ -135,24 +143,54 @@ public class AssociationResource {
 
     @PostMapping("/associations")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<AssociationDTO> createAssociation(@RequestBody AssociationDTO dto) {
-        AssociationDTO createdDto = associationService.createAssociation(dto);
-        return new ResponseEntity<>(createdDto, HttpStatus.CREATED);
+    public ResponseEntity<?> createAssociation(@RequestBody AssociationDTO associationDTO) {
+        try {
+            AssociationDTO result = associationService.createAssociation(associationDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(Collections.singletonMap("error", e.getReason()));
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Data integrity violation: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "An unexpected error occurred: " + e.getMessage()));
+        }
     }
     @PutMapping("/associations")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<AssociationDTO> updateAssociationStatut(@RequestParam UUID id, @RequestBody String statut) {
+    public ResponseEntity<AssociationDTO> updateAssociationStatut(@RequestParam UUID id, @RequestParam String statut) {
         StatutAssociation nouveauStatut;
         try {
-            nouveauStatut = StatutAssociation.valueOf(statut);
+            nouveauStatut = StatutAssociation.valueOf(statut.toUpperCase()); // Ensure case insensitivity
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid statut value");
         }
 
-        AssociationDTO updatedAssociation = associationService.updateStatut(id, nouveauStatut);
-        return ResponseEntity.ok(updatedAssociation);
+        try {
+            AssociationDTO updatedAssociation = associationService.updateStatut(id, nouveauStatut);
+            return ResponseEntity.ok(updatedAssociation);
+        } catch (ResponseStatusException | FirebaseMessagingException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
-
-
+    @PostMapping("/associations/demande-role")
+    public ResponseEntity<AssociationDTO> demanderRole(@RequestBody RoleRequestDTO roleRequest) {
+        try {
+            AssociationDTO result = associationService.demanderRole(roleRequest);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                    .buildAndExpand(result.getId()).toUri();
+            return ResponseEntity.created(location).body(result);
+        } catch (Exception e) {
+            // Log the exception details here
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+    @GetMapping("/associations/roles")
+    public ResponseEntity<?> getRolesByCompteProAndEntreprise(@RequestParam String compteProId, @RequestParam UUID entrepriseId) {
+        List<String> roles = associationService.getRolesByCompteProAndEntreprise(compteProId, entrepriseId);
+        if (roles.isEmpty()) {
+            return new ResponseEntity<>("No roles found for the provided ComptePro and Entreprise", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(roles, HttpStatus.OK);
+    }
 }
 

@@ -1,16 +1,19 @@
-2024-04-24 11:14:39,637 INFO [XNIO-1 task-2] m.d.p.audit [AuditLogService.java:17] {"timestamp": "2024-04-24T10:14:39.637777300Z", "actionType": "CREATE_ACCOUNT", "username": "admin", "userId": "compteId008", "ipAddress": "192.168.1.1", "userAgent": "Mozilla/5.0", "data": {"actionDetail":"Create new ComptePro"}}
-2024-04-24 11:25:32,406 INFO [XNIO-1 task-2] m.d.p.audit [AuditLogService.java:17] {"timestamp": "2024-04-24T10:25:32.406416400Z", "actionType": "CREATE_ACCOUNT", "username": "admin", "userId": "compteId009", "ipAddress": "192.168.1.1", "userAgent": "Mozilla/5.0", "data": {"actionDetail":"Create new ComptePro"}, "result": {"id":"compteId009","createdAt":1713954332346,"updatedAt":null,"deleted":false,"statut":"VALIDE"}}
-2024-04-24 12:06:28,863 INFO [XNIO-1 task-2] m.d.p.audit [AuditLogService.java:18] {"timestamp": "2024-04-24T11:06:28.862241300Z", "actionType": "CREATE_ACCOUNT", "username": "admin", "userId": "compteId109", "ipAddress": "192.168.1.1", "userAgent": "Mozilla/5.0", "data": {"actionDetail":"Create new ComptePro"}, "result": {"id":"compteId109","createdAt":1713956788805,"updatedAt":null,"deleted":false,"statut":"VALIDE"}}
-2024-04-24 12:26:07,465 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@149f18bf
-2024-04-24 12:26:07,467 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/1/1234567890
-2024-04-24 12:26:08,503 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 1, numRC: 1234567890
-2024-04-24 12:26:09,416 ERROR [XNIO-1 task-2] m.d.p.audit [EntrepriseService.java:372] Échec de la création de l'entreprise par Compte0001 pour le tribunal 1 et le numéro RC 1234567890
+2024-05-13 09:41:51,404 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@1103d5a8
+2024-05-13 09:41:51,410 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/1/1234567890
+2024-05-13 09:41:52,410 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 1, numRC: 1234567890
+2024-05-13 09:41:53,175 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseService.java:368] Nouvelle entreprise créée avec succès par f47ac10b-58cc-4372-a567-0e02b2c3d479 pour le tribunal 1 et le numéro RC 1234567890
+2024-05-13 09:41:53,176 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseService.java:369] Successfully created company with NumRC: 1234567890
+2024-05-13 09:41:53,282 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseResource.java:93] Entreprise créée avec succès avec le NumRC : 1234567890
+2024-05-13 11:26:48,067 INFO [http-nio-8091-exec-10] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@3cb52006
+2024-05-13 11:26:48,072 INFO [http-nio-8091-exec-10] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/1/1234567890
+2024-05-13 11:26:49,150 INFO [http-nio-8091-exec-10] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 1, numRC: 1234567890
+2024-05-13 11:26:50,526 ERROR [http-nio-8091-exec-10] m.d.p.audit [EntrepriseService.java:373] Échec de la création de l'entreprise par string pour le tribunal 1 et le numéro RC 1234567890
 java.lang.NullPointerException: Cannot invoke "ma.digital.prospace.domain.ComptePro.setEntrepriseGeree(ma.digital.prospace.domain.Entreprise)" because "i" is null
 	at ma.digital.prospace.domain.Entreprise.lambda$setGerants$1(Entreprise.java:175)
 	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
 	at ma.digital.prospace.domain.Entreprise.setGerants(Entreprise.java:175)
-	at ma.digital.prospace.service.EntrepriseService.handlePhysicalPerson(EntrepriseService.java:363)
-	at ma.digital.prospace.service.EntrepriseService.createCompany(EntrepriseService.java:333)
+	at ma.digital.prospace.service.EntrepriseService.handlePhysicalPerson(EntrepriseService.java:364)
+	at ma.digital.prospace.service.EntrepriseService.createCompany(EntrepriseService.java:334)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -88,14 +91,21 @@ java.lang.NullPointerException: Cannot invoke "ma.digital.prospace.domain.Compte
 	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
 	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
 	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:547)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
 	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614)
-	at io.undertow.servlet.handlers.ServletHandler.handleRequest(ServletHandler.java:74)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:129)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110)
-	at io.undertow.servlet.core.ManagedFilter.doFilter(ManagedFilter.java:67)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:131)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at ma.digital.prospace.web.filter.OAuth2RefreshTokensWebFilter.doFilterInternal(OAuth2RefreshTokensWebFilter.java:67)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
 	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
 	at org.springframework.security.web.ObservationFilterChainDecorator$FilterObservation$SimpleFilterObservation.lambda$wrap$1(ObservationFilterChainDecorator.java:479)
 	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$1(ObservationFilterChainDecorator.java:340)
@@ -159,271 +169,77 @@ java.lang.NullPointerException: Cannot invoke "ma.digital.prospace.domain.Compte
 	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
 	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
 	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
-	at io.undertow.servlet.core.ManagedFilter.doFilter(ManagedFilter.java:67)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:131)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
 	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at io.undertow.servlet.core.ManagedFilter.doFilter(ManagedFilter.java:67)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:131)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
 	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at io.undertow.servlet.core.ManagedFilter.doFilter(ManagedFilter.java:67)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:131)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
 	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:109)
 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at io.undertow.servlet.core.ManagedFilter.doFilter(ManagedFilter.java:67)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:131)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
 	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at io.undertow.servlet.core.ManagedFilter.doFilter(ManagedFilter.java:67)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:131)
-	at io.undertow.servlet.handlers.FilterHandler.handleRequest(FilterHandler.java:84)
-	at io.undertow.servlet.handlers.security.ServletSecurityRoleHandler.handleRequest(ServletSecurityRoleHandler.java:62)
-	at io.undertow.servlet.handlers.ServletChain$1.handleRequest(ServletChain.java:68)
-	at io.undertow.servlet.handlers.ServletDispatchingHandler.handleRequest(ServletDispatchingHandler.java:36)
-	at io.undertow.servlet.handlers.RedirectDirHandler.handleRequest(RedirectDirHandler.java:68)
-	at io.undertow.servlet.handlers.security.SSLInformationAssociationHandler.handleRequest(SSLInformationAssociationHandler.java:117)
-	at io.undertow.servlet.handlers.security.ServletAuthenticationCallHandler.handleRequest(ServletAuthenticationCallHandler.java:57)
-	at io.undertow.server.handlers.PredicateHandler.handleRequest(PredicateHandler.java:43)
-	at io.undertow.security.handlers.AbstractConfidentialityHandler.handleRequest(AbstractConfidentialityHandler.java:46)
-	at io.undertow.servlet.handlers.security.ServletConfidentialityConstraintHandler.handleRequest(ServletConfidentialityConstraintHandler.java:64)
-	at io.undertow.security.handlers.AuthenticationMechanismsHandler.handleRequest(AuthenticationMechanismsHandler.java:60)
-	at io.undertow.servlet.handlers.security.CachedAuthenticatedSessionHandler.handleRequest(CachedAuthenticatedSessionHandler.java:77)
-	at io.undertow.security.handlers.AbstractSecurityContextAssociationHandler.handleRequest(AbstractSecurityContextAssociationHandler.java:43)
-	at io.undertow.server.handlers.PredicateHandler.handleRequest(PredicateHandler.java:43)
-	at io.undertow.servlet.handlers.SendErrorPageHandler.handleRequest(SendErrorPageHandler.java:52)
-	at io.undertow.server.handlers.PredicateHandler.handleRequest(PredicateHandler.java:43)
-	at io.undertow.servlet.handlers.SessionRestoringHandler.handleRequest(SessionRestoringHandler.java:119)
-	at io.undertow.servlet.handlers.ServletInitialHandler.handleFirstRequest(ServletInitialHandler.java:276)
-	at io.undertow.servlet.handlers.ServletInitialHandler$2.call(ServletInitialHandler.java:135)
-	at io.undertow.servlet.handlers.ServletInitialHandler$2.call(ServletInitialHandler.java:132)
-	at io.undertow.servlet.core.ServletRequestContextThreadSetupAction$1.call(ServletRequestContextThreadSetupAction.java:48)
-	at io.undertow.servlet.core.ContextClassLoaderSetupAction$1.call(ContextClassLoaderSetupAction.java:43)
-	at io.undertow.servlet.handlers.ServletInitialHandler.dispatchRequest(ServletInitialHandler.java:256)
-	at io.undertow.servlet.handlers.ServletInitialHandler$1.handleRequest(ServletInitialHandler.java:101)
-	at io.undertow.server.Connectors.executeRootHandler(Connectors.java:393)
-	at io.undertow.server.HttpServerExchange$1.run(HttpServerExchange.java:859)
-	at org.jboss.threads.ContextHandler$1.runWith(ContextHandler.java:18)
-	at org.jboss.threads.EnhancedQueueExecutor$Task.run(EnhancedQueueExecutor.java:2513)
-	at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1538)
-	at org.xnio.XnioWorker$WorkerThreadFactory$1$1.run(XnioWorker.java:1282)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:340)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.base/java.lang.Thread.run(Thread.java:842)
-2024-04-24 12:26:16,489 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@427e238e
-2024-04-24 12:26:16,490 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/1/1234567890
-2024-04-24 12:26:16,989 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 1, numRC: 1234567890
-2024-04-24 12:26:17,499 ERROR [XNIO-1 task-2] m.d.p.audit [EntrepriseService.java:372] Échec de la création de l'entreprise par Compte001 pour le tribunal 1 et le numéro RC 1234567890
-java.lang.NullPointerException: Cannot invoke "ma.digital.prospace.domain.ComptePro.setEntrepriseGeree(ma.digital.prospace.domain.Entreprise)" because "i" is null
-	at ma.digital.prospace.domain.Entreprise.lambda$setGerants$1(Entreprise.java:175)
-	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
-	at ma.digital.prospace.domain.Entreprise.setGerants(Entreprise.java:175)
-	at ma.digital.prospace.service.EntrepriseService.handlePhysicalPerson(EntrepriseService.java:363)
-	at ma.digital.prospace.service.EntrepriseService.createCompany(EntrepriseService.java:333)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:352)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
-	at org.springframework.aop.aspectj.AspectJAfterThrowingAdvice.invoke(AspectJAfterThrowingAdvice.java:64)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
-	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89)
-	at ma.digital.prospace.aop.logging.LoggingAspect.logAround(LoggingAspect.java:105)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:637)
-	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:627)
-	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
-	at org.springframework.aop.framework.adapter.MethodBeforeAdviceInterceptor.invoke(MethodBeforeAdviceInterceptor.java:58)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
-	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
-	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:385)
-	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
-	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
-	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:717)
-	at ma.digital.prospace.service.EntrepriseService$$SpringCGLIB$$0.createCompany(<generated>)
-	at ma.digital.prospace.web.rest.EntrepriseResource.createCompany(EntrepriseResource.java:89)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:352)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
-	at org.springframework.aop.aspectj.AspectJAfterThrowingAdvice.invoke(AspectJAfterThrowingAdvice.java:64)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
-	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89)
-	at ma.digital.prospace.aop.logging.LoggingAspect.logAround(LoggingAspect.java:105)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:637)
-	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:627)
-	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
-	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
-	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:717)
-	at ma.digital.prospace.web.rest.EntrepriseResource$$SpringCGLIB$$0.createCompany(<generated>)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:254)
-	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:182)
-	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:917)
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:829)
-	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
-	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
-	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
-	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
-	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:547)
-	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:614)
-	at io.undertow.servlet.handlers.ServletHandler.handleRequest(ServletHandler.java:74)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:129)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110)
-	at io.undertow.servlet.core.ManagedFilter.doFilter(ManagedFilter.java:67)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:131)
-	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
-	at org.springframework.security.web.ObservationFilterChainDecorator$FilterObservation$SimpleFilterObservation.lambda$wrap$1(ObservationFilterChainDecorator.java:479)
-	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$1(ObservationFilterChainDecorator.java:340)
-	at org.springframework.security.web.ObservationFilterChainDecorator.lambda$wrapSecured$0(ObservationFilterChainDecorator.java:82)
-	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:128)
-	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:117)
-	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:83)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227)
-	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137)
-	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
-	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227)
-	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137)
-	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227)
-	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137)
-	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227)
-	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137)
-	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227)
-	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137)
-	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
-	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227)
-	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137)
-	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227)
-	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137)
-	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
-	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227)
-	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137)
-	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
-	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227)
-	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137)
-	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227)
-	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137)
-	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240)
-	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$0(ObservationFilterChainDecorator.java:323)
-	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:224)
-	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137)
-	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
-	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
-	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
-	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
-	at io.undertow.servlet.core.ManagedFilter.doFilter(ManagedFilter.java:67)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:131)
-	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at io.undertow.servlet.core.ManagedFilter.doFilter(ManagedFilter.java:67)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:131)
-	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at io.undertow.servlet.core.ManagedFilter.doFilter(ManagedFilter.java:67)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:131)
-	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:109)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at io.undertow.servlet.core.ManagedFilter.doFilter(ManagedFilter.java:67)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:131)
-	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at io.undertow.servlet.core.ManagedFilter.doFilter(ManagedFilter.java:67)
-	at io.undertow.servlet.handlers.FilterHandler$FilterChainImpl.doFilter(FilterHandler.java:131)
-	at io.undertow.servlet.handlers.FilterHandler.handleRequest(FilterHandler.java:84)
-	at io.undertow.servlet.handlers.security.ServletSecurityRoleHandler.handleRequest(ServletSecurityRoleHandler.java:62)
-	at io.undertow.servlet.handlers.ServletChain$1.handleRequest(ServletChain.java:68)
-	at io.undertow.servlet.handlers.ServletDispatchingHandler.handleRequest(ServletDispatchingHandler.java:36)
-	at io.undertow.servlet.handlers.RedirectDirHandler.handleRequest(RedirectDirHandler.java:68)
-	at io.undertow.servlet.handlers.security.SSLInformationAssociationHandler.handleRequest(SSLInformationAssociationHandler.java:117)
-	at io.undertow.servlet.handlers.security.ServletAuthenticationCallHandler.handleRequest(ServletAuthenticationCallHandler.java:57)
-	at io.undertow.server.handlers.PredicateHandler.handleRequest(PredicateHandler.java:43)
-	at io.undertow.security.handlers.AbstractConfidentialityHandler.handleRequest(AbstractConfidentialityHandler.java:46)
-	at io.undertow.servlet.handlers.security.ServletConfidentialityConstraintHandler.handleRequest(ServletConfidentialityConstraintHandler.java:64)
-	at io.undertow.security.handlers.AuthenticationMechanismsHandler.handleRequest(AuthenticationMechanismsHandler.java:60)
-	at io.undertow.servlet.handlers.security.CachedAuthenticatedSessionHandler.handleRequest(CachedAuthenticatedSessionHandler.java:77)
-	at io.undertow.security.handlers.AbstractSecurityContextAssociationHandler.handleRequest(AbstractSecurityContextAssociationHandler.java:43)
-	at io.undertow.server.handlers.PredicateHandler.handleRequest(PredicateHandler.java:43)
-	at io.undertow.servlet.handlers.SendErrorPageHandler.handleRequest(SendErrorPageHandler.java:52)
-	at io.undertow.server.handlers.PredicateHandler.handleRequest(PredicateHandler.java:43)
-	at io.undertow.servlet.handlers.SessionRestoringHandler.handleRequest(SessionRestoringHandler.java:119)
-	at io.undertow.servlet.handlers.ServletInitialHandler.handleFirstRequest(ServletInitialHandler.java:276)
-	at io.undertow.servlet.handlers.ServletInitialHandler$2.call(ServletInitialHandler.java:135)
-	at io.undertow.servlet.handlers.ServletInitialHandler$2.call(ServletInitialHandler.java:132)
-	at io.undertow.servlet.core.ServletRequestContextThreadSetupAction$1.call(ServletRequestContextThreadSetupAction.java:48)
-	at io.undertow.servlet.core.ContextClassLoaderSetupAction$1.call(ContextClassLoaderSetupAction.java:43)
-	at io.undertow.servlet.handlers.ServletInitialHandler.dispatchRequest(ServletInitialHandler.java:256)
-	at io.undertow.servlet.handlers.ServletInitialHandler$1.handleRequest(ServletInitialHandler.java:101)
-	at io.undertow.server.Connectors.executeRootHandler(Connectors.java:393)
-	at io.undertow.server.HttpServerExchange$1.run(HttpServerExchange.java:859)
-	at org.jboss.threads.ContextHandler$1.runWith(ContextHandler.java:18)
-	at org.jboss.threads.EnhancedQueueExecutor$Task.run(EnhancedQueueExecutor.java:2513)
-	at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1538)
-	at org.xnio.XnioWorker$WorkerThreadFactory$1$1.run(XnioWorker.java:1282)
-	at java.base/java.lang.Thread.run(Thread.java:842)
-2024-04-24 12:26:45,921 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@b6906e3
-2024-04-24 12:26:45,924 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/1/1234567890
-2024-04-24 12:26:46,427 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 1, numRC: 1234567890
-2024-04-24 12:26:46,986 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseService.java:367] Nouvelle entreprise créée avec succès par compteId109 pour le tribunal 1 et le numéro RC 1234567890
-2024-04-24 12:26:46,986 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseService.java:368] Successfully created company with NumRC: 1234567890
-2024-04-24 12:26:47,021 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseResource.java:93] Entreprise créée avec succès avec le NumRC : 1234567890
-2024-04-24 12:30:39,797 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@23bbcb96
-2024-04-24 12:30:39,798 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/1/1234567890
-2024-04-24 12:30:40,497 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 1, numRC: 1234567890
-2024-04-24 12:30:41,227 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseService.java:367] Nouvelle entreprise créée avec succès par f47ac10b-58cc-4372-a567-0e02b2c3d479 pour le tribunal 1 et le numéro RC 1234567890
-2024-04-24 12:30:41,228 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseService.java:368] Successfully created company with NumRC: 1234567890
-2024-04-24 12:30:41,233 INFO [XNIO-1 task-2] m.d.p.audit [EntrepriseResource.java:93] Entreprise créée avec succès avec le NumRC : 1234567890
+2024-05-13 11:27:30,588 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@416aa885
+2024-05-13 11:27:30,590 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/2/1234567890
+2024-05-13 11:27:31,247 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 2, numRC: 1234567890
+2024-05-13 11:27:31,807 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseService.java:289] Aucune correspondance trouvée
+2024-05-13 11:27:31,807 WARN [http-nio-8091-exec-1] m.d.p.audit [EntrepriseService.java:377] Tentative de création d'entreprise échouée pour string - non manager.
+2024-05-13 11:28:55,780 INFO [http-nio-8091-exec-2] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@a96400b
+2024-05-13 11:28:55,782 INFO [http-nio-8091-exec-2] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/2/1234567890
+2024-05-13 11:28:56,684 INFO [http-nio-8091-exec-2] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 2, numRC: 1234567890
+2024-05-13 11:28:57,884 INFO [http-nio-8091-exec-2] m.d.p.audit [EntrepriseService.java:289] Aucune correspondance trouvée
+2024-05-13 11:28:57,884 WARN [http-nio-8091-exec-2] m.d.p.audit [EntrepriseService.java:377] Tentative de création d'entreprise échouée pour f47ac10b-58cc-4372-a567-0e02b2c3d479 - non manager.
+2024-05-13 11:29:05,069 INFO [http-nio-8091-exec-3] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@29cb4a23
+2024-05-13 11:29:05,070 INFO [http-nio-8091-exec-3] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/1/1234567890
+2024-05-13 11:29:05,587 INFO [http-nio-8091-exec-3] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 1, numRC: 1234567890
+2024-05-13 11:29:06,113 INFO [http-nio-8091-exec-3] m.d.p.audit [EntrepriseService.java:368] Nouvelle entreprise créée avec succès par f47ac10b-58cc-4372-a567-0e02b2c3d479 pour le tribunal 1 et le numéro RC 1234567890
+2024-05-13 11:29:06,114 INFO [http-nio-8091-exec-3] m.d.p.audit [EntrepriseService.java:369] Successfully created company with NumRC: 1234567890
+2024-05-13 11:29:06,147 INFO [http-nio-8091-exec-3] m.d.p.audit [EntrepriseResource.java:93] Entreprise créée avec succès avec le NumRC : 1234567890
+2024-05-13 11:30:35,083 INFO [http-nio-8091-exec-8] m.d.p.audit [AuditLogService.java:18] {"timestamp": "2024-05-13T10:30:35.083103700Z", "actionType": "CREATE_COMPTE_PRO", "username": "admin", "userId": "ComptePro0001", "ipAddress": "@IP", "userAgent": "test", "data": {"actionDetail":"Create new ComptePro"}, "result": {"id":"ComptePro0001","identifiant":null,"typeIdentifiant":null,"nomAr":null,"nomFr":null,"prenomAr":null,"prenomFr":null,"address":null,"photo":null,"createdAt":1715596235066,"updatedAt":null,"deleted":false,"statut":"VALIDE"}}
+2024-05-13 11:31:17,313 INFO [http-nio-8091-exec-10] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@1c183d0f
+2024-05-13 11:31:17,314 INFO [http-nio-8091-exec-10] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/1/1234567890
+2024-05-13 11:31:17,916 INFO [http-nio-8091-exec-10] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 1, numRC: 1234567890
+2024-05-13 11:31:18,622 INFO [http-nio-8091-exec-10] m.d.p.audit [EntrepriseService.java:368] Nouvelle entreprise créée avec succès par ComptePro0001 pour le tribunal 1 et le numéro RC 1234567890
+2024-05-13 11:31:18,622 INFO [http-nio-8091-exec-10] m.d.p.audit [EntrepriseService.java:369] Successfully created company with NumRC: 1234567890
+2024-05-13 11:31:18,626 INFO [http-nio-8091-exec-10] m.d.p.audit [EntrepriseResource.java:93] Entreprise créée avec succès avec le NumRC : 1234567890
+2024-05-13 11:31:22,288 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@3b0881cf
+2024-05-13 11:31:22,289 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/1/1234567890
+2024-05-13 11:31:23,007 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 1, numRC: 1234567890
+2024-05-13 11:31:23,252 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseService.java:368] Nouvelle entreprise créée avec succès par ComptePro0001 pour le tribunal 1 et le numéro RC 1234567890
+2024-05-13 11:31:23,252 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseService.java:369] Successfully created company with NumRC: 1234567890
+2024-05-13 11:31:23,256 INFO [http-nio-8091-exec-1] m.d.p.audit [EntrepriseResource.java:93] Entreprise créée avec succès avec le NumRC : 1234567890
+2024-05-13 11:31:35,095 INFO [http-nio-8091-exec-2] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@5dcbba2f
+2024-05-13 11:31:35,096 INFO [http-nio-8091-exec-2] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/2/1234567890
+2024-05-13 11:31:35,555 INFO [http-nio-8091-exec-2] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 2, numRC: 1234567890
+2024-05-13 11:31:36,224 INFO [http-nio-8091-exec-2] m.d.p.audit [EntrepriseService.java:289] Aucune correspondance trouvée
+2024-05-13 11:31:36,225 WARN [http-nio-8091-exec-2] m.d.p.audit [EntrepriseService.java:377] Tentative de création d'entreprise échouée pour ComptePro0001 - non manager.
+2024-05-13 11:32:02,575 INFO [http-nio-8091-exec-5] m.d.p.audit [EntrepriseResource.java:87] Tentative de création de l'entreprise : ma.digital.prospace.service.dto.EntrepriseRequest2@390417a9
+2024-05-13 11:32:02,577 INFO [http-nio-8091-exec-5] m.d.p.audit [EntrepriseWSMJService.java:94] Attempting to call API URL: https://0474c1d3-c5c9-412a-bd2f-86e7f459ab4f.mock.pstmn.io/wsRcPpModel7/PersonnePhysique/ADD/1/1234567890
+2024-05-13 11:32:03,070 INFO [http-nio-8091-exec-5] m.d.p.audit [EntrepriseWSMJService.java:113] Successfully parsed JSON for codeJuridiction: 1, numRC: 1234567890
+2024-05-13 11:32:03,668 INFO [http-nio-8091-exec-5] m.d.p.audit [EntrepriseService.java:368] Nouvelle entreprise créée avec succès par ComptePro0001 pour le tribunal 1 et le numéro RC 1234567890
+2024-05-13 11:32:03,669 INFO [http-nio-8091-exec-5] m.d.p.audit [EntrepriseService.java:369] Successfully created company with NumRC: 1234567890
+2024-05-13 11:32:03,673 INFO [http-nio-8091-exec-5] m.d.p.audit [EntrepriseResource.java:93] Entreprise créée avec succès avec le NumRC : 1234567890

@@ -1,5 +1,0 @@
-2024-04-12 23:00:06,012 INFO [XNIO-1 task-5] m.d.p.audit2 [CompteProResource.java:200] Initiated mobile registration for compteId: 19bcecbc-7076-4b26-b709-c1a959c32f58
-2024-04-12 23:00:06,143 INFO [XNIO-1 task-5] m.d.p.audit2 [CompteProService.java:135] Initiating registration/update for compteId: 19bcecbc-7076-4b26-b709-c1a959c32f58
-2024-04-12 23:00:06,754 INFO [XNIO-1 task-5] m.d.p.audit2 [CompteProService.java:146] Creating new contact for compteId: 19bcecbc-7076-4b26-b709-c1a959c32f58
-2024-04-12 23:00:06,849 INFO [XNIO-1 task-5] m.d.p.audit2 [CompteProService.java:160] Completed registration/update for compteId: 19bcecbc-7076-4b26-b709-c1a959c32f58
-2024-04-12 23:00:06,860 INFO [XNIO-1 task-5] m.d.p.audit2 [CompteProResource.java:205] Completed mobile registration for compteId: 19bcecbc-7076-4b26-b709-c1a959c32f58

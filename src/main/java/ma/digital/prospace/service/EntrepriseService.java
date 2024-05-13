@@ -55,7 +55,7 @@ public class EntrepriseService {
 
     private final EntrepriseRepository entrepriseRepository;
     private final EntrepriseMapper entrepriseMapper;
-
+    private final CompteProRepository compteProRepository;
     private final TribunalWSMJService tribunalWSMJService;
     private final ProcurationRepository procurationRepository;
     private final AssociationRepository associationRepository;
@@ -68,7 +68,7 @@ public class EntrepriseService {
     @Autowired
     private EntrepriseWSMJService entrepriseWSMJService;
 
-    public EntrepriseService(TribunalWSMJService tribunalWSMJService,EntrepriseRepository entrepriseRepository, EntrepriseMapper entrepriseMapper, CompteProRepository CompteProRepository, ProcurationRepository procurationRepository, EntrepriseWSMJService entrepriseWSMJService, AssociationRepository associationRepository, UserService userService) {
+    public EntrepriseService(TribunalWSMJService tribunalWSMJService,EntrepriseRepository entrepriseRepository, EntrepriseMapper entrepriseMapper, CompteProRepository CompteProRepository, ProcurationRepository procurationRepository, EntrepriseWSMJService entrepriseWSMJService, AssociationRepository associationRepository, UserService userService, CompteProRepository compteProRepository) {
         this.entrepriseRepository = entrepriseRepository;
         this.entrepriseMapper = entrepriseMapper;
         this.CompteProRepository = CompteProRepository;
@@ -77,6 +77,7 @@ public class EntrepriseService {
         this.associationRepository = associationRepository;
         this.userService = userService;
         this.tribunalWSMJService =tribunalWSMJService;
+        this.compteProRepository = compteProRepository;
     }
 
     /**
@@ -506,6 +507,10 @@ public class EntrepriseService {
                 }
             }
         }
+    }
+    public List<Entreprise> findEntreprisesByCompteProId(String compteProId) {
+        List<Entreprise> entreprises = compteProRepository.findEntreprisesByGerants(compteProId);
+        return entreprises;
     }
 }
 

@@ -1,9 +1,12 @@
 package ma.digital.prospace.repository;
 
 import ma.digital.prospace.domain.ComptePro;
+import ma.digital.prospace.domain.Entreprise;
 import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,6 +21,9 @@ public interface CompteProRepository extends JpaRepository<ComptePro, String> {
 
     @Query(value = "SELECT * FROM compte_pro WHERE id = :id", nativeQuery = true)
     Optional<ComptePro> findByCustomIdQuery(String id);
+    @Query("SELECT c FROM ComptePro c WHERE c.id = :userId OR c.id IN (SELECT p.utilisateurPro.id FROM Procuration p WHERE p.gestionnaireEspacePro.id = :userId)")
+    List<ComptePro> findAllRelatedByUser(@Param("userId") String userId);
 
-
+    @Query("SELECT e FROM Entreprise e JOIN e.gerants c WHERE c.id = :compteProId")
+    List<Entreprise> findEntreprisesByGerants(@Param("compteProId") String compteProId);
 }

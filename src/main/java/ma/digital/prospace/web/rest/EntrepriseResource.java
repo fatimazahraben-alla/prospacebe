@@ -234,6 +234,9 @@ public class EntrepriseResource {
     public PersonnephysiqueDTO getBycodeJuridictionAndnumRC(@PathVariable String codeJuridiction, @PathVariable String numRC) {
         return entrepriseWSMJService.getBycodeJuridictionAndnumRC(codeJuridiction, numRC);
     }
-
-
+    @GetMapping("/api/entreprises/compte-pro/{compteProId}")
+    public List<Entreprise> getEntreprisesByCompteProId(
+            @PathVariable("compteProId") String compteProId) {
+        return entrepriseService.findEntreprisesByCompteProId(compteProId);
+    }
 }

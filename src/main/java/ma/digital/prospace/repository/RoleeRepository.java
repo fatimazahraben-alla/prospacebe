@@ -7,6 +7,7 @@ import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.Entreprise;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -14,4 +15,5 @@ import java.util.UUID;
  */
 @Repository
 public interface RoleeRepository extends JpaRepository<Rolee, UUID> {
+    Optional<Rolee> findByIdAndFsId(UUID id, String fsId);
 }

@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import tech.jhipster.config.JHipsterConstants;
 import tech.jhipster.config.JHipsterProperties;
 import tech.jhipster.config.h2.H2ConfigurationHelper;
@@ -59,6 +60,13 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     public void customize(WebServerFactory server) {
         // When running in an IDE or with ./mvnw spring-boot:run, set location of the static web assets.
         setLocationForStaticAssets(server);
+    }
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 
     private void setLocationForStaticAssets(WebServerFactory server) {

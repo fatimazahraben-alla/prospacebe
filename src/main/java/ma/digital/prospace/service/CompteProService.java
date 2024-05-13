@@ -1,10 +1,9 @@
 package ma.digital.prospace.service;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,8 +15,10 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.Contact;
 import ma.digital.prospace.domain.enumeration.StatutCompte;
+import ma.digital.prospace.repository.AssociationRepository;
 import ma.digital.prospace.repository.ContactRepository;
 import ma.digital.prospace.repository.ProcurationRepository;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class CompteProService {
 
     private final Logger log = LoggerFactory.getLogger(CompteProService.class);
     private static final Logger auditLogger = LoggerFactory.getLogger("ma.digital.prospace.audit2");
-
+    private final AssociationRepository associationRepository;
     private final CompteProRepository compteProRepository;
     private final ProcurationRepository procurationRepository;
     private final CompteProMapper compteProMapper;
@@ -51,7 +52,7 @@ public class CompteProService {
     @Autowired
     private final FirebaseMessaging firebaseMessaging;
 
-    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository, FirebaseNotificationService firebaseNotificationService, FirebaseMessaging firebaseMessaging, ProcurationRepository procurationRepository, AuditLogService auditLogService) {
+    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository, FirebaseNotificationService firebaseNotificationService, FirebaseMessaging firebaseMessaging, ProcurationRepository procurationRepository, AuditLogService auditLogService, AssociationRepository associationRepository) {
         this.compteProRepository = compteProRepository;
         this.compteProMapper = compteProMapper;
         this.contactRepository = contactRepository;
@@ -59,6 +60,7 @@ public class CompteProService {
         this.firebaseMessaging = firebaseMessaging;
         this.procurationRepository = procurationRepository;
         this.auditLogService = auditLogService;
+        this.associationRepository = associationRepository;
     }
 
     /**
@@ -168,7 +170,7 @@ public class CompteProService {
         // Remove all procurations related to this ComptePro
         procurationRepository.deleteAll(procurationRepository.findByGestionnaireEspaceProId(id));
         procurationRepository.deleteAll(procurationRepository.findByUtilisateurProId(id));
-        //associationRepository.deleteAll(associationRepository.findByCompteProId(id));
+        associationRepository.deleteAll(associationRepository.findAllByCompteID(id));
         // Then delete the associated contact
         Contact contact = contactRepository.findByCompteProId(id);
         if (contact != null) {
@@ -214,5 +216,11 @@ public class CompteProService {
         auditLogService.logAudit("CREATE_COMPTE_PRO", "admin", savedComptePro.getId(), "@IP", "test", data, createdCompteProDTO);
 
         return createdCompteProDTO;
+    }
+    public List<CompteProDTO> listerMesEspaces(String userId) {
+        List<ComptePro> relatedSpaces = compteProRepository.findAllRelatedByUser(userId);
+        return relatedSpaces.stream()
+                .map(compteProMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

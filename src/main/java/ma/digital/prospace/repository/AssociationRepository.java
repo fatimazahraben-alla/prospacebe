@@ -1,6 +1,7 @@
 package ma.digital.prospace.repository;
 
 import ma.digital.prospace.domain.Association;
+import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.Entreprise;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -20,5 +20,8 @@ public interface AssociationRepository extends JpaRepository<Association, UUID> 
                                                            @Param("entrepriseId") UUID entrepriseId);
     @Query("SELECT DISTINCT e FROM Entreprise e JOIN e.associations a WHERE a.compte.id = :compteID AND a.role.fs.id = :fsId")
     List<Entreprise> findAllDistinctByCompteIdAndRoleFsId(@Param("fsId") String fsId, @Param("compteID") String compteID);
+
+    @Query("SELECT a FROM Association a WHERE a.compte.id = :compteId")
+    List<Association> findAllByCompteID(@Param("compteId") String compteId);
 }
 

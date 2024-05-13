@@ -1,3 +1,10 @@
-2024-04-24 10:13:06,728 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProService.java:120] Performed a retrieval of all ComptePros - Page: 0, Size: 20
-2024-04-24 10:27:50,331 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProService.java:205] [2024-04-24T09:27:50.331349900Z] Action: CREATE_ACCOUNT, User: admin, UserID: compteId007, IP: 192.168.1.1, UserAgent: Mozilla/5.0, Description: Création de compte
-2024-04-24 13:46:52,280 INFO [XNIO-1 task-2] m.d.p.audit2 [CompteProService.java:127] Performed a retrieval of all ComptePros - Page: 0, Size: 20
+2024-05-13 09:09:26,534 INFO [http-nio-8091-exec-1] m.d.p.audit2 [CompteProService.java:129] Performed a retrieval of all ComptePros - Page: 0, Size: 20
+2024-05-13 09:40:24,747 INFO [http-nio-8091-exec-2] m.d.p.audit2 [CompteProService.java:129] Performed a retrieval of all ComptePros - Page: 0, Size: 20
+2024-05-13 09:42:16,679 INFO [http-nio-8091-exec-3] m.d.p.audit2 [CompteProService.java:129] Performed a retrieval of all ComptePros - Page: 0, Size: 20
+2024-05-13 10:28:05,651 INFO [http-nio-8091-exec-5] m.d.p.audit2 [CompteProService.java:129] Performed a retrieval of all ComptePros - Page: 0, Size: 20
+2024-05-13 10:28:32,792 INFO [http-nio-8091-exec-9] m.d.p.audit2 [CompteProService.java:129] Performed a retrieval of all ComptePros - Page: 0, Size: 20
+2024-05-13 10:30:51,559 INFO [http-nio-8091-exec-10] m.d.p.audit2 [CompteProService.java:129] Performed a retrieval of all ComptePros - Page: 0, Size: 20
+2024-05-13 10:44:38,081 INFO [http-nio-8091-exec-10] m.d.p.audit2 [CompteProService.java:129] Performed a retrieval of all ComptePros - Page: 0, Size: 20
+2024-05-13 11:30:39,329 INFO [http-nio-8091-exec-7] m.d.p.audit2 [CompteProService.java:129] Performed a retrieval of all ComptePros - Page: 0, Size: 20
+2024-05-13 11:36:49,398 INFO [http-nio-8091-exec-1] m.d.p.audit2 [CompteProService.java:129] Performed a retrieval of all ComptePros - Page: 0, Size: 20
+2024-05-13 12:29:14,433 INFO [http-nio-8091-exec-8] m.d.p.audit2 [CompteProService.java:129] Performed a retrieval of all ComptePros - Page: 0, Size: 20
