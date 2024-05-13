@@ -510,7 +510,6 @@ public class EntrepriseService {
         }
     }
     public List<EntrepriseDTO> findAllEntreprisesByCompteProId(String compteProId) {
-        log.debug("Request to get all Enterprises by ComptePro ID : {}", compteProId);
         List<Entreprise> entreprises = compteProRepository.findEntreprisesByGerants(compteProId);
         return entreprises.stream()
                 .map(entrepriseMapper::toDto)

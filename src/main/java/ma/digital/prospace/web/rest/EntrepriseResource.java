@@ -236,8 +236,10 @@ public class EntrepriseResource {
     }
     @GetMapping("/entreprises/by-compte-pro/{compteProId}")
     public ResponseEntity<List<EntrepriseDTO>> getAllEntreprisesByCompteProId(@PathVariable String compteProId) {
-        log.debug("REST request to get all Enterprises for ComptePro ID: {}", compteProId);
         List<EntrepriseDTO> list = entrepriseService.findAllEntreprisesByCompteProId(compteProId);
-        return ResponseEntity.ok().body(list);
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(list);
     }
 }
