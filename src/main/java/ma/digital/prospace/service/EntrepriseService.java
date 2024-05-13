@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.enumeration.typeidentifiant;
@@ -508,9 +509,12 @@ public class EntrepriseService {
             }
         }
     }
-    public List<Entreprise> findEntreprisesByCompteProId(String compteProId) {
+    public List<EntrepriseDTO> findAllEntreprisesByCompteProId(String compteProId) {
+        log.debug("Request to get all Enterprises by ComptePro ID : {}", compteProId);
         List<Entreprise> entreprises = compteProRepository.findEntreprisesByGerants(compteProId);
-        return entreprises;
+        return entreprises.stream()
+                .map(entrepriseMapper::toDto)
+                .collect(Collectors.toList());
     }
 }
 

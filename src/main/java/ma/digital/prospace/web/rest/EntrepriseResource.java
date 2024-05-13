@@ -234,9 +234,10 @@ public class EntrepriseResource {
     public PersonnephysiqueDTO getBycodeJuridictionAndnumRC(@PathVariable String codeJuridiction, @PathVariable String numRC) {
         return entrepriseWSMJService.getBycodeJuridictionAndnumRC(codeJuridiction, numRC);
     }
-    @GetMapping("/api/entreprises/compte-pro/{compteProId}")
-    public List<Entreprise> getEntreprisesByCompteProId(
-            @PathVariable("compteProId") String compteProId) {
-        return entrepriseService.findEntreprisesByCompteProId(compteProId);
+    @GetMapping("/entreprises/by-compte-pro/{compteProId}")
+    public ResponseEntity<List<EntrepriseDTO>> getAllEntreprisesByCompteProId(@PathVariable String compteProId) {
+        log.debug("REST request to get all Enterprises for ComptePro ID: {}", compteProId);
+        List<EntrepriseDTO> list = entrepriseService.findAllEntreprisesByCompteProId(compteProId);
+        return ResponseEntity.ok().body(list);
     }
 }

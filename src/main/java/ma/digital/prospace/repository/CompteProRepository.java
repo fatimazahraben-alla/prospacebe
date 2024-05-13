@@ -23,7 +23,7 @@ public interface CompteProRepository extends JpaRepository<ComptePro, String> {
     Optional<ComptePro> findByCustomIdQuery(String id);
     @Query("SELECT c FROM ComptePro c WHERE c.id = :userId OR c.id IN (SELECT p.utilisateurPro.id FROM Procuration p WHERE p.gestionnaireEspacePro.id = :userId)")
     List<ComptePro> findAllRelatedByUser(@Param("userId") String userId);
-
-    @Query("SELECT e FROM Entreprise e JOIN e.gerants c WHERE c.id = :compteProId")
+    @Query("SELECT e FROM Entreprise e JOIN e.gerants g WHERE g.id = :compteProId")
     List<Entreprise> findEntreprisesByGerants(@Param("compteProId") String compteProId);
+
 }
