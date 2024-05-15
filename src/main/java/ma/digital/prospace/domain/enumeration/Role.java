@@ -1,14 +1,15 @@
 package ma.digital.prospace.domain.enumeration;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.util.Set;
+
+
 public enum Role {
-    ADMIN_PRO_SPACE,
-    GESTIONNAIRE_ENTREPRISE,
-    GESTIONNAIRE_ESPACE_PRO,
+    ADMIN,
+    GERANT,
+    GESTIONNAIRE,
     MEMBRE;
-
-
-    public String getFormattedName() {
-        return this.name().replace("_", " ");
-    }
 
 }

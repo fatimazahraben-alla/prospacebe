@@ -118,6 +118,7 @@ public class AssociationResource {
             return ResponseEntity.badRequest().build();
         }
     }
+
     @PostMapping("/association/pushCompteEntreprise")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> pushCompteEntreprise(@RequestBody CompteEntrepriseDTO compteEntrepriseDTO) {

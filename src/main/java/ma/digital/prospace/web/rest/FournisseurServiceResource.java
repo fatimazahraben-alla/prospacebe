@@ -98,7 +98,7 @@ public class FournisseurServiceResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of fournisseurServices in body.
      */
     @GetMapping("/fournisseur-services")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<FournisseurServiceDTO>> getAllFournisseurServices(
             @org.springdoc.api.annotations.ParameterObject Pageable pageable
     ) {
