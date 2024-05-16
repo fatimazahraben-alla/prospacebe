@@ -151,25 +151,17 @@ public class ProcurationService {
 
         Procuration savedProcuration = procurationRepository.save(procuration);
 
-<<<<<<< HEAD
-        sendNotification(gestionnaire.getId(), "Nouvelle demande de procuration", "Vous avez reçu une nouvelle demande de procuration de la part de " + utilisateur.getNomFr() + " " + utilisateur.getPrenomFr());
-=======
         // Prepare the notification details
         String title = "Nouvelle demande de procuration";
         String message = "Vous avez reçu une nouvelle demande de procuration de " + utilisateur.getNomAr();
 
         // Send and persist the notification
         sendAndPersistNotification(gestionnaire.getId(), title, message);
->>>>>>> a41303acf85ca67855e30660f8a1f4359e790aa8
 
         return procurationMapper.toDto(savedProcuration);
     }
 
-<<<<<<< HEAD
-    public ProcurationDTO changeProcurationStatus(UUID id, StatutInvitation statut) {
-=======
     public ProcurationDTO changeProcurationStatus(UUID id, StatutInvitation statut) throws FirebaseMessagingException {
->>>>>>> a41303acf85ca67855e30660f8a1f4359e790aa8
         log.debug("Request to change status of Procuration : {}", id);
         Procuration procuration = procurationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Procuration non trouvée"));
@@ -193,28 +185,15 @@ public class ProcurationService {
         if (!procuration.getStatut().equals(StatutInvitation.ACCEPTED)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seules les procurations acceptées peuvent être révoquées");
         }
-<<<<<<< HEAD
-        // Envoi de notifications avant la suppression
-        String messageToGestionnaire = String.format("Vous n'avez plus de procuration sur l'espace pro de %s.",
-                (procuration.getUtilisateurPro().getNomFr() + " " + procuration.getUtilisateurPro().getPrenomFr()));
-        sendNotification(procuration.getGestionnaireEspacePro().getId(), "Fin de procuration", messageToGestionnaire);
-=======
->>>>>>> a41303acf85ca67855e30660f8a1f4359e790aa8
 
         String messageToGestionnaire = String.format("Vous n'avez plus de procuration sur l'espace pro de %s.",
                 procuration.getUtilisateurPro().getNomFr() + " " + procuration.getUtilisateurPro().getPrenomFr());
         String messageToUtilisateur = String.format("%s n'est plus gestionnaire de votre espace pro.",
-<<<<<<< HEAD
-                (procuration.getGestionnaireEspacePro().getNomFr() + " " + procuration.getGestionnaireEspacePro().getPrenomFr()));
-        sendNotification(procuration.getUtilisateurPro().getId(), "Gestionnaire parti", messageToUtilisateur);
-        // Suppression effective de la procuration
-=======
                 procuration.getGestionnaireEspacePro().getNomFr() + " " + procuration.getGestionnaireEspacePro().getPrenomFr());
 
         sendAndPersistNotification(procuration.getGestionnaireEspacePro().getId(), "Fin de procuration", messageToGestionnaire);
         sendAndPersistNotification(procuration.getUtilisateurPro().getId(), "Gestionnaire parti", messageToUtilisateur);
 
->>>>>>> a41303acf85ca67855e30660f8a1f4359e790aa8
         procurationRepository.deleteById(procurationId);
     }
 

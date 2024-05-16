@@ -23,6 +23,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.enumeration.typeidentifiant;
@@ -85,7 +86,12 @@ public class EntrepriseService {
         this.tribunalWSMJService = tribunalWSMJService;
         this.auditorAware2=auditorAware2;
     }
-
+    public List<EntrepriseDTO> findEntreprisesByCompteId(String compteId) {
+        List<Entreprise> entreprises = entrepriseRepository.findByGerantsId(compteId);
+        return entreprises.stream()
+                .map(entrepriseMapper::toDto) // Utilisez toDto pour mapper vers EntrepriseDTO
+                .collect(Collectors.toList());
+    }
     /**
      * Save an entreprise.
      *

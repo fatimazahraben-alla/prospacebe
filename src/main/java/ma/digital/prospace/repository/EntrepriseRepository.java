@@ -18,7 +18,6 @@ import java.util.UUID;
 
 @Repository
 public interface EntrepriseRepository extends JpaRepository<Entreprise, UUID> {
-    EntrepriseDTO findEntrepriseByGerants(String CompteID);
-
+    List<Entreprise> findByGerantsId(String compteId);
 
 }

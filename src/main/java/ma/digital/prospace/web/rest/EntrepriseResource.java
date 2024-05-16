@@ -235,14 +235,13 @@ public class EntrepriseResource {
         return entrepriseWSMJService.getBycodeJuridictionAndnumRC(codeJuridiction, numRC);
     }
     @GetMapping("/entreprise/{compteid}")
-    public EntrepriseDTO getEntrepriseByEspace(@PathVariable String compteid) {
-        EntrepriseDTO entreprise = entrepriseRepository.findEntrepriseByGerants(compteid);
-        if (entreprise != null) {
-            auditLogger.info("Entreprise trouvée avec l'identifiant : {}", entreprise.getId());
-            return entreprise;
+    public List<EntrepriseDTO> getEntreprisesByEspace(@PathVariable String compteid) {
+        List<EntrepriseDTO> entreprises = entrepriseService.findEntreprisesByCompteId(compteid);
+        if (!entreprises.isEmpty()) {
+            auditLogger.info("{} entreprises trouvées pour l'identifiant : {}", entreprises.size(), compteid);
         } else {
-            auditLogger.info("Entreprise non trouvée pour l'identifiant : {}", compteid);
-            return null;
+            auditLogger.info("Aucune entreprise trouvée pour l'identifiant : {}", compteid);
         }
+        return entreprises;
     }
 }
