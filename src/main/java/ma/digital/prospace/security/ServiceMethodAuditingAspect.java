@@ -30,15 +30,15 @@ public class ServiceMethodAuditingAspect {
         String methodName = joinPoint.getSignature().toShortString();
         System.out.println("Method called: " + methodName + " by user: " + username);
         // Here, you can also integrate with your logging framework or auditing storage
-        String userId = UserId();
+     //   String userId = UserId();
         MDC.put("username", username);
         MDC.put("method", methodName);
         String ipAddress = getIpAddress();
-        MDC.put("userId", userId);
+        MDC.put("userId", "");
         // Ajoutez l'adresse IP au MDC
         MDC.put("ipAddress", ipAddress);
     }
-    private String UserId() {
+   /* private String UserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
@@ -59,7 +59,7 @@ public class ServiceMethodAuditingAspect {
         } else {
             throw new IllegalStateException("Le type de l'objet Principal n'est ni Jwt ni OidcUser.");
         }
-    }
+    }*/
 
     private String getIpAddress() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

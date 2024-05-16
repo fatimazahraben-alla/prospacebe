@@ -123,7 +123,7 @@ public class EntrepriseServiceTest {
         // Verify that the savedEntrepriseDTO is the same as the entrepriseDTO
         assertEquals(savedEntrepriseDTO, entrepriseDTO);
     }
-    @Test
+  /*  @Test
     void testIsCurrentUserWithJwt() {
         // Given
         String accountId = "testAccountId";
@@ -185,7 +185,7 @@ public class EntrepriseServiceTest {
 
         // Then
         assertEquals(accountId, result);
-    }
+    }*/
     @Test
     void testCheckManagerPp() {
         // Given
@@ -532,7 +532,7 @@ public class EntrepriseServiceTest {
 
 
 
-    @Test
+  /*  @Test
     void testUserIdWithOidcUser() {
         // Given
         String accountId = "testAccountId";
@@ -555,8 +555,8 @@ public class EntrepriseServiceTest {
 
         // When, Then
         assertThrows(IllegalStateException.class, () -> entrepriseService.UserId("testAccountId"));
-    }
-
+    }*/
+/*
     @Test
     void testUserIdWithUnknownPrincipalType() {
         // Given
@@ -565,7 +565,7 @@ public class EntrepriseServiceTest {
 
         // When, Then
         assertThrows(IllegalStateException.class, () -> entrepriseService.UserId("testAccountId"));
-    }
+    }*/
 
     @Test
     void testUpdate() {

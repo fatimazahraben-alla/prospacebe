@@ -85,7 +85,7 @@ public class EntrepriseResource {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<EntrepriseDTO> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
         auditLogger.info("Tentative de création de l'entreprise : {}", entrepriseRequest);
-        try {
+
             EntrepriseDTO entreprise = entrepriseService.createCompany(entrepriseRequest);
             if (entreprise == null) {
                 return ResponseEntity.badRequest().build();
@@ -93,10 +93,7 @@ public class EntrepriseResource {
                 auditLogger.info("Entreprise créée avec succès avec le NumRC : {}", entrepriseRequest.getNumeroRC());
                 return ResponseEntity.ok().body(entreprise);
             }
-        } catch (Exception e) {
-            log.error("Échec de la création de l'entreprise en raison d'une mauvaise demande : {}, Détails: {}", entrepriseRequest.getNumeroRC(), entrepriseRequest.getTribunal());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+
     }
 
 
