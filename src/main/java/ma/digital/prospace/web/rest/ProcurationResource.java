@@ -156,7 +156,7 @@ public class ProcurationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Collections.singletonMap("error", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Collections.singletonMap("error", "An error occurred while creating procuration"));
         }
     }
@@ -170,6 +170,9 @@ public class ProcurationResource {
             return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
+        } catch (FirebaseMessagingException e) {
+            // Gérer l'exception Firebase spécifique
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).build();
         }
@@ -183,7 +186,7 @@ public class ProcurationResource {
             return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
         } catch (FirebaseMessagingException e) {
             log.error("Notification sending failed for Procuration ID {}: {}", id, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (ResponseStatusException e) {
             log.error("Procuration deletion failed for ID {}: {}", id, e.getReason());
             return ResponseEntity.status(e.getStatusCode()).build();

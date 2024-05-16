@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.HttpSession;
+import ma.digital.prospace.service.dto.CompteProContactDTO;
 import ma.digital.prospace.service.dto.ContactDTO;
 import ma.digital.prospace.service.dto.MobileRegistrationDTO;
 import org.slf4j.Logger;
@@ -197,5 +198,11 @@ public class CompteProResource {
     public ResponseEntity<List<CompteProDTO>> getMesEspaces(@RequestParam String userId) {
         List<CompteProDTO> espaces = compteProService.listerMesEspaces(userId);
         return ResponseEntity.ok().body(espaces);
+    }
+    @GetMapping("/compte-pros/{id}/contact")
+    public ResponseEntity<CompteProContactDTO> getCompteProWithContact(@PathVariable String id) {
+        Optional<CompteProContactDTO> compteProContactDTO = compteProService.findCompteProWithContact(id);
+        return compteProContactDTO.map(response -> ResponseEntity.ok().body(response))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

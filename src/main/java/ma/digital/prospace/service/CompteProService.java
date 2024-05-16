@@ -18,6 +18,7 @@ import ma.digital.prospace.domain.enumeration.StatutCompte;
 import ma.digital.prospace.repository.AssociationRepository;
 import ma.digital.prospace.repository.ContactRepository;
 import ma.digital.prospace.repository.ProcurationRepository;
+import ma.digital.prospace.service.mapper.ContactMapper;
 import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,15 +47,17 @@ public class CompteProService {
     private final CompteProRepository compteProRepository;
     private final ProcurationRepository procurationRepository;
     private final CompteProMapper compteProMapper;
+    private final ContactMapper contactMapper;
     private final AuditLogService auditLogService;
     private final ContactRepository contactRepository;
     private final FirebaseNotificationService firebaseNotificationService;
     @Autowired
     private final FirebaseMessaging firebaseMessaging;
 
-    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository, FirebaseNotificationService firebaseNotificationService, FirebaseMessaging firebaseMessaging, ProcurationRepository procurationRepository, AuditLogService auditLogService, AssociationRepository associationRepository) {
+    public CompteProService(CompteProRepository compteProRepository, CompteProMapper compteProMapper,ContactRepository contactRepository, FirebaseNotificationService firebaseNotificationService, FirebaseMessaging firebaseMessaging, ProcurationRepository procurationRepository, AuditLogService auditLogService, AssociationRepository associationRepository, ContactMapper contactMapper) {
         this.compteProRepository = compteProRepository;
         this.compteProMapper = compteProMapper;
+        this.contactMapper = contactMapper;
         this.contactRepository = contactRepository;
         this.firebaseNotificationService = firebaseNotificationService;
         this.firebaseMessaging = firebaseMessaging;
@@ -222,5 +225,15 @@ public class CompteProService {
         return relatedSpaces.stream()
                 .map(compteProMapper::toDto)
                 .collect(Collectors.toList());
+    }
+    public Optional<CompteProContactDTO> findCompteProWithContact(String compteProId) {
+        Optional<ComptePro> compteProOptional = compteProRepository.findById(compteProId);
+        if (compteProOptional.isPresent()) {
+            CompteProDTO compteProDTO = compteProMapper.toDto(compteProOptional.get());
+            Contact contact = contactRepository.findByCompteProId(compteProId);
+            ContactDTO contactDTO = contact != null ? contactMapper.toDto(contact) : null;
+            return Optional.of(new CompteProContactDTO(compteProDTO, contactDTO));
+        }
+        return Optional.empty();
     }
 }

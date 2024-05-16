@@ -18,7 +18,6 @@ import java.util.UUID;
 public interface CompteProRepository extends JpaRepository<ComptePro, String> {
     Optional<ComptePro> findByIdentifiant(String identifiant);
     Optional<ComptePro> findById(String Id);
-
     @Query(value = "SELECT * FROM compte_pro WHERE id = :id", nativeQuery = true)
     Optional<ComptePro> findByCustomIdQuery(String id);
     @Query("SELECT c FROM ComptePro c WHERE c.id = :userId OR c.id IN (SELECT p.utilisateurPro.id FROM Procuration p WHERE p.gestionnaireEspacePro.id = :userId)")

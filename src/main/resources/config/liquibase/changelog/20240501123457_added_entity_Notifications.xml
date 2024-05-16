@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Added the entity Notification. -->
+    <changeSet id="20240501123457-1" author="jhipster">
+        <createTable tableName="notifications">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="compte_pro_id" type="varchar(50)">
+                <constraints nullable="false" foreignKeyName="fk_notifications_compte_pro" referencedTableName="compte_pro" referencedColumnNames="id"/>
+            </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_read" type="boolean" defaultValue="false">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Optional: Load initial data for entity Notification. -->
+    <changeSet id="20240501123457-1-data" author="jhipster" context="faker">
+        <loadData file="config/liquibase/fake-data/notifications.csv"
+                  separator=";"
+                  tableName="notifications"
+                  usePreparedStatements="true">
+            <column name="id" type="UUID"/>
+            <column name="title" type="STRING"/>
+            <column name="message" type="STRING"/>
+            <column name="compte_pro_id" type="STRING"/>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="is_read" type="BOOLEAN"/>
+        </loadData>
+    </changeSet>
+
+</databaseChangeLog>

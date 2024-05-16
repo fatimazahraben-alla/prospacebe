@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Instant;
 import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import ma.digital.prospace.domain.*;
@@ -52,7 +54,7 @@ public class AssociationService {
     private Logger logger = LoggerFactory.getLogger(AssociationService.class);
     private final FirebaseNotificationService firebaseNotificationService;
     private final ObjectMapper objectMapper;
-
+    private final NotificationService notificationService;
     // Constructor
     public AssociationService(AssociationRepository associationRepository,
                               AssociationMapper associationMapper,
@@ -62,7 +64,8 @@ public class AssociationService {
                               RoleeRepository roleeRepository,
                               ObjectMapper objectMapper,
                               FirebaseMessaging firebaseMessaging,
-                              FirebaseNotificationService firebaseNotificationService) { // Add ObjectMapper to the constructor
+                              FirebaseNotificationService firebaseNotificationService,
+                              NotificationService notificationService) { // Add ObjectMapper to the constructor
         this.associationRepository = associationRepository;
         this.associationMapper = associationMapper;
         this.sessionRepository = sessionRepository;
@@ -72,6 +75,7 @@ public class AssociationService {
         this.objectMapper = objectMapper; // Initialize ObjectMapper*
         this.firebaseMessaging = firebaseMessaging;
         this.firebaseNotificationService = firebaseNotificationService;
+        this.notificationService = notificationService;
     }
 
     public AssociationDTO save(AssociationDTO associationDTO) {
@@ -144,15 +148,6 @@ public class AssociationService {
             return "error sending notification ";
         }
     }
-    private class NotificationSendingException extends RuntimeException {
-        public NotificationSendingException(String message) {
-            super(message);
-        }
-
-        public NotificationSendingException(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
     private EntrepriseDTO convertToDTO(Entreprise entreprise) {
         EntrepriseDTO dto = new EntrepriseDTO();
         dto.setId(entreprise.getId());
@@ -160,7 +155,6 @@ public class AssociationService {
 
         return dto;
     }
-
     public CompteFSAssociationDTO processAuthenticationStep2(String compteID, String fs, String transactionID) throws JsonProcessingException {
         Optional<Session> optionalSession = sessionRepository.findByTransactionId(transactionID);
         if (optionalSession.isPresent()) {
@@ -328,6 +322,7 @@ public class AssociationService {
         return associationMapper.toDto(association);
     }
     public AssociationDTO demanderRole(RoleRequestDTO roleRequest) throws FirebaseMessagingException {
+        // Validation des paramètres de la requête
         if (roleRequest.getCompteId() == null || roleRequest.getCompteId().trim().isEmpty()) {
             throw new InvalidDataAccessApiUsageException("L'ID du compte ne peut pas être nul ou vide.");
         }
@@ -338,7 +333,7 @@ public class AssociationService {
             throw new InvalidDataAccessApiUsageException("L'ID du rôle ne peut pas être nul.");
         }
 
-        //
+        // Récupération des entités nécessaires à partir des repositories
         ComptePro comptePro = compteProRepository.findById(roleRequest.getCompteId())
                 .orElseThrow(() -> new EntityNotFoundException("ComptePro not found"));
         Entreprise entreprise = entrepriseRepository.findById(roleRequest.getEntrepriseId())
@@ -346,37 +341,40 @@ public class AssociationService {
         Rolee role = roleeRepository.findById(roleRequest.getRoleId())
                 .orElseThrow(() -> new EntityNotFoundException("Role not found"));
 
-        // Création d'association
+        // Création de l'association
         Association association = new Association();
         association.setCompte(comptePro);
         association.setEntreprise(entreprise);
         association.setRole(role);
-        association.setStatut(StatutAssociation.PENDING); // Statut init PENDING
+        association.setStatut(StatutAssociation.PENDING); // Statut initialement en attente
         association = associationRepository.save(association);
         System.out.println("New association created: " + association);
-        // Envoyer une notification concernant la nouvelle demande d'association en attente
-        Contact contact = contactRepository.findByCompteProId(comptePro.getId());
-        if (contact != null && contact.getDeviceToken() != null) {
-            firebaseNotificationService.sendNotification(contact.getDeviceToken(),
-                    "Demande d'association nouvelle", "Votre demande d'association en tant que " + role.getNom() +
-                            " chez " + role.getFs().getNom() + " est en attente d'approbation.");
-        } else {
-            throw new RuntimeException("Aucun token de device trouvé pour l'ID de ComptePro : " + comptePro.getId());
-        }
+
+        // Envoi de la notification et enregistrement
+        sendAndPersistNotification(comptePro.getId(),
+                "Demande d'association nouvelle",
+                "Votre demande d'association en tant que " + role.getNom() +
+                        " chez " + role.getFs().getNom() + " est en attente d'approbation.");
+
         return associationMapper.toDto(association);
     }
-    private void sendNotification(String compteProId, String title, String message) {
+
+    private void sendAndPersistNotification(String compteProId, String title, String message) throws FirebaseMessagingException {
         Contact contact = contactRepository.findByCompteProId(compteProId);
         if (contact != null && contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
-            try {
-                firebaseNotificationService.sendNotification(contact.getDeviceToken(), title, message);
-            } catch (FirebaseMessagingException e) {
-                throw new RuntimeException("Échec de l'envoi de la notification Firebase", e);
-            }
+            firebaseNotificationService.sendNotification(contact.getDeviceToken(), title, message);
+            // Enregistrement de la notification dans la base de données
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setTitle(title);
+            notificationDTO.setMessage(message);
+            notificationDTO.setCompteProId(compteProId);
+            notificationDTO.setCreatedAt(Instant.now());
+            notificationService.createNotification(notificationDTO);
         } else {
-            throw new RuntimeException("Contact introuvable pour l'ID de ComptePro : " + compteProId);
+            throw new RuntimeException("Aucun token de device trouvé pour l'ID de ComptePro : " + compteProId);
         }
     }
+
     public List<String> getRolesByCompteProAndEntreprise(String compteProId, UUID entrepriseId) {
         return associationRepository.findRoleNamesByCompteProIdAndEntrepriseId(compteProId, entrepriseId);
     }
