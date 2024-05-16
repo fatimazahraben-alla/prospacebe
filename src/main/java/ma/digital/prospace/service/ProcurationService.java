@@ -2,6 +2,7 @@ package ma.digital.prospace.service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -151,10 +152,11 @@ public class ProcurationService {
         procuration.setStatut(StatutInvitation.PENDING);
         Procuration savedProcuration = procurationRepository.save(procuration);
 
-        sendNotification(gestionnaire.getId(), "Nouvelle demande de procuration", "Vous avez reçu une nouvelle demande de procuration de la part de " + utilisateur.getNomFr() + " "+ utilisateur.getPrenomFr());
+        sendNotification(gestionnaire.getId(), "Nouvelle demande de procuration", "Vous avez reçu une nouvelle demande de procuration de la part de " + utilisateur.getNomFr() + " " + utilisateur.getPrenomFr());
 
         return procurationMapper.toDto(savedProcuration);
     }
+
     public ProcurationDTO changeProcurationStatus(UUID id, StatutInvitation statut) {
         log.debug("Request to change status of Procuration : {}", id);
         Procuration procuration = procurationRepository.findById(id)
@@ -202,11 +204,11 @@ public class ProcurationService {
         }
         // Envoi de notifications avant la suppression
         String messageToGestionnaire = String.format("Vous n'avez plus de procuration sur l'espace pro de %s.",
-                (procuration.getUtilisateurPro().getNomFr() +" "+procuration.getUtilisateurPro().getPrenomFr()));
+                (procuration.getUtilisateurPro().getNomFr() + " " + procuration.getUtilisateurPro().getPrenomFr()));
         sendNotification(procuration.getGestionnaireEspacePro().getId(), "Fin de procuration", messageToGestionnaire);
 
         String messageToUtilisateur = String.format("%s n'est plus gestionnaire de votre espace pro.",
-                (procuration.getGestionnaireEspacePro().getNomFr()+" "+ procuration.getGestionnaireEspacePro().getPrenomFr()));
+                (procuration.getGestionnaireEspacePro().getNomFr() + " " + procuration.getGestionnaireEspacePro().getPrenomFr()));
         sendNotification(procuration.getUtilisateurPro().getId(), "Gestionnaire parti", messageToUtilisateur);
         // Suppression effective de la procuration
         procurationRepository.deleteById(procurationId);
@@ -246,14 +248,27 @@ public class ProcurationService {
         log.info("Delegation removed for GestionnaireEspacePro ID: {} from UtilisateurPro ID: {}", gestionnaireEspaceProId, utilisateurProId);
     }
 
-    public List<ProcurationDTO> findAllProcurationsByUtilisateurPro(String utilisateurProId) {
-        log.debug("Request to get all Procurations for UtilisateurPro ID: {}", utilisateurProId);
+    public List<ComptePro> findAllProcurationsByUtilisateurPro(String utilisateurProId) {
+        auditLogger1.info("Requête pour récupérer toutes les procurations pour l'utilisateur professionnel ID: {}", utilisateurProId);
+
         List<Procuration> procurations = procurationRepository.findByUtilisateurProId(utilisateurProId);
-        List<ProcurationDTO> procurationDTOs = procurations.stream()
-                .map(procurationMapper::toDto)
+
+        // Convertir les Procuration en ComptePro
+        List<ComptePro> comptePros = procurations.stream()
+                .map(procuration -> {
+                    ComptePro gestionnaireEspacePro = procuration.getGestionnaireEspacePro();
+                    if (gestionnaireEspacePro != null) {
+                        return gestionnaireEspacePro;
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        auditLogger1.info("{timestamp: '{}', correlationID: '{}', classe/méthode: 'ProcurationService/findAllProcurationsByUtilisateurPro', Level: 'INFO', actionType: 'LIST_PROCURATIONS', username: '{}', userId: '{}', ipAddress: '{}', userAgent: '{}', dataReturned: '{}'}", Instant.now(), UUID.randomUUID(), "Utilisateur", utilisateurProId, "IP", "User-Agent", procurationDTOs.size());
-        return procurationDTOs;
+        // Log de l'utilisateur professionnel
+        auditLogger1.info("Utilisateur professionnel : {}", utilisateurProId);
+
+        return comptePros;
     }
 }

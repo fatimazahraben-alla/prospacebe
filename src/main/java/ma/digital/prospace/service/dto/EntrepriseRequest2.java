@@ -11,7 +11,6 @@ public class EntrepriseRequest2 {
     private String numeroRC;
     private typeidentifiant indentifianttype;
     private String CIN;
-    private String ice;
     private String COMPID;
     private Statut Perphysique_Permorale;
 
@@ -37,9 +36,7 @@ public class EntrepriseRequest2 {
         this.numeroRC = numeroRC;
     }
 
-    public String getIce() {
-        return ice;
-    }
+
     public String getCIN() {
         return CIN;
     }
@@ -54,9 +51,7 @@ public class EntrepriseRequest2 {
     public void setIndentifianttype(typeidentifiant indentifianttype) {
         this.indentifianttype = indentifianttype;
     }
-    public void setIce(String ice) {
-        this.ice = ice;
-    }
+
 
     public String getCOMPID() {
         return COMPID;

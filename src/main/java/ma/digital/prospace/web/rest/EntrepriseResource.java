@@ -83,10 +83,10 @@ public class EntrepriseResource {
      */
     @PostMapping(value = "/entreprises", produces = "application/json")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<Entreprise> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
+    public ResponseEntity<EntrepriseDTO> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
         auditLogger.info("Tentative de création de l'entreprise : {}", entrepriseRequest);
         try {
-            Entreprise entreprise = entrepriseService.createCompany(entrepriseRequest);
+            EntrepriseDTO entreprise = entrepriseService.createCompany(entrepriseRequest);
             if (entreprise == null) {
                 return ResponseEntity.badRequest().build();
             } else {
@@ -234,12 +234,15 @@ public class EntrepriseResource {
     public PersonnephysiqueDTO getBycodeJuridictionAndnumRC(@PathVariable String codeJuridiction, @PathVariable String numRC) {
         return entrepriseWSMJService.getBycodeJuridictionAndnumRC(codeJuridiction, numRC);
     }
-    @GetMapping("/entreprises/by-compte-pro/{compteProId}")
-    public ResponseEntity<List<EntrepriseDTO>> getAllEntreprisesByCompteProId(@PathVariable String compteProId) {
-        List<EntrepriseDTO> list = entrepriseService.findAllEntreprisesByCompteProId(compteProId);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
+    @GetMapping("/entreprise/{compteid}")
+    public EntrepriseDTO getEntrepriseByEspace(@PathVariable String compteid) {
+        EntrepriseDTO entreprise = entrepriseRepository.findEntrepriseByGerants(compteid);
+        if (entreprise != null) {
+            auditLogger.info("Entreprise trouvée avec l'identifiant : {}", entreprise.getId());
+            return entreprise;
+        } else {
+            auditLogger.info("Entreprise non trouvée pour l'identifiant : {}", compteid);
+            return null;
         }
-        return ResponseEntity.ok(list);
     }
 }

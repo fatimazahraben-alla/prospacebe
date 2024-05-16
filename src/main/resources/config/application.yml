@@ -25,15 +25,7 @@ springdoc:
   api-docs:
     enabled: false
 ---
-keycloak:
-  auth-server-url: http://localhost:8080/auth
-  realm: jhipster
-  resource: prospace-mobile-client
-  public-client: true
-  principal-attribute: preferred_username
-  credentials:
-    secret: lK7JQCHrlVAcvq7UDAyzRLBkDi6k5Lly
-  use-resource-role-mappings: true
+
 
 
 
@@ -176,20 +168,19 @@ spring:
   output:
     ansi:
       console-available: true
-  security:
-    oauth2:
-      client:
-        registration:
-          keycloak:
-            client-id: prospace-mobile-client
-            client-secret: zM8GKsnVz5WlFQu1L9XVyRJFB5OHDvfB
-            authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
-            scope: openid, profile, email
-        provider:
-          keycloak:
-            issuer-uri: http://localhost:8080/realms/jhipster
-            user-name-attribute: preferred_username
+ # security:
+  #  oauth2:
+  #    client:
+   #     registration:
+   #         client-id: prospace-mobile-client
+        #         client-secret: zM8GKsnVz5WlFQu1L9XVyRJFB5OHDvfB
+        #         authorization-grant-type: authorization_code
+        #        redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+        #        scope: openid, profile, email
+        #    provider:
+        #     keycloak:
+        #       issuer-uri: http://localhost:8080/realms/jhipster
+      #       user-name-attribute: preferred_username
 server:
   servlet:
     session:

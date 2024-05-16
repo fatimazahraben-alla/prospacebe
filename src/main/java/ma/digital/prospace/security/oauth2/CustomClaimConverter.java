@@ -28,6 +28,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 /**
  * Claim converter to add custom claims by retrieving the user from the userinfo endpoint.
  */
+
 public class CustomClaimConverter implements Converter<Map<String, Object>, Map<String, Object>> {
 
     private final BearerTokenResolver bearerTokenResolver = new DefaultBearerTokenResolver();

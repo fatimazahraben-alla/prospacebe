@@ -1,6 +1,7 @@
 package ma.digital.prospace.repository;
 
 import ma.digital.prospace.domain.Entreprise;
+import ma.digital.prospace.service.dto.EntrepriseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -17,4 +18,7 @@ import java.util.UUID;
 
 @Repository
 public interface EntrepriseRepository extends JpaRepository<Entreprise, UUID> {
+    EntrepriseDTO findEntrepriseByGerants(String CompteID);
+
+
 }

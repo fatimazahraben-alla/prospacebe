@@ -6,6 +6,7 @@ import java.util.*;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import jakarta.persistence.EntityNotFoundException;
+import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
@@ -208,15 +209,9 @@ public class ProcurationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-    @GetMapping("/procurations/espacePro/{espaceProId}")
-    public ResponseEntity<?> getAllProcurationsByUtilisateurPro(@PathVariable String espaceProId) {
-        if (!compteProRepository.existsById(espaceProId)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Compte Pro not found");
-        }
-        List<ProcurationDTO> procurations = procurationService.findAllProcurationsByUtilisateurPro(espaceProId);
-        if (procurations.isEmpty()) {
-            return ResponseEntity.ok("Vous n'avez pas des mandataires");
-        }
-        return ResponseEntity.ok(procurations);
+    @GetMapping("/utilisateur/{utilisateurProId}/procurations")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public List<ComptePro> findAllProcurationsByUtilisateurPro(@PathVariable String utilisateurProId) {
+        return procurationService.findAllProcurationsByUtilisateurPro(utilisateurProId);
     }
 }

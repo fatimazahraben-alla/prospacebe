@@ -1,16 +1,16 @@
 <!DOCTYPE configuration>
 
 <configuration scan="true">
-    <conversionRule conversionWord="crlf" converterClass="ma.digital.prospace.service.config.CRLFLogConverter" />
+    <conversionRule conversionWord="crlf" converterClass="ma.digital.prospace.config.CRLFLogConverter" />
 
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
-    <!-- Appender for general audits -->
+    <!-- Appender spécifique pour l'audit -->
     <appender name="AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/audit.log</file>
         <encoder>
-            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] %X{username} %X{ipAddress} %X{userId} - Method called: %X{method} - %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>logs/audit.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
@@ -21,16 +21,16 @@
         </rollingPolicy>
     </appender>
 
-    <!-- Logger for general audit -->
+    <!-- Logger pour l'audit -->
     <logger name="ma.digital.prospace.audit" level="debug" additivity="false">
         <appender-ref ref="AUDIT"/>
     </logger>
 
-    <!-- Second Appender for specialized audits -->
+    <!-- Second Appender for audit -->
     <appender name="AUDIT2" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/audit2.log</file>
         <encoder>
-            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] %X{username} %X{ipAddress} %X{userId} - Method called: %X{method} - %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>logs/audit2.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
@@ -40,31 +40,18 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
     </appender>
+
+    <!-- Logger for second audit appender -->
     <logger name="ma.digital.prospace.audit2" level="debug" additivity="false">
         <appender-ref ref="AUDIT2"/>
     </logger>
 
-    <!-- Third Appender for another specialized audit, with its unique file pattern -->
-    <appender name="AUDIT3" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/audit3.log</file>
-        <encoder>
-            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/audit3.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
-    </appender>
-    <logger name="ma.digital.prospace.audit3" level="debug" additivity="false">
-        <appender-ref ref="AUDIT3"/>
-    </logger>
+    <!-- Property to control root logging level -->
+    <springProperty name="log.level" source="logging.level.root" defaultValue="INFO" />
+
 
     <!-- Root logger configuration -->
     <ROOT level="${log.level}">
         <appender-ref ref="CONSOLE" />
     </ROOT>
 </configuration>
-
