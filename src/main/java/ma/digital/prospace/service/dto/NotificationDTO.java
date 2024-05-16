@@ -1,8 +1,5 @@
 package ma.digital.prospace.service.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.Instant;
 import java.util.UUID;
 

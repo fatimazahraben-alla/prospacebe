@@ -1,9 +1,7 @@
 package ma.digital.prospace.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.Instant;

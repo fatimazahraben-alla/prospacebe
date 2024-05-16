@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * REST controller for managing global OIDC logout.
  */
-/*
 @RestController
 public class LogoutResource {
 
@@ -25,7 +24,6 @@ public class LogoutResource {
     public LogoutResource(ClientRegistrationRepository registrations) {
         this.registration = registrations.findByRegistrationId("oidc");
     }
-*/
     /**
      * {@code POST  /api/logout} : logout the current user.
      *
@@ -33,7 +31,7 @@ public class LogoutResource {
      * @param idToken the ID token.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and a body with a global logout URL.
      */
-    /*
+
     @PostMapping("/api/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
         StringBuilder logoutUrl = new StringBuilder();
@@ -47,4 +45,4 @@ public class LogoutResource {
         request.getSession().invalidate();
         return ResponseEntity.ok().body(Map.of("logoutUrl", logoutUrl.toString()));
     }
-}*/
+}

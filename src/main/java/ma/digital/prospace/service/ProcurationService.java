@@ -15,8 +15,10 @@ import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.repository.ContactRepository;
 import ma.digital.prospace.repository.ProcurationRepository;
+import ma.digital.prospace.service.dto.CompteProDTO;
 import ma.digital.prospace.service.dto.NotificationDTO;
 import ma.digital.prospace.service.dto.ProcurationDTO;
+import ma.digital.prospace.service.mapper.CompteProMapper;
 import ma.digital.prospace.service.mapper.ProcurationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.threeten.bp.LocalDateTime;
 
-import static ma.digital.prospace.domain.Procuration_.gestionnaireEspacePro;
-import static ma.digital.prospace.domain.Procuration_.utilisateurPro;
 
 
 /**
@@ -45,11 +45,13 @@ public class ProcurationService {
     private final ContactRepository contactRepository;
     private final NotificationService notificationService;
     private final ProcurationMapper procurationMapper;
+    private final CompteProMapper compteProMapper;
     private final CompteProRepository compteProRepository;
 
-    public ProcurationService(ProcurationRepository procurationRepository, ProcurationMapper procurationMapper, CompteProRepository compteProRepository, FirebaseNotificationService firebaseNotificationService, ContactRepository contactRepository, NotificationService notificationService) {
+    public ProcurationService(ProcurationRepository procurationRepository, ProcurationMapper procurationMapper, CompteProRepository compteProRepository, FirebaseNotificationService firebaseNotificationService, ContactRepository contactRepository, NotificationService notificationService, CompteProMapper compteProMapper) {
         this.procurationRepository = procurationRepository;
         this.procurationMapper = procurationMapper;
+        this.compteProMapper = compteProMapper;
         this.compteProRepository = compteProRepository;
         this.firebaseNotificationService = firebaseNotificationService;
         this.contactRepository = contactRepository;
@@ -237,27 +239,20 @@ public class ProcurationService {
         }
     }
 
-    public List<ComptePro> findAllProcurationsByUtilisateurPro(String utilisateurProId) {
-        auditLogger1.info("Requête pour récupérer toutes les procurations pour l'utilisateur professionnel ID: {}", utilisateurProId);
-
+    public List<CompteProDTO> findAllCompteProsByUtilisateurPro(String utilisateurProId) {
+        log.debug("Request to get all ComptePros for UtilisateurPro ID: {}", utilisateurProId);
         List<Procuration> procurations = procurationRepository.findByUtilisateurProId(utilisateurProId);
-
-        // Convertir les Procuration en ComptePro
-        List<ComptePro> comptePros = procurations.stream()
-                .map(procuration -> {
-                    ComptePro gestionnaireEspacePro = procuration.getGestionnaireEspacePro();
-                    if (gestionnaireEspacePro != null) {
-                        return gestionnaireEspacePro;
-                    } else {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
+        List<ComptePro> comptes = procurations.stream()
+                .map(Procuration::getGestionnaireEspacePro)
+                .distinct()
                 .collect(Collectors.toList());
 
-        // Log de l'utilisateur professionnel
-        auditLogger1.info("Utilisateur professionnel : {}", utilisateurProId);
+        List<CompteProDTO> compteProDTOs = comptes.stream()
+                .map(compteProMapper::toDto)
+                .collect(Collectors.toList());
 
-        return comptePros;
+        auditLogger1.info("{timestamp: '{}', correlationID: '{}', classe/méthode: 'ProcurationService/findAllCompteProsByUtilisateurPro', Level: 'INFO', actionType: 'LIST_COMPTES', username: '{}', userId: '{}', ipAddress: '{}', userAgent: '{}', dataReturned: '{}'}", Instant.now(), UUID.randomUUID(), "Utilisateur", utilisateurProId, "IP", "User-Agent", compteProDTOs.size());
+        return compteProDTOs;
     }
+
 }

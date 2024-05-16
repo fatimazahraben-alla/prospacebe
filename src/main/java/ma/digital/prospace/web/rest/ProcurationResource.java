@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import ma.digital.prospace.repository.CompteProRepository;
+import ma.digital.prospace.service.dto.CompteProDTO;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,9 +213,15 @@ public class ProcurationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-    @GetMapping("/utilisateur/{utilisateurProId}/procurations")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public List<ComptePro> findAllProcurationsByUtilisateurPro(@PathVariable String utilisateurProId) {
-        return procurationService.findAllProcurationsByUtilisateurPro(utilisateurProId);
+    @GetMapping("/comptes/espacePro/{espaceProId}")
+    public ResponseEntity<?> getAllCompteProsByUtilisateurPro(@PathVariable String espaceProId) {
+        if (!compteProRepository.existsById(espaceProId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Compte Pro not found");
+        }
+        List<CompteProDTO> comptes = procurationService.findAllCompteProsByUtilisateurPro(espaceProId);
+        if (comptes.isEmpty()) {
+            return ResponseEntity.ok("Vous n'avez pas des mandataires");
+        }
+        return ResponseEntity.ok(comptes);
     }
 }

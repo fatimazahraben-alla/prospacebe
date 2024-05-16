@@ -25,7 +25,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * Refresh oauth2 tokens.
  */
-/*
+
 @Component
 public class OAuth2RefreshTokensWebFilter extends OncePerRequestFilter {
 
@@ -83,4 +83,3 @@ public class OAuth2RefreshTokensWebFilter extends OncePerRequestFilter {
         return clientManager.authorize(request);
     }
 }
-*/
