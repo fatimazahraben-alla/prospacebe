@@ -195,11 +195,14 @@ public class CompteProResource {
         }
     }
     @GetMapping("/mes-espaces")
-    public ResponseEntity<List<CompteProDTO>> getMesEspaces(@RequestParam String userId) {
+    public ResponseEntity<?> getMesEspaces(@RequestParam String userId) {
+        if (!compteProRepository.existsById(userId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Compte Pro not found");
+        }
         List<CompteProDTO> espaces = compteProService.listerMesEspaces(userId);
         return ResponseEntity.ok().body(espaces);
     }
-    @GetMapping("/compte-pros/{id}/contact")
+    @GetMapping("/Not_Used-compte-pros/{id}/contact")
     public ResponseEntity<CompteProContactDTO> getCompteProWithContact(@PathVariable String id) {
         Optional<CompteProContactDTO> compteProContactDTO = compteProService.findCompteProWithContact(id);
         return compteProContactDTO.map(response -> ResponseEntity.ok().body(response))

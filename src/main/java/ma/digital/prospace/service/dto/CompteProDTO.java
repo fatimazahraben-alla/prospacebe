@@ -187,4 +187,3 @@ public class CompteProDTO implements Serializable {
     // prettier-ignore
 
 }
-

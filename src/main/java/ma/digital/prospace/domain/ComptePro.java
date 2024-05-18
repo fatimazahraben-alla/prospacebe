@@ -38,7 +38,7 @@ public class ComptePro implements Serializable {
     private String id;
 
     @Size(max = 100)
-    @Column(name = "identifiant")
+    @Column(name = "identifiant", nullable = true)
     private String identifiant;
 
     @Size(max = 60)

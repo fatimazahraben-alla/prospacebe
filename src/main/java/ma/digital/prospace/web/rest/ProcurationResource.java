@@ -134,7 +134,7 @@ public class ProcurationResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the procuration, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/procurations/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ADMIN', 'GERANT', 'GESTIONNAIRE')")
     public ResponseEntity<ProcurationDTO> getProcuration(@PathVariable UUID id) {
         log.debug("REST request to get ProcurationDTO : {}", id);
         Optional<ProcurationDTO> procuration = procurationService.findOne(id);
@@ -148,7 +148,7 @@ public class ProcurationResource {
      * or with status 400 (Bad Request) if the procuration has not been created
      */
     @PostMapping("/procurations")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('GERANT', 'GESTIONNAIRE')")
     public ResponseEntity<Object> createProcuration(@RequestBody ProcurationDTO procurationDTO) {
         try {
             ProcurationDTO result = procurationService.createProcuration(procurationDTO);
@@ -179,7 +179,7 @@ public class ProcurationResource {
         }
     }
     @DeleteMapping("/procurations/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('GESTIONNAIRE')")
     public ResponseEntity<Void> deleteProcuration(@PathVariable UUID id) {
         log.debug("REST request to delete Procuration : {}", id);
         try {
@@ -194,7 +194,7 @@ public class ProcurationResource {
         }
     }
     @DeleteMapping("/procurations/{utilisateurProId}/{gestionnaireEspaceProId}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('GERANT')")
     public ResponseEntity<Void> removeDelegation(
             @PathVariable String utilisateurProId,
             @PathVariable String gestionnaireEspaceProId) {

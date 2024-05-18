@@ -42,10 +42,13 @@ public class AssociationResource {
     private  CompteProRepository compteProRepository;
     private  EntrepriseRepository entrepriseRepository;
     private  RoleeRepository roleeRepository;
-    private final AssociationService associationService;
+    private  AssociationService associationService;
 
-    public AssociationResource(AssociationService associationService) {
+    public AssociationResource(AssociationService associationService, CompteProRepository compteProRepository, EntrepriseRepository entrepriseRepository, RoleeRepository roleeRepository) {
         this.associationService = associationService;
+        this.compteProRepository = compteProRepository;
+        this.entrepriseRepository = entrepriseRepository;
+        this.roleeRepository = roleeRepository;
     }
 
     /*@PostMapping("/associations")
@@ -120,7 +123,7 @@ public class AssociationResource {
     }
 
     @PostMapping("/association/pushCompteEntreprise")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> pushCompteEntreprise(@RequestBody CompteEntrepriseDTO compteEntrepriseDTO) {
         try {
             associationService.pushCompteEntreprise(compteEntrepriseDTO);
@@ -143,7 +146,7 @@ public class AssociationResource {
     }
 
     @PostMapping("/associations")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> createAssociation(@RequestBody AssociationDTO associationDTO) {
         try {
             AssociationDTO result = associationService.createAssociation(associationDTO);
@@ -174,7 +177,10 @@ public class AssociationResource {
         }
     }
     @PostMapping("/associations/demande-role")
-    public ResponseEntity<AssociationDTO> demanderRole(@RequestBody RoleRequestDTO roleRequest) {
+    public ResponseEntity<?> demanderRole(@RequestBody RoleRequestDTO roleRequest) {
+        if ((!compteProRepository.existsById(roleRequest.getCompteId())) ||  (!entrepriseRepository.existsById(roleRequest.getEntrepriseId())) || (!roleeRepository.existsById(roleRequest.getRoleId()))) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("not found");
+        }
         try {
             AssociationDTO result = associationService.demanderRole(roleRequest);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -187,6 +193,9 @@ public class AssociationResource {
     }
     @GetMapping("/associations/roles")
     public ResponseEntity<?> getRolesByCompteProAndEntreprise(@RequestParam String compteProId, @RequestParam UUID entrepriseId) {
+        if ((!compteProRepository.existsById(compteProId)) ||  (!entrepriseRepository.existsById(entrepriseId))) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ComptePro or Entreprise not found");
+        }
         List<String> roles = associationService.getRolesByCompteProAndEntreprise(compteProId, entrepriseId);
         if (roles.isEmpty()) {
             return new ResponseEntity<>("No roles found for the provided ComptePro and Entreprise", HttpStatus.NOT_FOUND);

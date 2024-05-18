@@ -243,6 +243,7 @@ public class ProcurationService {
         log.debug("Request to get all ComptePros for UtilisateurPro ID: {}", utilisateurProId);
         List<Procuration> procurations = procurationRepository.findByUtilisateurProId(utilisateurProId);
         List<ComptePro> comptes = procurations.stream()
+                .filter(procuration -> procuration.getStatut() == StatutInvitation.ACCEPTED)
                 .map(Procuration::getGestionnaireEspacePro)
                 .distinct()
                 .collect(Collectors.toList());
