@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import ma.digital.prospace.domain.*;
 import ma.digital.prospace.repository.*;
@@ -126,14 +128,13 @@ public class AssociationService {
     /**
      *  check that there is an association between the FS and the account and create a session for the current transaction (see header) and create a new session object (transactionID, status = IN_PROGRESS).
      */
-    private String constructAndSendPushNotification(String deviceToken, String transactionID, String Title, String Body) {
+    private String constructAndSendPushNotification(String deviceToken, String transactionID, String Title, String Body, Map data) {
 
         Notification notification = Notification.builder()
                 .setTitle(Title)
                 .setBody(Body)
                 .build();
-        Map<String, String> data = new HashMap<>();
-        data.put("transactionID", transactionID);
+
 
         Message message = Message.builder()
                 .setNotification(notification)
@@ -211,7 +212,11 @@ public class AssociationService {
 
                 if (devicetoken != null) {
                     logger.info("Device token récupéré avec succès : {}", devicetoken);
-                    constructAndSendPushNotification(devicetoken, transactionID, "Notification process auth", "contenu");
+                    Map<String, String> data = new HashMap<>();
+                    data.put("transactionID", transactionID);
+                    data.put("compteID", compteID);
+                    data.put("fs", fs);
+                    constructAndSendPushNotification(devicetoken, transactionID, "Notification process auth", "contenu", data);
                     return responseDTO;
                 }
             } catch (Exception e) {
@@ -222,7 +227,7 @@ public class AssociationService {
             logger.info("*acunne device token n'est trouvé");
             return null;
         } else {
-            return null; // Retourne null si aucune association n'est trouvée
+            return null;
         }
 
     }
@@ -377,5 +382,11 @@ public class AssociationService {
 
     public List<String> getRolesByCompteProAndEntreprise(String compteProId, UUID entrepriseId) {
         return associationRepository.findRoleNamesByCompteProIdAndEntrepriseId(compteProId, entrepriseId);
+    }
+    public List<AssociationDTO> getEntrepriseRole(String fs, String compteProId) {
+        List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteProId);
+        return associations.stream()
+                .map(associationMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

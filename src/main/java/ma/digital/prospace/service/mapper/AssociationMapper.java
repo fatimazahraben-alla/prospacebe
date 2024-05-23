@@ -30,4 +30,5 @@ public interface AssociationMapper extends EntityMapper<AssociationDTO, Associat
     @Mapping(source = "mail", target = "mail")
     @Mapping(source = "telephone", target = "telephone")
     Association toEntity(AssociationDTO associationDTO);
+
 }

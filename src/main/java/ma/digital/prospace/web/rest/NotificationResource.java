@@ -55,7 +55,7 @@ public class NotificationResource {
     public ResponseEntity<List<NotificationDTO>> getAllNotifications() {
         List<NotificationDTO> notifications = notificationService.findAll();
         if (notifications.isEmpty()) {
-            return ResponseEntity.noContent().build(); // ou ResponseEntity.ok().body(notifications) si vous préférez renvoyer une liste vide
+            return ResponseEntity.ok().body(notifications);
         }
         return ResponseEntity.ok(notifications);
     }

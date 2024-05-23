@@ -1,2 +1,4 @@
 ﻿id;denomination;statut_juridique;tribunal;numero_rc;ice;activite;forme_juridique;date_immatriculation;Status_Perphysique_Permorale;etat
-f47ac10b-58cc-4372-a567-0e02b2c3d478;;;;;;;;;;En attente de validation
+f47ac10b-58cc-4372-a567-0e02b2c3d478;Nom1;anonyme;1;1234567890;ICE123456789;Services informatiques;SA;;PHYSICAL_PERSON;En attente de validation
+38b1e5d3-0f8c-43df-b4dc-739f7b20e2cf;Nom;anonyme;1;1234567890;ICE123456789;Services informatiques;SA;;PHYSICAL_PERSON;En attente de validation
+9d2f5c58-9d72-4c91-aa91-ef54e7f44d57;Nom3;anonyme;1;1234567890;ICE123456789;Consultation en finances;EI;;PHYSICAL_PERSON;En attente de validation

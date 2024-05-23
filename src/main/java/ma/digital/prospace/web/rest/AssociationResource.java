@@ -4,14 +4,12 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
+import ma.digital.prospace.domain.Association;
 import ma.digital.prospace.domain.Session;
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import ma.digital.prospace.repository.*;
 import ma.digital.prospace.service.AssociationService;
-import ma.digital.prospace.service.dto.AssociationDTO;
-import ma.digital.prospace.service.dto.CompteEntrepriseDTO;
-import ma.digital.prospace.service.dto.CompteFSAssociationDTO;
-import ma.digital.prospace.service.dto.RoleRequestDTO;
+import ma.digital.prospace.service.dto.*;
 import ma.digital.prospace.service.mapper.AssociationMapper;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
@@ -201,6 +199,11 @@ public class AssociationResource {
             return new ResponseEntity<>("No roles found for the provided ComptePro and Entreprise", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(roles, HttpStatus.OK);
+    }
+    @GetMapping("/associations/EntreprisesRoles")
+    public ResponseEntity<List<AssociationDTO>> getEntrepriseRole(@RequestParam String fs, @RequestParam String compteProId) {
+        List<AssociationDTO> associations = associationService.getEntrepriseRole(fs, compteProId);
+        return ResponseEntity.ok().body(associations);
     }
 }
 
