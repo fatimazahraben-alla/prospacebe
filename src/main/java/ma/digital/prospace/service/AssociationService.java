@@ -330,10 +330,8 @@ public class AssociationService {
     private void sendAndPersistNotification(String compteProId, String title, String message, UUID associationId, String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
         Contact contact = contactRepository.findByCompteProId(compteProId);
         if (contact != null && contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
-            String detailedMessage = String.format("Invitation de %s %s pour rejoindre l'entreprise %s",
-                    prenomInitiateur, nomInitiateur, nomEntreprise);
             try {
-                firebaseNotificationService.sendNotification(contact.getDeviceToken(), title, detailedMessage);
+                firebaseNotificationService.sendNotification(contact.getDeviceToken(), title, message);
             } catch (FirebaseMessagingException e) {
                 log.error("Failed to send notification: {}", e.getMessage());
                 // Handle the error appropriately
@@ -342,7 +340,7 @@ public class AssociationService {
             // Persist notification
             NotificationDTO notificationDTO = new NotificationDTO();
             notificationDTO.setTitle(title);
-            notificationDTO.setMessage(detailedMessage);
+            notificationDTO.setMessage(message);
             notificationDTO.setCompteProId(compteProId);
             notificationDTO.setCreatedAt(Instant.now());
             notificationService.createNotification(notificationDTO);
