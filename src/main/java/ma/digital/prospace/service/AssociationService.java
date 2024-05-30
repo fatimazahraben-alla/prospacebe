@@ -274,33 +274,36 @@ public class AssociationService {
                 .orElseThrow(() -> new EntityNotFoundException("Session not found with transaction ID: " + transactionId));
     }
     /**
-     * create an association
+     * Create an association
      */
-
-    public AssociationDTO createAssociation(AssociationDTO dto) {
-        Association association = associationMapper.toEntity(dto);
-        //Compte exists
-        ComptePro compte = compteProRepository.findById(dto.getCompteID())
+    public AssociationDTO createAssociationWithNotification(String compteID, String destinataireID, UUID entrepriseID, UUID roleID, String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
+        // Validate and find the required entities
+        ComptePro initiateur = compteProRepository.findById(compteID)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Compte not found"));
-        //Entreprise exists
-        Entreprise entreprise = entrepriseRepository.findById(dto.getEntrepriseID())
+        ComptePro destinataire = compteProRepository.findById(destinataireID)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Destinataire not found"));
+        Entreprise entreprise = entrepriseRepository.findById(entrepriseID)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Entreprise not found"));
-        //Role exists
-        Rolee role = roleeRepository.findById(dto.getRoleID())
+        Rolee role = roleeRepository.findById(roleID)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found"));
 
-        association.setCompte(compte);
+        // Create and save the association
+        Association association = new Association();
+        association.setCompte(destinataire);
         association.setEntreprise(entreprise);
         association.setRole(role);
-        association.setStatut(dto.getStatut());
+        association.setStatut(StatutAssociation.PENDING);
         association = associationRepository.save(association);
+
+        // Send notification
+        String message = String.format("%s %s vous invite en tant que %s dans l'entreprise %s",
+                prenomInitiateur, nomInitiateur, role.getNom(), nomEntreprise);
+        sendAndPersistNotification(destinataire.getId(), "Nouvelle invitation", message, association.getId(), prenomInitiateur, nomInitiateur, nomEntreprise);
+
         return associationMapper.toDto(association);
     }
 
-    /**
-     * update an association accepter ou annuler association
-     */
-    public AssociationDTO updateStatut(UUID associationId, StatutAssociation nouveauStatut) throws FirebaseMessagingException {
+    public AssociationDTO updateAssociationStatut(UUID associationId, StatutAssociation nouveauStatut) throws FirebaseMessagingException {
         Association association = associationRepository.findById(associationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Association not found with id " + associationId));
 
@@ -311,67 +314,35 @@ public class AssociationService {
         association.setStatut(nouveauStatut);
         association = associationRepository.save(association);
 
-        // Préparer les détails de la notification
+        // Prepare and send the notification
         String title = (nouveauStatut == StatutAssociation.ACCEPTED) ? "Association Acceptée" : "Association Refusée";
         String message = (nouveauStatut == StatutAssociation.ACCEPTED) ?
                 "Votre demande d'association a été acceptée." :
                 "Votre demande d'association a été refusée.";
 
-        Contact contact = contactRepository.findByCompteProId(association.getCompte().getId());
-        if (contact != null && contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
-            firebaseNotificationService.sendNotification(contact.getDeviceToken(), title, message);
-        } else {
-            throw new RuntimeException("Aucun token de device trouvé pour l'ID de ComptePro : " + association.getCompte().getId());
-        }
-
-        return associationMapper.toDto(association);
-    }
-    public AssociationDTO demanderRole(RoleRequestDTO roleRequest) throws FirebaseMessagingException {
-        // Validation des paramètres de la requête
-        if (roleRequest.getCompteId() == null || roleRequest.getCompteId().trim().isEmpty()) {
-            throw new InvalidDataAccessApiUsageException("L'ID du compte ne peut pas être nul ou vide.");
-        }
-        if (roleRequest.getEntrepriseId() == null) {
-            throw new InvalidDataAccessApiUsageException("L'ID de l'entreprise ne peut pas être nul.");
-        }
-        if (roleRequest.getRoleId() == null) {
-            throw new InvalidDataAccessApiUsageException("L'ID du rôle ne peut pas être nul.");
-        }
-
-        // Récupération des entités nécessaires à partir des repositories
-        ComptePro comptePro = compteProRepository.findById(roleRequest.getCompteId())
-                .orElseThrow(() -> new EntityNotFoundException("ComptePro not found"));
-        Entreprise entreprise = entrepriseRepository.findById(roleRequest.getEntrepriseId())
-                .orElseThrow(() -> new EntityNotFoundException("Entreprise not found"));
-        Rolee role = roleeRepository.findById(roleRequest.getRoleId())
-                .orElseThrow(() -> new EntityNotFoundException("Role not found"));
-
-        // Création de l'association
-        Association association = new Association();
-        association.setCompte(comptePro);
-        association.setEntreprise(entreprise);
-        association.setRole(role);
-        association.setStatut(StatutAssociation.PENDING); // Statut initialement en attente
-        association = associationRepository.save(association);
-        System.out.println("New association created: " + association);
-
-        // Envoi de la notification et enregistrement
-        sendAndPersistNotification(comptePro.getId(),
-                "Demande d'association nouvelle",
-                "Votre demande d'association en tant que " + role.getNom() +
-                        " chez " + role.getFs().getNom() + " est en attente d'approbation.");
+        ComptePro initiateur = association.getCompte(); // Get initiator info from the association
+        Entreprise entreprise = association.getEntreprise();
+        sendAndPersistNotification(initiateur.getId(), title, message, association.getId(), initiateur.getPrenomFr(), initiateur.getNomFr(), entreprise.getIce());
 
         return associationMapper.toDto(association);
     }
 
-    private void sendAndPersistNotification(String compteProId, String title, String message) throws FirebaseMessagingException {
+    private void sendAndPersistNotification(String compteProId, String title, String message, UUID associationId, String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
         Contact contact = contactRepository.findByCompteProId(compteProId);
         if (contact != null && contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
-            firebaseNotificationService.sendNotification(contact.getDeviceToken(), title, message);
-            // Enregistrement de la notification dans la base de données
+            String detailedMessage = String.format("Invitation de %s %s pour rejoindre l'entreprise %s",
+                    prenomInitiateur, nomInitiateur, nomEntreprise);
+            try {
+                firebaseNotificationService.sendNotification(contact.getDeviceToken(), title, detailedMessage);
+            } catch (FirebaseMessagingException e) {
+                log.error("Failed to send notification: {}", e.getMessage());
+                // Handle the error appropriately
+            }
+
+            // Persist notification
             NotificationDTO notificationDTO = new NotificationDTO();
             notificationDTO.setTitle(title);
-            notificationDTO.setMessage(message);
+            notificationDTO.setMessage(detailedMessage);
             notificationDTO.setCompteProId(compteProId);
             notificationDTO.setCreatedAt(Instant.now());
             notificationService.createNotification(notificationDTO);

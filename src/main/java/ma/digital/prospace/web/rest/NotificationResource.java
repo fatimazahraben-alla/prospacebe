@@ -22,18 +22,10 @@ public class NotificationResource {
     public NotificationResource(NotificationService notificationService) {
         this.notificationService = notificationService;
     }
-    @PostMapping("/notifications")
-    public ResponseEntity<NotificationDTO> createNotification(@RequestBody NotificationDTO notificationDTO) {
-        if (notificationDTO.getId() != null) {
-            return ResponseEntity.badRequest().body(null); // Prevent creation with existing ID
-        }
-        NotificationDTO result = notificationService.createNotification(notificationDTO);
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
-    }
     @PutMapping("/notifications")
     public ResponseEntity<NotificationDTO> updateNotification(@RequestBody NotificationDTO notificationDTO) {
         if (notificationDTO.getId() == null) {
-            return ResponseEntity.badRequest().body(null); // ID is required for update
+            return ResponseEntity.badRequest().body(null); // ID
         }
         NotificationDTO result = notificationService.updateNotification(notificationDTO);
         return ResponseEntity.ok(result);

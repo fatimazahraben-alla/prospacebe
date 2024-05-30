@@ -23,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -142,53 +143,51 @@ public class AssociationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-
-    @PostMapping("/associations")
+    @PostMapping("/associations/invite")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> createAssociation(@RequestBody AssociationDTO associationDTO) {
+    public ResponseEntity<?> createAssociationWithNotification(@RequestParam String compteID,
+                                                               @RequestParam String destinataireID,
+                                                               @RequestParam UUID entrepriseID,
+                                                               @RequestParam UUID roleID,
+                                                               @RequestParam String prenomInitiateur,
+                                                               @RequestParam String nomInitiateur,
+                                                               @RequestParam String nomEntreprise) {
         try {
-            AssociationDTO result = associationService.createAssociation(associationDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(result);
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(Collections.singletonMap("error", e.getReason()));
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Data integrity violation: " + e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "An unexpected error occurred: " + e.getMessage()));
-        }
-    }
-    @PutMapping("/associations")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<AssociationDTO> updateAssociationStatut(@RequestParam UUID id, @RequestParam String statut) {
-        StatutAssociation nouveauStatut;
-        try {
-            nouveauStatut = StatutAssociation.valueOf(statut.toUpperCase()); // Ensure case insensitivity
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid statut value");
-        }
-
-        try {
-            AssociationDTO updatedAssociation = associationService.updateStatut(id, nouveauStatut);
-            return ResponseEntity.ok(updatedAssociation);
-        } catch (ResponseStatusException | FirebaseMessagingException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-    }
-    @PostMapping("/associations/demande-role")
-    public ResponseEntity<?> demanderRole(@RequestBody RoleRequestDTO roleRequest) {
-        if ((!compteProRepository.existsById(roleRequest.getCompteId())) ||  (!entrepriseRepository.existsById(roleRequest.getEntrepriseId())) || (!roleeRepository.existsById(roleRequest.getRoleId()))) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("not found");
-        }
-        try {
-            AssociationDTO result = associationService.demanderRole(roleRequest);
+            AssociationDTO result = associationService.createAssociationWithNotification(compteID, destinataireID, entrepriseID, roleID, prenomInitiateur, nomInitiateur, nomEntreprise);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                     .buildAndExpand(result.getId()).toUri();
             return ResponseEntity.created(location).body(result);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(Collections.singletonMap("error", e.getReason()));
         } catch (Exception e) {
-            // Log the exception details here
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            log.error("Error creating association with notification", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Internal server error: " + e.getMessage()));
         }
     }
+
+    @PutMapping("/associations/{id}/status")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> updateAssociationStatut(@PathVariable UUID id, @RequestParam String statut) {
+        StatutAssociation nouveauStatut;
+        try {
+            nouveauStatut = StatutAssociation.valueOf(statut.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Invalid statut value"));
+        }
+
+        try {
+            AssociationDTO result = associationService.updateAssociationStatut(id, nouveauStatut);
+            return ResponseEntity.ok(result);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(Collections.singletonMap("error", e.getReason()));
+        } catch (FirebaseMessagingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Error sending notification: " + e.getMessage()));
+        } catch (Exception e) {
+            log.error("Error updating association status", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Internal server error: " + e.getMessage()));
+        }
+    }
+
     @GetMapping("/associations/roles")
     public ResponseEntity<?> getRolesByCompteProAndEntreprise(@RequestParam String compteProId, @RequestParam UUID entrepriseId) {
         if ((!compteProRepository.existsById(compteProId)) ||  (!entrepriseRepository.existsById(entrepriseId))) {

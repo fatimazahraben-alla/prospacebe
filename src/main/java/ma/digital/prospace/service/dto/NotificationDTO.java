@@ -58,4 +58,15 @@ public class NotificationDTO {
         isRead = read;
     }
 
+    public void setAssociationId(String string) {
+    }
+
+    public void setPrenomInitiateur(String prenomInitiateur) {
+    }
+
+    public void setNomInitiateur(String nomInitiateur) {
+    }
+
+    public void setNomEntreprise(String nomEntreprise) {
+    }
 }

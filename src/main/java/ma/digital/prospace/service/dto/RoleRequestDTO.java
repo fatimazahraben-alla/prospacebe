@@ -5,10 +5,10 @@ import java.util.UUID;
 public class RoleRequestDTO {
     private String compteId;
     private UUID entrepriseId;
-    private String fsId;
     private UUID roleId;
 
-    // Getters et Setters
+    // Getters and setters
+
     public String getCompteId() {
         return compteId;
     }
@@ -23,14 +23,6 @@ public class RoleRequestDTO {
 
     public void setEntrepriseId(UUID entrepriseId) {
         this.entrepriseId = entrepriseId;
-    }
-
-    public String getFsId() {
-        return fsId;
-    }
-
-    public void setFsId(String fsId) {
-        this.fsId = fsId;
     }
 
     public UUID getRoleId() {
