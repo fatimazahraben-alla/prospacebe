@@ -143,7 +143,7 @@ public class AssociationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-    @PostMapping("/associations/invite")
+    @PostMapping("/associations")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> createAssociationWithNotification(@RequestParam String compteID,
                                                                @RequestParam String destinataireID,

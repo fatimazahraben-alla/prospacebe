@@ -42,7 +42,7 @@ import tech.jhipster.web.util.ResponseUtil;
 public class CompteProResource {
 
     private final Logger log = LoggerFactory.getLogger(CompteProResource.class);
-    private static final Logger auditLogger = LoggerFactory.getLogger("ma.digital.prospace.audit2");
+    private static final Logger auditLogger = LoggerFactory.getLogger("");
     private static final String ENTITY_NAME = "comptePro";
 
     @Value("${jhipster.clientApp.name}")

@@ -48,7 +48,7 @@ import tech.jhipster.web.util.ResponseUtil;
 public class EntrepriseResource {
 
     private final Logger log = LoggerFactory.getLogger(EntrepriseResource.class);
-    private static final Logger auditLogger = LoggerFactory.getLogger("ma.digital.prospace.audit");
+    private static final Logger auditLogger = LoggerFactory.getLogger("");
 
     private static final String ENTITY_NAME = "entreprise";
 

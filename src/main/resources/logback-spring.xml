@@ -6,45 +6,6 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
-    <!-- Appender spécifique pour l'audit -->
-    <appender name="AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/audit.log</file>
-        <encoder>
-            <pattern>%date %level [%thread] %logger{10} [%file:%line] %X{username} %X{ipAddress} %X{userId} - Method called: %X{method} - %msg%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/audit.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
-    </appender>
-
-    <!-- Logger pour l'audit -->
-    <logger name="ma.digital.prospace.audit" level="debug" additivity="false">
-        <appender-ref ref="AUDIT"/>
-    </logger>
-
-    <!-- Second Appender for audit -->
-    <appender name="AUDIT2" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/audit2.log</file>
-        <encoder>
-            <pattern>%date %level [%thread] %logger{10} [%file:%line] %X{username} %X{ipAddress} %X{userId} - Method called: %X{method} - %msg%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/audit2.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
-    </appender>
-
-    <!-- Logger for second audit appender -->
-    <logger name="ma.digital.prospace.audit2" level="debug" additivity="false">
-        <appender-ref ref="AUDIT2"/>
-    </logger>
 
     <!-- Property to control root logging level -->
     <springProperty name="log.level" source="logging.level.root" defaultValue="INFO" />

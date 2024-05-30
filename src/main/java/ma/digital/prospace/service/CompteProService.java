@@ -42,7 +42,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class CompteProService {
 
     private final Logger log = LoggerFactory.getLogger(CompteProService.class);
-    private static final Logger auditLogger = LoggerFactory.getLogger("ma.digital.prospace.audit2");
+    private static final Logger auditLogger = LoggerFactory.getLogger("");
     private final AssociationRepository associationRepository;
     private final CompteProRepository compteProRepository;
     private final ProcurationRepository procurationRepository;

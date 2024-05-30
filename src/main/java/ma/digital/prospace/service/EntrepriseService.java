@@ -56,7 +56,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class EntrepriseService {
 
     private final Logger log = LoggerFactory.getLogger(EntrepriseService.class);
-    private static final Logger auditLogger1 = LoggerFactory.getLogger("ma.digital.prospace.audit");
+    private static final Logger auditLogger1 = LoggerFactory.getLogger("");
     private AuditorAware<String> auditorAware;
     private final EntrepriseRepository entrepriseRepository;
     private final EntrepriseMapper entrepriseMapper;
