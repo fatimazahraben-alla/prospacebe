@@ -31,9 +31,10 @@ public class Procuration implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
+    @Transient
     @Column(name = "date_effet")
     private Instant dateEffet;
-
+    @Transient
     @Column(name = "date_fin")
     private Instant dateFin;
 

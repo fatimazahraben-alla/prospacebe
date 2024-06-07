@@ -176,20 +176,20 @@ spring:
   output:
     ansi:
       console-available: true
-  #security:
-      #oauth2:
-        #client:
-        #registration:
-          #keycloak:
-            #client-id: prospace-mobile-client
-            #client-secret: zM8GKsnVz5WlFQu1L9XVyRJFB5OHDvfB
-            #authorization-grant-type: authorization_code
-            #redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
-            #scope: openid, profile, email
-        #provider:
-          #keycloak:
-            #issuer-uri: http://localhost:8080/realms/jhipster
-            #user-name-attribute: preferred_username
+  security:
+      oauth2:
+        client:
+        registration:
+          keycloak:
+            client-id: prospace-mobile-client
+            client-secret: SCABEh8JWxY33AK0m6Us5Lnu1KLlMbb3
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+            scope: openid, profile, email
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/jhipster
+            user-name-attribute: preferred_username
 server:
   servlet:
     session:

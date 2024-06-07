@@ -241,9 +241,10 @@ public class ProcurationService {
 
     public List<CompteProDTO> findAllCompteProsByUtilisateurPro(String utilisateurProId) {
         log.debug("Request to get all ComptePros for UtilisateurPro ID: {}", utilisateurProId);
+
         List<Procuration> procurations = procurationRepository.findByUtilisateurProId(utilisateurProId);
+
         List<ComptePro> comptes = procurations.stream()
-                .filter(procuration -> procuration.getStatut() == StatutInvitation.ACCEPTED)
                 .map(Procuration::getGestionnaireEspacePro)
                 .distinct()
                 .collect(Collectors.toList());
@@ -255,5 +256,6 @@ public class ProcurationService {
         auditLogger1.info("{timestamp: '{}', correlationID: '{}', classe/méthode: 'ProcurationService/findAllCompteProsByUtilisateurPro', Level: 'INFO', actionType: 'LIST_COMPTES', username: '{}', userId: '{}', ipAddress: '{}', userAgent: '{}', dataReturned: '{}'}", Instant.now(), UUID.randomUUID(), "Utilisateur", utilisateurProId, "IP", "User-Agent", compteProDTOs.size());
         return compteProDTOs;
     }
+
 
 }

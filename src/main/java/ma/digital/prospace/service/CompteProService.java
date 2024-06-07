@@ -14,6 +14,7 @@ import com.google.firebase.messaging.Notification;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.Contact;
+import ma.digital.prospace.domain.Procuration;
 import ma.digital.prospace.domain.enumeration.StatutCompte;
 import ma.digital.prospace.repository.AssociationRepository;
 import ma.digital.prospace.repository.ContactRepository;
@@ -221,10 +222,26 @@ public class CompteProService {
         return createdCompteProDTO;
     }
     public List<CompteProDTO> listerMesEspaces(String userId) {
-        List<ComptePro> relatedSpaces = compteProRepository.findAllRelatedByUser(userId);
-        return relatedSpaces.stream()
-                .map(compteProMapper::toDto)
+        log.debug("Lister les espaces pour l'utilisateur ID: {}", userId);
+        List<Procuration> acceptedProcurations = procurationRepository.findAcceptedProcurationsForGestionnaire(userId);
+        log.debug("Nombre de procurations acceptées trouvées: {}", acceptedProcurations.size());
+
+        // les espaces des procurations acceptées
+        List<CompteProDTO> espaces = acceptedProcurations.stream()
+                .map(procuration -> compteProMapper.toDto(procuration.getUtilisateurPro()))
+                .distinct()
                 .collect(Collectors.toList());
+
+        // l'espace lui-même
+        compteProRepository.findById(userId).ifPresent(comptePro -> {
+            CompteProDTO utilisateurEspaceDTO = compteProMapper.toDto(comptePro);
+            if (espaces.stream().noneMatch(dto -> dto.getId().equals(utilisateurEspaceDTO.getId()))) {
+                espaces.add(utilisateurEspaceDTO);
+            }
+        });
+
+        log.debug("Espaces retournés: {}", espaces);
+        return espaces;
     }
     public Optional<CompteProContactDTO> findCompteProWithContact(String compteProId) {
         Optional<ComptePro> compteProOptional = compteProRepository.findById(compteProId);

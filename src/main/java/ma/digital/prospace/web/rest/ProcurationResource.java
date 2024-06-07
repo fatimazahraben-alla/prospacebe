@@ -220,8 +220,9 @@ public class ProcurationResource {
         }
         List<CompteProDTO> comptes = procurationService.findAllCompteProsByUtilisateurPro(espaceProId);
         if (comptes.isEmpty()) {
-            return ResponseEntity.ok("Vous n'avez pas des mandataires");
+            return ResponseEntity.ok("Vous n'avez pas de mandataires.");
         }
         return ResponseEntity.ok(comptes);
     }
+
 }

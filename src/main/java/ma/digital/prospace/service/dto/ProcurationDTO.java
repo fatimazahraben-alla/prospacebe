@@ -20,10 +20,7 @@ import java.util.UUID;
 public class ProcurationDTO implements Serializable {
 
     private UUID id;
-    private typeidentifiant typePiece;
-    private String numeroPiece;
-    private String nom;
-    private String prenom;
+
     private String gestionnaireEspaceProId;
     private String utilisateurProId;
 
@@ -34,36 +31,6 @@ public class ProcurationDTO implements Serializable {
     public void setId(UUID id) {
         this.id = id;
     }
-    public typeidentifiant getTypePiece() {
-        return typePiece;
-    }
-
-    public void setTypePiece(typeidentifiant typePiece) {
-        this.typePiece = typePiece;
-    }
-
-    public String getNumeroPiece() {
-        return numeroPiece;
-    }
-
-    public void setNumeroPiece(String numeroPiece) {
-        this.numeroPiece = numeroPiece;
-    }
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-
 
     public String getGestionnaireEspaceProId() {
         return gestionnaireEspaceProId;

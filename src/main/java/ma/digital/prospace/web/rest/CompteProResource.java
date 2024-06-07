@@ -2,10 +2,11 @@ package ma.digital.prospace.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -195,11 +196,11 @@ public class CompteProResource {
         }
     }
     @GetMapping("/mes-espaces")
-    public ResponseEntity<?> getMesEspaces(@RequestParam String userId) {
-        if (!compteProRepository.existsById(userId)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Compte Pro not found");
-        }
+    public ResponseEntity<List<CompteProDTO>> getMesEspaces(@RequestParam String userId) {
         List<CompteProDTO> espaces = compteProService.listerMesEspaces(userId);
+        if (espaces.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Collections.emptyList());
+        }
         return ResponseEntity.ok().body(espaces);
     }
     @GetMapping("/Not_Used-compte-pros/{id}/contact")
