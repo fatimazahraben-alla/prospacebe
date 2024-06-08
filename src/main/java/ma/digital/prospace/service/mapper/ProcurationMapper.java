@@ -26,10 +26,12 @@ public interface  ProcurationMapper extends EntityMapper<ProcurationDTO, Procura
 
     @Mapping(source = "gestionnaireEspacePro.id", target = "gestionnaireEspaceProId")
     @Mapping(source = "utilisateurPro.id", target = "utilisateurProId")
+    @Mapping(source = "statut", target = "statut")
     ProcurationDTO toDto(Procuration entity);
 
     @Mapping(source = "gestionnaireEspaceProId", target = "gestionnaireEspacePro.id")
     @Mapping(source = "utilisateurProId", target = "utilisateurPro.id")
+    @Mapping(source = "statut", target = "statut")
     Procuration toEntity(ProcurationDTO dto);
 
     @Named("localDateToInstant")

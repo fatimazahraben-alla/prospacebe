@@ -214,15 +214,12 @@ public class ProcurationResource {
         }
     }
     @GetMapping("/comptes/espacePro/{espaceProId}")
-    public ResponseEntity<?> getAllCompteProsByUtilisateurPro(@PathVariable String espaceProId) {
-        if (!compteProRepository.existsById(espaceProId)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Compte Pro not found");
-        }
-        List<CompteProDTO> comptes = procurationService.findAllCompteProsByUtilisateurPro(espaceProId);
-        if (comptes.isEmpty()) {
-            return ResponseEntity.ok("Vous n'avez pas de mandataires.");
-        }
-        return ResponseEntity.ok(comptes);
-    }
+    public ResponseEntity<?> getAllProcurationsByUtilisateurPro(@PathVariable String espaceProId) {
 
+        List<ProcurationDTO> procurations = procurationService.findAllProcurationsByUtilisateurPro(espaceProId);
+        if (procurations.isEmpty()) {
+            return ResponseEntity.ok("Aucune procuration trouvée pour l'Espace.");
+        }
+        return ResponseEntity.ok(procurations);
+    }
 }

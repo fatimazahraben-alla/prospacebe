@@ -179,22 +179,26 @@ public class ProcurationService {
 
         return procurationMapper.toDto(savedProcuration);
     }
-
     public void deleteProcuration(UUID procurationId) throws FirebaseMessagingException {
         Procuration procuration = procurationRepository.findById(procurationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Procuration not found"));
+        String messageToGestionnaire;
+        String messageToUtilisateur;
 
-        if (!procuration.getStatut().equals(StatutInvitation.ACCEPTED)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seules les procurations acceptées peuvent être révoquées");
+        if (procuration.getStatut() == StatutInvitation.ACCEPTED) {
+            messageToGestionnaire = String.format("Vous n'avez plus de procuration sur l'espace pro de %s.",
+                    procuration.getUtilisateurPro().getNomFr() + " " + procuration.getUtilisateurPro().getPrenomFr());
+            messageToUtilisateur = String.format("%s n'est plus gestionnaire de votre espace pro.",
+                    procuration.getGestionnaireEspacePro().getNomFr() + " " + procuration.getGestionnaireEspacePro().getPrenomFr());
+        } else {
+            messageToGestionnaire = String.format("Procuration en cours sur l'espace pro de %s a été annulée.",
+                    procuration.getUtilisateurPro().getNomFr() + " " + procuration.getUtilisateurPro().getPrenomFr());
+            messageToUtilisateur = String.format("Votre demande de procuration pour %s a été annulée.",
+                    procuration.getGestionnaireEspacePro().getNomFr() + " " + procuration.getGestionnaireEspacePro().getPrenomFr());
         }
 
-        String messageToGestionnaire = String.format("Vous n'avez plus de procuration sur l'espace pro de %s.",
-                procuration.getUtilisateurPro().getNomFr() + " " + procuration.getUtilisateurPro().getPrenomFr());
-        String messageToUtilisateur = String.format("%s n'est plus gestionnaire de votre espace pro.",
-                procuration.getGestionnaireEspacePro().getNomFr() + " " + procuration.getGestionnaireEspacePro().getPrenomFr());
-
         sendAndPersistNotification(procuration.getGestionnaireEspacePro().getId(), "Fin de procuration", messageToGestionnaire);
-        sendAndPersistNotification(procuration.getUtilisateurPro().getId(), "Gestionnaire parti", messageToUtilisateur);
+        sendAndPersistNotification(procuration.getUtilisateurPro().getId(), "Procuration annulée", messageToUtilisateur);
 
         procurationRepository.deleteById(procurationId);
     }
@@ -238,24 +242,16 @@ public class ProcurationService {
             throw new RuntimeException("Contact introuvable pour l'ID de ComptePro : " + compteProId);
         }
     }
-
-    public List<CompteProDTO> findAllCompteProsByUtilisateurPro(String utilisateurProId) {
-        log.debug("Request to get all ComptePros for UtilisateurPro ID: {}", utilisateurProId);
+    public List<ProcurationDTO> findAllProcurationsByUtilisateurPro(String utilisateurProId) {
+        log.debug("Request to get all Procurations for UtilisateurPro ID: {}", utilisateurProId);
 
         List<Procuration> procurations = procurationRepository.findByUtilisateurProId(utilisateurProId);
 
-        List<ComptePro> comptes = procurations.stream()
-                .map(Procuration::getGestionnaireEspacePro)
-                .distinct()
+        List<ProcurationDTO> procurationDTOs = procurations.stream()
+                .map(procurationMapper::toDto)
                 .collect(Collectors.toList());
 
-        List<CompteProDTO> compteProDTOs = comptes.stream()
-                .map(compteProMapper::toDto)
-                .collect(Collectors.toList());
-
-        auditLogger1.info("{timestamp: '{}', correlationID: '{}', classe/méthode: 'ProcurationService/findAllCompteProsByUtilisateurPro', Level: 'INFO', actionType: 'LIST_COMPTES', username: '{}', userId: '{}', ipAddress: '{}', userAgent: '{}', dataReturned: '{}'}", Instant.now(), UUID.randomUUID(), "Utilisateur", utilisateurProId, "IP", "User-Agent", compteProDTOs.size());
-        return compteProDTOs;
+        auditLogger1.info("{timestamp: '{}', correlationID: '{}', classe/méthode: 'ProcurationService/findAllProcurationsByUtilisateurPro', Level: 'INFO', actionType: 'LIST_PROCURATIONS', username: '{}', userId: '{}', ipAddress: '{}', userAgent: '{}', dataReturned: '{}'}", Instant.now(), UUID.randomUUID(), "Utilisateur", utilisateurProId, "IP", "User-Agent", procurationDTOs.size());
+        return procurationDTOs;
     }
-
-
 }

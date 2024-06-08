@@ -24,6 +24,16 @@ public class ProcurationDTO implements Serializable {
     private String gestionnaireEspaceProId;
     private String utilisateurProId;
 
+    public StatutInvitation getStatut() {
+        return statut;
+    }
+
+    public void setStatut(StatutInvitation statut) {
+        this.statut = statut;
+    }
+
+    private StatutInvitation statut;
+
     public UUID getId() {
         return id;
     }

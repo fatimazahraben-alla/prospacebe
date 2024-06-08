@@ -38,8 +38,9 @@ public class Procuration implements Serializable {
     @Column(name = "date_fin")
     private Instant dateFin;
 
-    @Column(name = "statut")
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "statut")
     private StatutInvitation statut;
 
     @ManyToOne
@@ -152,6 +153,7 @@ public class Procuration implements Serializable {
                 ", dateFin=" + dateFin +
                 ", gestionnaireEspacePro=" + gestionnaireEspacePro +
                 ", utilisateurPro=" + utilisateurPro +
+                ", statut=" + statut +
                 '}';
     }
 }
