@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Added the entity AuditAssociation. -->
+    <changeSet id="20240610190000-1" author="jhipster">
+        <createTable tableName="audit_association">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="action" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="association_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="compte_id" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
+        </createTable>
+    </changeSet>
+
+    <!-- Insert sample data -->
+    <changeSet id="20240610190000-2" author="jhipster" context="faker">
+        <insert tableName="audit_association">
+            <column name="id" value="c3107485-8901-4d6c-b2f3-9d4e28db5ed9"/>
+            <column name="action" value="CREATE"/>
+            <column name="association_id" value="a02d2140-acb9-4cb7-8c9a-03d5b0ce8e1b"/>
+            <column name="compte_id" value="Compte002"/>
+            <column name="timestamp" valueDate="2024-06-10T18:00:00Z"/>
+        </insert>
+        <insert tableName="audit_association">
+            <column name="id" value="836d4ef0-9e3b-4e5c-b37f-0710c07f1843"/>
+            <column name="action" value="UPDATE"/>
+            <column name="association_id" value="902330eb-fc8e-46a3-b5dd-632b343e4cb6"/>
+            <column name="compte_id" value="Compte003"/>
+            <column name="timestamp" valueDate="2024-06-10T18:30:00Z"/>
+        </insert>
+        <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
+    </changeSet>
+</databaseChangeLog>

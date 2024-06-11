@@ -1,0 +1,3 @@
+id;action;association_id;compte_id;timestamp
+c3107485-8901-4d6c-b2f3-9d4e28db5ed9;CREATE;a02d2140-acb9-4cb7-8c9a-03d5b0ce8e1b;Compte002;2024-06-10T18:00:00Z
+836d4ef0-9e3b-4e5c-b37f-0710c07f1843;UPDATE;902330eb-fc8e-46a3-b5dd-632b343e4cb6;Compte003;2024-06-10T18:30:00Z

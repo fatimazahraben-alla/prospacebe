@@ -204,5 +204,10 @@ public class AssociationResource {
         List<AssociationDTO> associations = associationService.getEntrepriseRole(fs, compteProId);
         return ResponseEntity.ok().body(associations);
     }
+    @GetMapping("/associations/espacePro/{compteId}")
+    public ResponseEntity<List<AssociationDTO>> getAssociationsCreatedBy(@PathVariable String compteId) {
+        List<AssociationDTO> associations = associationService.findAssociationsByCompteId(compteId);
+        return ResponseEntity.ok(associations.isEmpty() ? Collections.emptyList() : associations);
+    }
 }
 

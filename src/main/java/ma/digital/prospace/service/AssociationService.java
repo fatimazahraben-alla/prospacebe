@@ -42,6 +42,8 @@ public class AssociationService {
     @Autowired
     private AssociationRepository associationRepository;
     @Autowired
+    private AuditAssociationRepository auditAssociationRepository;
+    @Autowired
     private AssociationMapper associationMapper;
     @Autowired
     private SessionRepository sessionRepository;
@@ -59,6 +61,7 @@ public class AssociationService {
     private final NotificationService notificationService;
     // Constructor
     public AssociationService(AssociationRepository associationRepository,
+                              AuditAssociationRepository auditAssociationRepository,
                               AssociationMapper associationMapper,
                               SessionRepository sessionRepository,
                               CompteProRepository compteProRepository,
@@ -69,6 +72,7 @@ public class AssociationService {
                               FirebaseNotificationService firebaseNotificationService,
                               NotificationService notificationService) { // Add ObjectMapper to the constructor
         this.associationRepository = associationRepository;
+        this.auditAssociationRepository = auditAssociationRepository;
         this.associationMapper = associationMapper;
         this.sessionRepository = sessionRepository;
         this.compteProRepository = compteProRepository;
@@ -79,14 +83,12 @@ public class AssociationService {
         this.firebaseNotificationService = firebaseNotificationService;
         this.notificationService = notificationService;
     }
-
     public AssociationDTO save(AssociationDTO associationDTO) {
         log.debug("Request to save Association : {}", associationDTO);
         Association association = associationMapper.toEntity(associationDTO);
         association = associationRepository.save(association);
         return associationMapper.toDto(association);
     }
-
     public AssociationDTO update(AssociationDTO associationDTO) {
         log.debug("Request to update Association : {}", associationDTO);
         Association association = associationMapper.toEntity(associationDTO);
@@ -277,7 +279,7 @@ public class AssociationService {
      * Create an association
      */
     public AssociationDTO createAssociationWithNotification(String compteID, String destinataireID, UUID entrepriseID, UUID roleID, String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
-        // Validate and find the required entities
+        // Validation et récupération des entités requises
         ComptePro initiateur = compteProRepository.findById(compteID)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Compte not found"));
         ComptePro destinataire = compteProRepository.findById(destinataireID)
@@ -287,7 +289,7 @@ public class AssociationService {
         Rolee role = roleeRepository.findById(roleID)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found"));
 
-        // Create and save the association
+        // Création et sauvegarde de l'association
         Association association = new Association();
         association.setCompte(destinataire);
         association.setEntreprise(entreprise);
@@ -295,12 +297,32 @@ public class AssociationService {
         association.setStatut(StatutAssociation.PENDING);
         association = associationRepository.save(association);
 
-        // Send notification
+        // Enregistrement dans l'audit
+        AuditAssociation audit = new AuditAssociation();
+        audit.setCompteId(compteID);
+        audit.setAssociationId(association.getId());
+        audit.setAction("CREATE");
+        audit.setTimestamp(Instant.now());
+        auditAssociationRepository.save(audit);
+
+        // Envoi de la notification
         String message = String.format("%s %s vous invite en tant que %s dans l'entreprise %s",
                 prenomInitiateur, nomInitiateur, role.getNom(), nomEntreprise);
         sendAndPersistNotification(destinataire.getId(), "Nouvelle invitation", message, association.getId(), prenomInitiateur, nomInitiateur, nomEntreprise);
 
         return associationMapper.toDto(association);
+    }
+
+    public List<AssociationDTO> findAssociationsByCompteId(String compteId) {
+        List<AuditAssociation> audits = auditAssociationRepository.findByCompteId(compteId);
+        List<UUID> associationIds = audits.stream()
+                .map(AuditAssociation::getAssociationId)
+                .distinct()
+                .collect(Collectors.toList());
+        List<Association> associations = associationRepository.findAllById(associationIds);
+        return associations.stream()
+                .map(associationMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     public AssociationDTO updateAssociationStatut(UUID associationId, StatutAssociation nouveauStatut) throws FirebaseMessagingException {
@@ -348,7 +370,6 @@ public class AssociationService {
             throw new RuntimeException("Aucun token de device trouvé pour l'ID de ComptePro : " + compteProId);
         }
     }
-
     public List<String> getRolesByCompteProAndEntreprise(String compteProId, UUID entrepriseId) {
         return associationRepository.findRoleNamesByCompteProIdAndEntrepriseId(compteProId, entrepriseId);
     }

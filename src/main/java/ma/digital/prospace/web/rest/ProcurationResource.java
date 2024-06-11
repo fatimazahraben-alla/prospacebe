@@ -214,12 +214,8 @@ public class ProcurationResource {
         }
     }
     @GetMapping("/comptes/espacePro/{espaceProId}")
-    public ResponseEntity<?> getAllProcurationsByUtilisateurPro(@PathVariable String espaceProId) {
-
+    public ResponseEntity<List<ProcurationDTO>> getAllProcurationsByUtilisateurPro(@PathVariable String espaceProId) {
         List<ProcurationDTO> procurations = procurationService.findAllProcurationsByUtilisateurPro(espaceProId);
-        if (procurations.isEmpty()) {
-            return ResponseEntity.ok("Aucune procuration trouvée pour l'Espace.");
-        }
-        return ResponseEntity.ok(procurations);
+        return ResponseEntity.ok(procurations.isEmpty() ? Collections.emptyList() : procurations);
     }
 }

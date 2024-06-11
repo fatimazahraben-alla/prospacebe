@@ -25,16 +25,6 @@ springdoc:
   api-docs:
     enabled: false
 ---
-keycloak:
-  auth-server-url: http://localhost:8080/auth
-  realm: jhipster
-  resource: prospace-mobile-client
-  public-client: true
-  principal-attribute: preferred_username
-  credentials:
-    secret: lK7JQCHrlVAcvq7UDAyzRLBkDi6k5Lly
-  use-resource-role-mappings: true
-
 
 
 mj:
@@ -177,19 +167,17 @@ spring:
     ansi:
       console-available: true
   security:
-      oauth2:
-        client:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            issuer-uri:  http://localhost:8080/realms/jhipster
+            jwk-set-uri: http://localhost:8080/realms/jhipster/protocol/openid-connect/certs
         registration:
-          keycloak:
+          oidc:
             client-id: prospace-mobile-client
             client-secret: SCABEh8JWxY33AK0m6Us5Lnu1KLlMbb3
-            authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
-            scope: openid, profile, email
-        provider:
-          keycloak:
-            issuer-uri: http://localhost:8080/realms/jhipster
-            user-name-attribute: preferred_username
+            scope: openid, profile, email, offline_access # last one for refresh tokens
 server:
   servlet:
     session:
@@ -213,20 +201,14 @@ info:
 jhipster:
   clientApp:
     name: 'prospaceApp'
-
-
-
-
   # By default CORS is disabled. Uncomment to enable.
-
-  cors:
-    allowed-origin-patterns: '*'
-    allowed-methods: 'GET,DELETE,POST,PUT'
-    allowed-headers: '*'
-    exposed-headers: 'Authorization, Link, X-Total-Count, X-${jhipster.clientApp.name}-alert, X-${jhipster.clientApp.name}-error, X-${jhipster.clientApp.name}-params'
-    allow-credentials: true
-    max-age: 3600
-
+  # cors:
+  #   allowed-origins: "http://localhost:8100,http://localhost:9000"
+  #   allowed-methods: "*"
+  #   allowed-headers: "*"
+  #   exposed-headers: "Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params"
+  #   allow-credentials: true
+  #   max-age: 1800
   mail:
     from: prospace@localhost
   api-docs:
