@@ -72,9 +72,10 @@ public class Entreprise implements Serializable {
     @Column(name = "etat")
     private String etat;
 
-    @OneToMany(mappedBy = "entrepriseGeree")
-    @JsonIgnoreProperties(value = { "entrepriseGeree", "mandataires", "mandants", "associations" }, allowSetters = true)
+    @ManyToMany(mappedBy = "entrepriseGeree")
+    @JsonIgnoreProperties(value = { "entrepriseGeree", "password" }, allowSetters = true)
     private Set<ComptePro> gerants = new HashSet<>();
+
 
     @OneToMany(mappedBy = "entreprise") // Correspond à la propriété dans la classe Association
     @JsonIgnoreProperties(value = { "entreprise", "compte", "role" }, allowSetters = true)
@@ -167,16 +168,15 @@ public class Entreprise implements Serializable {
 
 
 
-    public void setGerants(Set<ComptePro> comptePros) {
+    public void setGerants(Set<ComptePro> gerants) {
         if (this.gerants != null) {
-            this.gerants.forEach(i -> i.setEntrepriseGeree(null));
+            this.gerants.forEach(i -> i.getEntrepriseGeree().remove(this));
         }
-        if (comptePros != null) {
-            comptePros.forEach(i -> i.setEntrepriseGeree(this));
+        if (gerants != null) {
+            gerants.forEach(i -> i.getEntrepriseGeree().add(this));
         }
-        this.gerants = comptePros;
+        this.gerants = gerants;
     }
-
     public Set<Association> getAssociations() {
         return this.associations;
     }

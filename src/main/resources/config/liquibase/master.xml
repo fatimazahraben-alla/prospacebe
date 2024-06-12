@@ -26,12 +26,11 @@
     <include file="config/liquibase/changelog/20240501123456_added_entity_Session.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240501123457_added_entity_Contact.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240501123457_added_entity_Notifications.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240610190000_added_entity_AuditAssociation.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240130231400_added_entity_compte_entreprise.xml" relativeToChangelogFile="false"/>
 
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20240130231407_added_entity_constraints_Rolee.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240130231409_added_entity_constraints_Association.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240130231405_added_entity_constraints_ComptePro.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240201104647_added_entity_constraints_Procuration.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->

@@ -82,7 +82,6 @@ public class EntrepriseResource {
      * or with status 400 (Bad Request) if the entreprise has already an ID
      */
     @PostMapping(value = "/entreprises", produces = "application/json")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<EntrepriseDTO> createCompany(@RequestBody EntrepriseRequest2 entrepriseRequest) {
         auditLogger.info("Tentative de création de l'entreprise : {}", entrepriseRequest);
 
@@ -232,8 +231,8 @@ public class EntrepriseResource {
         return entrepriseWSMJService.getBycodeJuridictionAndnumRC(codeJuridiction, numRC);
     }
     @GetMapping("/entreprise/{compteid}")
-    public List<EntrepriseDTO> getEntreprisesByEspace(@PathVariable String compteid) {
-        List<EntrepriseDTO> entreprises = entrepriseService.findEntreprisesByCompteId(compteid);
+    public List<EntrepriseList> getEntreprisesByEspace(@PathVariable String compteid) {
+        List<EntrepriseList> entreprises = entrepriseService.findEntreprisesByCompteId(compteid);
         if (!entreprises.isEmpty()) {
             auditLogger.info("{} entreprises trouvées pour l'identifiant : {}", entreprises.size(), compteid);
         } else {

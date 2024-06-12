@@ -16,7 +16,7 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 @Repository
 public interface CompteProRepository extends JpaRepository<ComptePro, String> {
-    Optional<ComptePro> findByIdentifiant(String identifiant);
+
     Optional<ComptePro> findById(String Id);
     @Query(value = "SELECT * FROM compte_pro WHERE id = :id", nativeQuery = true)
     Optional<ComptePro> findByCustomIdQuery(String id);
@@ -24,5 +24,7 @@ public interface CompteProRepository extends JpaRepository<ComptePro, String> {
     List<ComptePro> findAllRelatedByUser(@Param("userId") String userId);
     @Query("SELECT e FROM Entreprise e JOIN e.gerants g WHERE g.id = :compteProId")
     List<Entreprise> findEntreprisesByGerants(@Param("compteProId") String compteProId);
+
+    ComptePro findCompteProById(String compte);
 
 }

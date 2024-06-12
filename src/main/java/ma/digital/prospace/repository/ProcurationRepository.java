@@ -24,6 +24,9 @@ public interface ProcurationRepository extends JpaRepository<Procuration, UUID> 
     List<Procuration> findByGestionnaireEspaceProId(String gestionnaireEspaceProId);
     List<Procuration> findByUtilisateurProId(String utilisateurProId);
 
+    Procuration findProcurationByUtilisateurProId(String UtilisateurPro);
+
+    Procuration findProcurationByGestionnaireEspaceProId(String GestionnaireEspacePro);
 
     @Modifying
     @Query("DELETE FROM Procuration p WHERE p.gestionnaireEspacePro.id = :compteId OR p.utilisateurPro.id = :compteId")

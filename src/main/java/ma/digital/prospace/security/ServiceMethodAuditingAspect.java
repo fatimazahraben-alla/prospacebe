@@ -35,10 +35,10 @@ public class ServiceMethodAuditingAspect {
         MDC.put("method", methodName);
         String ipAddress = getIpAddress();
         MDC.put("userId", "");
-        // Ajoutez l'adresse IP au MDC
+         //Ajoutez l'adresse IP au MDC
         MDC.put("ipAddress", ipAddress);
     }
-   /* private String UserId() {
+    private String UserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
@@ -59,7 +59,7 @@ public class ServiceMethodAuditingAspect {
         } else {
             throw new IllegalStateException("Le type de l'objet Principal n'est ni Jwt ni OidcUser.");
         }
-    }*/
+    }
 
     private String getIpAddress() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

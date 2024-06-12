@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <!--
+        Added the entity Entreprise.
+    -->
+    <changeSet id="20240611" author="jhipster">
+        <createTable tableName="compte_entreprise">
+            <column name="compte_id" type="VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="entreprise_geree_id" type="UUID">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey
+                columnNames="compte_id,entreprise_geree_id"
+                constraintName="pk_compte_entreprise"
+                tableName="compte_entreprise"
+               />
+        <addForeignKeyConstraint baseColumnNames="compte_id"
+                                 baseTableName="compte_entreprise"
+                                 constraintName="fk_compte_entreprise1_compte_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="compte_pro"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint baseColumnNames="entreprise_geree_id"
+                                 baseTableName="compte_entreprise"
+                                 constraintName="fk_compte_pro__entreprise1_geree_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="entreprise"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+    </changeSet>
+
+
+</databaseChangeLog>

@@ -2,10 +2,7 @@ package ma.digital.prospace.domain;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -37,56 +34,6 @@ public class ComptePro implements Serializable {
     @Column(name = "id", nullable = false, unique = true)
     private String id;
 
-    @Size(max = 100)
-    @Column(name = "identifiant", nullable = true)
-    private String identifiant;
-
-    @Size(max = 60)
-    @Enumerated(EnumType.STRING)
-    @Column(name = "typeidentifiant", length = 10)
-    private typeidentifiant typeidentifiant;
-
-    @Transient
-    @NotNull
-    @Size(max = 50)
-    @Column(name = "nom_ar", length = 50, nullable = true)
-    private String nomAr;
-
-    @Transient
-    @NotNull
-    @Size(max = 50)
-    @Column(name = "nom_fr", length = 50, nullable = true)
-    private String nomFr;
-
-    @Transient
-    @NotNull
-    @Size(max = 50)
-    @Column(name = "prenom_ar", length = 50, nullable = true)
-    private String prenomAr;
-
-    @Transient
-    @NotNull
-    @Size(max = 50)
-    @Column(name = "prenom_fr", length = 50, nullable = true)
-    private String prenomFr;
-
-    @Transient
-    @Size(max = 50)
-    @Column(name = "adresse", length = 50)
-    private String adresse;
-
-
-    @Transient
-    @Column(name = "photo", nullable = true)
-    private String photo;
-
-    @Transient
-    @Column(name = "mail")
-    private String mail;
-
-    @Transient
-    @Column(name = "telephone")
-    private String telephone;
 
 
     @Column(name = "created_at")
@@ -102,9 +49,15 @@ public class ComptePro implements Serializable {
     @Column(name = "statut")
     private StatutCompte statut;
 
-    @ManyToOne(optional=true)
-    @JsonIgnoreProperties(value = { "gerants", "associations" }, allowSetters = true)
-    private Entreprise entrepriseGeree;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "compte_entreprise",
+            joinColumns = @JoinColumn(name = "compte_id"),
+            inverseJoinColumns = @JoinColumn(name = "entreprise_geree_id")
+    )
+    @JsonIgnoreProperties(value = { "gerants", "password" }, allowSetters = true)
+    private Set<Entreprise> entrepriseGeree = new HashSet<>();
+
 
     @OneToMany(mappedBy = "gestionnaireEspacePro")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -137,9 +90,6 @@ public class ComptePro implements Serializable {
     }
 
 
-    public String getNomAr() {
-        return nomAr;
-    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -161,105 +111,29 @@ public class ComptePro implements Serializable {
         return deleted;
     }
 
-    public ComptePro nomAr(String nomAr) {
-        this.setNomAr(nomAr);
-        return this;
-    }
 
-    public void setNomAr(String nomAr) {
-        this.nomAr = nomAr;
-    }
 
-    public String getNomFr() {
-        return this.nomFr;
-    }
 
-    public ComptePro nomFr(String nomFr) {
-        this.setNomFr(nomFr);
-        return this;
-    }
 
-    public void setNomFr(String nomFr) {
-        this.nomFr = nomFr;
-    }
 
-    public String getPrenomAr() {
-        return this.prenomAr;
-    }
 
-    public ComptePro prenomAr(String prenomAr) {
-        this.setPrenomAr(prenomAr);
-        return this;
-    }
 
-    public void setPrenomAr(String prenomAr) {
-        this.prenomAr = prenomAr;
-    }
 
-    public String getPrenomFr() {
-        return this.prenomFr;
-    }
 
-    public ComptePro prenomFr(String prenomFr) {
-        this.setPrenomFr(prenomFr);
-        return this;
-    }
 
-    public void setPrenomFr(String prenomFr) {
-        this.prenomFr = prenomFr;
-    }
 
-    public String getAdresse() {
-        return this.adresse;
-    }
 
-    public ComptePro adresse(String adresse) {
-        this.setAdresse(adresse);
-        return this;
-    }
 
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
-    }
 
-    public String getPhoto() {
-        return this.photo;
-    }
 
-    public ComptePro photo(String photo) {
-        this.setPhoto(photo);
-        return this;
-    }
 
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
 
-    public String getMail() {
-        return this.mail;
-    }
 
-    public ComptePro mail(String mail) {
-        this.setMail(mail);
-        return this;
-    }
 
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
 
-    public String getTelephone() {
-        return this.telephone;
-    }
 
-    public ComptePro telephone(String telephone) {
-        this.setTelephone(telephone);
-        return this;
-    }
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
+
 
     public StatutCompte getStatut() {
         return this.statut;
@@ -274,17 +148,12 @@ public class ComptePro implements Serializable {
         this.statut = statut;
     }
 
-    public Entreprise getEntrepriseGeree() {
-        return this.entrepriseGeree;
+    public Set<Entreprise> getEntrepriseGeree() {
+        return entrepriseGeree;
     }
 
-    public void setEntrepriseGeree(Entreprise entreprise) {
-        this.entrepriseGeree = entreprise;
-    }
-
-    public ComptePro entrepriseGeree(Entreprise entreprise) {
-        this.setEntrepriseGeree(entreprise);
-        return this;
+    public void setEntrepriseGeree(Set<Entreprise> entrepriseGeree) {
+        this.entrepriseGeree = entrepriseGeree;
     }
 
     public Set<Procuration> getMandataires() {
@@ -399,21 +268,7 @@ public class ComptePro implements Serializable {
         return getClass().hashCode();
     }
 
-    public String getIdentifiant() {
-        return identifiant;
-    }
 
-    public void setIdentifiant(String identifiant) {
-        this.identifiant = identifiant;
-    }
-
-    public ma.digital.prospace.domain.enumeration.typeidentifiant getTypeidentifiant() {
-        return typeidentifiant;
-    }
-
-    public void setTypeidentifiant(typeidentifiant typeidentifiant) {
-        this.typeidentifiant = typeidentifiant;
-    }
 
 
 
