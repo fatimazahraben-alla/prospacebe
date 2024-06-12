@@ -34,8 +34,55 @@ public class ComptePro implements Serializable {
     @Column(name = "id", nullable = false, unique = true)
     private String id;
 
+    @Size(max = 100)
+    @Column(name = "identifiant", nullable = true)
+    private String identifiant;
+
+    @Size(max = 60)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "typeidentifiant", length = 10)
+    private typeidentifiant typeidentifiant;
+
+    @Transient
+    @NotNull
+    @Size(max = 50)
+    @Column(name = "nom_ar", length = 50, nullable = true)
+    private String nomAr;
+
+    @Transient
+    @NotNull
+    @Size(max = 50)
+    @Column(name = "nom_fr", length = 50, nullable = true)
+    private String nomFr;
+
+    @Transient
+    @NotNull
+    @Size(max = 50)
+    @Column(name = "prenom_ar", length = 50, nullable = true)
+    private String prenomAr;
+
+    @Transient
+    @NotNull
+    @Size(max = 50)
+    @Column(name = "prenom_fr", length = 50, nullable = true)
+    private String prenomFr;
+
+    @Transient
+    @Size(max = 50)
+    @Column(name = "adresse", length = 50)
+    private String adresse;
 
 
+    @Transient
+    @Column(name = "photo", nullable = true)
+    private String photo;
+
+    @Transient
+    @Column(name = "mail")
+    private String mail;
+    @Transient
+    @Column(name = "telephone")
+    private String telephone;
     @Column(name = "created_at")
     private Date createdAt;
 
@@ -89,8 +136,85 @@ public class ComptePro implements Serializable {
         this.deleted = deleted;
     }
 
+    public String getIdentifiant() {
+        return identifiant;
+    }
 
+    public void setIdentifiant(String identifiant) {
+        this.identifiant = identifiant;
+    }
 
+    public ma.digital.prospace.domain.enumeration.typeidentifiant getTypeidentifiant() {
+        return typeidentifiant;
+    }
+
+    public void setTypeidentifiant(ma.digital.prospace.domain.enumeration.typeidentifiant typeidentifiant) {
+        this.typeidentifiant = typeidentifiant;
+    }
+
+    public String getNomAr() {
+        return nomAr;
+    }
+
+    public void setNomAr(String nomAr) {
+        this.nomAr = nomAr;
+    }
+
+    public String getNomFr() {
+        return nomFr;
+    }
+
+    public void setNomFr(String nomFr) {
+        this.nomFr = nomFr;
+    }
+
+    public String getPrenomAr() {
+        return prenomAr;
+    }
+
+    public void setPrenomAr(String prenomAr) {
+        this.prenomAr = prenomAr;
+    }
+
+    public String getPrenomFr() {
+        return prenomFr;
+    }
+
+    public void setPrenomFr(String prenomFr) {
+        this.prenomFr = prenomFr;
+    }
+
+    public String getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -110,31 +234,6 @@ public class ComptePro implements Serializable {
     public boolean isDeleted() {
         return deleted;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public StatutCompte getStatut() {
         return this.statut;
     }

@@ -308,7 +308,7 @@ public class AssociationService {
         // Envoi de la notification
         String message = String.format("%s %s vous invite en tant que %s dans l'entreprise %s",
                 prenomInitiateur, nomInitiateur, role.getNom(), nomEntreprise);
-        sendAndPersistNotification(destinataire.getId(), "Nouvelle invitation", message, association.getId(), nomEntreprise);
+        sendAndPersistNotification(destinataire.getId(), "Nouvelle invitation", message, association.getId(), prenomInitiateur, nomInitiateur, nomEntreprise);
 
         return associationMapper.toDto(association);
     }
@@ -344,12 +344,12 @@ public class AssociationService {
 
         ComptePro initiateur = association.getCompte(); // Get initiator info from the association
         Entreprise entreprise = association.getEntreprise();
-        sendAndPersistNotification(initiateur.getId(), title, message, association.getId(), entreprise.getIce());
+        sendAndPersistNotification(initiateur.getId(), title, message, association.getId(), initiateur.getPrenomFr(), initiateur.getNomFr(), entreprise.getIce());
 
         return associationMapper.toDto(association);
     }
 
-    private void sendAndPersistNotification(String compteProId, String title, String message, UUID associationId, String nomEntreprise) throws FirebaseMessagingException {
+    private void sendAndPersistNotification(String compteProId, String title, String message, UUID associationId, String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
         Contact contact = contactRepository.findByCompteProId(compteProId);
         if (contact != null && contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
             try {

@@ -175,8 +175,8 @@ spring:
             jwk-set-uri: http://localhost:8080/realms/jhipster/protocol/openid-connect/certs
         registration:
           oidc:
-            client-id: web_app
-            client-secret: iI1pQOLrCiYTvKI5l7EyckPrNbR7nvy4
+            client-id: prospace-mobile-client
+            client-secret: SCABEh8JWxY33AK0m6Us5Lnu1KLlMbb3
             scope: openid, profile, email, offline_access # last one for refresh tokens
 server:
   servlet:

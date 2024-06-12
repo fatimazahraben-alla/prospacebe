@@ -155,7 +155,7 @@ public class ProcurationService {
 
         // Prepare the notification details
         String title = "Nouvelle demande de procuration";
-        String message = "Vous avez reçu une nouvelle demande de procuration de " + utilisateur.getId();
+        String message = "Vous avez reçu une nouvelle demande de procuration de " + utilisateur.getNomFr() + " " + utilisateur.getPrenomFr();
 
         // Send and persist the notification
         sendAndPersistNotification(gestionnaire.getId(), title, message);
@@ -173,7 +173,7 @@ public class ProcurationService {
         String title = (statut == StatutInvitation.ACCEPTED) ? "Procuration acceptée" : "Procuration refusée";
         String message = String.format("Votre demande de procuration a été %s par %s.",
                 (statut == StatutInvitation.ACCEPTED) ? "acceptée" : "refusée",
-                savedProcuration.getUtilisateurPro().getId());
+                savedProcuration.getGestionnaireEspacePro().getNomFr());
 
         sendAndPersistNotification(savedProcuration.getUtilisateurPro().getId(), title, message);
 
@@ -187,14 +187,14 @@ public class ProcurationService {
 
         if (procuration.getStatut() == StatutInvitation.ACCEPTED) {
             messageToGestionnaire = String.format("Vous n'avez plus de procuration sur l'espace pro de %s.",
-                    procuration.getUtilisateurPro().getId() + " " + procuration.getUtilisateurPro().getId());
+                    procuration.getUtilisateurPro().getNomFr() + " " + procuration.getUtilisateurPro().getPrenomFr());
             messageToUtilisateur = String.format("%s n'est plus gestionnaire de votre espace pro.",
-                    procuration.getGestionnaireEspacePro().getId() + " " + procuration.getGestionnaireEspacePro().getId());
+                    procuration.getGestionnaireEspacePro().getNomFr() + " " + procuration.getGestionnaireEspacePro().getPrenomFr());
         } else {
             messageToGestionnaire = String.format("Procuration en cours sur l'espace pro de %s a été annulée.",
-                    procuration.getUtilisateurPro().getId() + " " + procuration.getUtilisateurPro().getId());
+                    procuration.getUtilisateurPro().getNomFr() + " " + procuration.getUtilisateurPro().getPrenomFr());
             messageToUtilisateur = String.format("Votre demande de procuration pour %s a été annulée.",
-                    procuration.getGestionnaireEspacePro().getId() + " " + procuration.getGestionnaireEspacePro().getId());
+                    procuration.getGestionnaireEspacePro().getNomFr() + " " + procuration.getGestionnaireEspacePro().getPrenomFr());
         }
 
         sendAndPersistNotification(procuration.getGestionnaireEspacePro().getId(), "Fin de procuration", messageToGestionnaire);
@@ -218,8 +218,8 @@ public class ProcurationService {
 
         ComptePro gestionnaire = procuration.getGestionnaireEspacePro();
         ComptePro utilisateurPro = procuration.getUtilisateurPro();
-        String messageToGestionnaire = String.format("Vous n'êtes plus le gestionnaire de l'espace pro de %s.", utilisateurPro.getId());
-        String messageToUtilisateurPro = String.format("%s n'est plus un délégué de votre espace pro.", gestionnaire.getId());
+        String messageToGestionnaire = String.format("Vous n'êtes plus le gestionnaire de l'espace pro de %s.", utilisateurPro.getNomFr() + " " + utilisateurPro.getPrenomFr());
+        String messageToUtilisateurPro = String.format("%s n'est plus un délégué de votre espace pro.", gestionnaire.getNomFr() + " " + gestionnaire.getPrenomFr());
 
         sendAndPersistNotification(gestionnaire.getId(), "Notification de retrait de délégation", messageToGestionnaire);
         sendAndPersistNotification(utilisateurPro.getId(), "Notification de retrait de délégation", messageToUtilisateurPro);

@@ -9,6 +9,33 @@
             <column name="id" type="varchar(50)" >
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="identifiant" type="varchar(10)">
+                <constraints nullable="true" />
+            </column>
+            <column name="nom_ar" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="nom_fr" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="prenom_ar" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="prenom_fr" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="adresse" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="photo" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="mail" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="telephone" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="created_at" type="timestamp">
                 <constraints nullable="true" />
             </column>
@@ -21,8 +48,9 @@
             <column name="statut" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-
-
+            <column name="typeidentifiant" type="varchar(10)">
+                <constraints nullable="true" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
     </changeSet>
@@ -46,9 +74,19 @@
                 tableName="compte_pro"
                 usePreparedStatements="true">
             <column name="id" type="UUID"/>
+            <column name="identifiant" type="STRING"/>
+            <column name="nom_ar" type="STRING"/>
+            <column name="nom_fr" type="STRING"/>
+            <column name="prenom_ar" type="STRING"/>
+            <column name="prenom_fr" type="STRING"/>
+            <column name="adresse" type="STRING"/>
+            <column name="photo" type="STRING"/>
+            <column name="mail" type="STRING"/>
+            <column name="telephone" type="STRING"/>
             <column name="created_at" type="TIMESTAMP"/>
             <column name="updated_at" type="TIMESTAMP"/>
             <column name="deleted" type="BOOLEAN"/>
+            <column name="typeidentifiant" type="STRING"/>
             <column name="statut" type="STRING"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
