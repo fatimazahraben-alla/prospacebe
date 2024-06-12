@@ -19,14 +19,15 @@ public class EntrepriseDTO implements Serializable {
     private String etat;
     private String CompteId;
 
-     private String mandataire;
+    private String comptegestionnaire ;
 
-    public String getMandataire() {
-        return mandataire;
+
+    public String getComptegestionnaire() {
+        return comptegestionnaire;
     }
 
-    public void setMandataire(String mandataire) {
-        this.mandataire = mandataire;
+    public void setComptegestionnaire(String comptegestionnaire) {
+        this.comptegestionnaire = comptegestionnaire;
     }
 
     public String getCompteId() {
