@@ -308,7 +308,13 @@ public class AssociationService {
         // Envoi de la notification
         String message = String.format("%s %s vous invite en tant que %s dans l'entreprise %s",
                 prenomInitiateur, nomInitiateur, role.getNom(), nomEntreprise);
-        sendAndPersistNotification(destinataire.getId(), "Nouvelle invitation", message, association.getId(), prenomInitiateur, nomInitiateur, nomEntreprise);
+
+        // Data for notification
+        Map<String, String> data = new HashMap<>();
+        data.put("associationId", association.getId().toString());
+        data.put("emeteurId", compteID);
+
+        sendAndPersistNotification(destinataire.getId(), "Nouvelle invitation", message, data);
 
         return associationMapper.toDto(association);
     }
@@ -344,20 +350,21 @@ public class AssociationService {
 
         ComptePro initiateur = association.getCompte(); // Get initiator info from the association
         Entreprise entreprise = association.getEntreprise();
-        sendAndPersistNotification(initiateur.getId(), title, message, association.getId(), initiateur.getPrenomFr(), initiateur.getNomFr(), entreprise.getIce());
+
+        // Data for notification
+        Map<String, String> data = new HashMap<>();
+        data.put("associationId", association.getId().toString());
+        data.put("emeteurId", initiateur.getId());
+
+        sendAndPersistNotification(initiateur.getId(), title, message, data);
 
         return associationMapper.toDto(association);
     }
 
-    private void sendAndPersistNotification(String compteProId, String title, String message, UUID associationId, String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
+    private void sendAndPersistNotification(String compteProId, String title, String message, Map<String, String> data) throws FirebaseMessagingException {
         Contact contact = contactRepository.findByCompteProId(compteProId);
         if (contact != null && contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
-            try {
-                firebaseNotificationService.sendNotification(contact.getDeviceToken(), title, message);
-            } catch (FirebaseMessagingException e) {
-                log.error("Failed to send notification: {}", e.getMessage());
-                // Handle the error appropriately
-            }
+            firebaseNotificationService.sendNotificationWithData(contact.getDeviceToken(), title, message, data);
 
             // Persist notification
             NotificationDTO notificationDTO = new NotificationDTO();
@@ -370,9 +377,11 @@ public class AssociationService {
             throw new RuntimeException("Aucun token de device trouvé pour l'ID de ComptePro : " + compteProId);
         }
     }
+
     public List<String> getRolesByCompteProAndEntreprise(String compteProId, UUID entrepriseId) {
         return associationRepository.findRoleNamesByCompteProIdAndEntrepriseId(compteProId, entrepriseId);
     }
+
     public List<AssociationDTO> getEntrepriseRole(String fs, String compteProId) {
         List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteProId);
         return associations.stream()

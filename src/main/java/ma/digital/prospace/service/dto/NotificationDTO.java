@@ -69,4 +69,10 @@ public class NotificationDTO {
 
     public void setNomEntreprise(String nomEntreprise) {
     }
+
+    public void setProcurationId(UUID procurationId) {
+    }
+
+    public void setEmetteurId(String emetteurId) {
+    }
 }

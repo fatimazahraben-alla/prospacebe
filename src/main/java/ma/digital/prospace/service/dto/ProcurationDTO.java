@@ -18,21 +18,11 @@ import java.util.UUID;
 @Component
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class ProcurationDTO implements Serializable {
-
     private UUID id;
-
     private String gestionnaireEspaceProId;
     private String utilisateurProId;
-
-    public StatutInvitation getStatut() {
-        return statut;
-    }
-
-    public void setStatut(StatutInvitation statut) {
-        this.statut = statut;
-    }
-
-    private StatutInvitation statut;
+    private String nomUtilisateurPro;
+    private String prenomUtilisateurPro;
 
     public UUID getId() {
         return id;
@@ -50,13 +40,39 @@ public class ProcurationDTO implements Serializable {
         this.gestionnaireEspaceProId = gestionnaireEspaceProId;
     }
 
-
     public String getUtilisateurProId() {
         return utilisateurProId;
     }
 
     public void setUtilisateurProId(String utilisateurProId) {
         this.utilisateurProId = utilisateurProId;
+    }
+
+    public StatutInvitation getStatut() {
+        return statut;
+    }
+
+    public void setStatut(StatutInvitation statut) {
+        this.statut = statut;
+    }
+
+    private StatutInvitation statut;
+
+
+    public String getNomUtilisateurPro() {
+        return nomUtilisateurPro;
+    }
+
+    public void setNomUtilisateurPro(String nomUtilisateurPro) {
+        this.nomUtilisateurPro = nomUtilisateurPro;
+    }
+
+    public String getPrenomUtilisateurPro() {
+        return prenomUtilisateurPro;
+    }
+
+    public void setPrenomUtilisateurPro(String prenomUtilisateurPro) {
+        this.prenomUtilisateurPro = prenomUtilisateurPro;
     }
 
 }
