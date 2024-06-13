@@ -348,7 +348,7 @@ public class AssociationService {
                 "Votre demande d'association a été acceptée." :
                 "Votre demande d'association a été refusée.";
 
-        ComptePro initiateur = association.getCompte(); // Get initiator info from the association
+        ComptePro initiateur = association.getCompte();
         Entreprise entreprise = association.getEntreprise();
 
         // Data for notification

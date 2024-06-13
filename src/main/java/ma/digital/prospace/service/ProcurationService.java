@@ -149,7 +149,9 @@ public class ProcurationService {
         // Additional data for notification
         Map<String, String> data = new HashMap<>();
         data.put("procurationId", savedProcuration.getId().toString());
-        data.put("emeteurId", gestionnaire.getId());
+        data.put("emeteurId", utilisateur.getId());
+        data.put("nom", procurationDTO.getNomUtilisateurPro());
+        data.put("prenom", procurationDTO.getPrenomUtilisateurPro());
 
         // Send and persist the notification
         sendAndPersistNotification(gestionnaire.getId(), title, message, data);
