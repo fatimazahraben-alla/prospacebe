@@ -313,6 +313,10 @@ public class AssociationService {
         Map<String, String> data = new HashMap<>();
         data.put("associationId", association.getId().toString());
         data.put("emeteurId", compteID);
+        data.put("nom", nomInitiateur);
+        data.put("prenom", prenomInitiateur);
+        data.put("nomEntreprise", nomEntreprise);
+
 
         sendAndPersistNotification(destinataire.getId(), "Nouvelle invitation", message, data);
 
