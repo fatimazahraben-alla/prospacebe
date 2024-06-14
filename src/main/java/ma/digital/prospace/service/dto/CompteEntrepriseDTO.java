@@ -2,7 +2,7 @@ package ma.digital.prospace.service.dto;
 
 import java.io.Serializable;
 import java.util.List;
-
+import ma.digital.prospace.service.dto.EntrepriseDTO2;
 /**
  * A DTO for the {@link ma.digital.prospace.domain.CompteEntreprise} entity.
  */
@@ -10,7 +10,8 @@ import java.util.List;
 public class CompteEntrepriseDTO implements Serializable {
 
     private CompteProDTO comptePro;
-    private EntrepriseDTO entreprise;
+
+    private EntrepriseDTO2 entreprise;
     private List<String> roles;
     private String transactionId;
     public CompteProDTO getComptePro() {
@@ -21,14 +22,13 @@ public class CompteEntrepriseDTO implements Serializable {
         this.comptePro = comptePro;
     }
 
-    public EntrepriseDTO getEntreprise() {
+    public EntrepriseDTO2 getEntreprise() {
         return entreprise;
     }
 
-    public void setEntreprise(EntrepriseDTO entreprise) {
+    public void setEntreprise(EntrepriseDTO2 entreprise) {
         this.entreprise = entreprise;
     }
-
     public String getTransactionId() {
         return transactionId;
     }

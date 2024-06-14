@@ -24,7 +24,7 @@
             <column name="statut" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="entreprise_id" type="UUID">
+            <column name="entreprise_id" type="varchar(50)">
                 <constraints nullable="true" />
             </column>
             <column name="compte_id" type="varchar(50)">
@@ -57,7 +57,7 @@
             <column name="mail" type="STRING"/>
             <column name="telephone" type="STRING"/>
             <column name="statut" type="STRING"/>
-            <column name="entreprise_id" type="UUID"/>
+            <column name="entreprise_id" type="STRING"/>
             <column name="compte_id" type="STRING"/>
             <column name="role_id" type="UUID"/>
 

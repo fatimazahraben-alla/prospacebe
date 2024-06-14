@@ -21,7 +21,7 @@ public class AssociationDTO implements Serializable {
     private String compteID;
 
     @NotNull
-    private UUID entrepriseID;
+    private String entrepriseID;
 
     @NotNull
     private UUID roleID;
@@ -53,11 +53,11 @@ public class AssociationDTO implements Serializable {
         this.compteID = compteID;
     }
 
-    public UUID getEntrepriseID() {
+    public String getEntrepriseID() {
         return entrepriseID;
     }
 
-    public void setEntrepriseID(UUID entrepriseID) {
+    public void setEntrepriseID(String entrepriseID) {
         this.entrepriseID = entrepriseID;
     }
 

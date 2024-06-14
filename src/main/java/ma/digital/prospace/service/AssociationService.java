@@ -151,8 +151,8 @@ public class AssociationService {
             return "error sending notification ";
         }
     }
-    private EntrepriseDTO convertToDTO(Entreprise entreprise) {
-        EntrepriseDTO dto = new EntrepriseDTO();
+    private EntrepriseDTO2 convertToDTO(Entreprise entreprise) {
+        EntrepriseDTO2 dto = new EntrepriseDTO2();
         dto.setId(entreprise.getId());
         dto.setEtat(entreprise.getEtat());
 
@@ -170,7 +170,7 @@ public class AssociationService {
                 ObjectMapper objectMapper = new ObjectMapper();
                 Map<String, Object> dataMap = objectMapper.readValue(existingSession.getJsonData(), new TypeReference<Map<String, Object>>() {});
                 // Extraire les données de la map et les convertir en objets DTO
-                EntrepriseDTO entrepriseDTO = objectMapper.convertValue(dataMap.get("entreprise"), EntrepriseDTO.class);
+                EntrepriseDTO2 entrepriseDTO = objectMapper.convertValue(dataMap.get("entreprise"), EntrepriseDTO2.class);
                 CompteProDTO compteProDTO = objectMapper.convertValue(dataMap.get("comptePro"), CompteProDTO.class);
                 List<String> roles = objectMapper.convertValue(dataMap.get("roles"), new TypeReference<List<String>>() {});
                 // Créer un objet CompteEntrepriseDTO à partir des objets DTO obtenus
@@ -199,7 +199,7 @@ public class AssociationService {
             List<String> entrepriseList = new ArrayList<>();
             for (Association association : associations) {
                 Entreprise entreprise = association.getEntreprise();
-                EntrepriseDTO entrepriseDTO = convertToDTO(entreprise); // Convert Entreprise to EntrepriseDTO
+                EntrepriseDTO2 entrepriseDTO = convertToDTO(entreprise); // Convert Entreprise to EntrepriseDTO
                 String entrepriseString = Objects.toString(entrepriseDTO, null);
                 entrepriseList.add(entrepriseString);
             }
@@ -239,7 +239,7 @@ public class AssociationService {
      */
     public void pushCompteEntreprise(CompteEntrepriseDTO compteEntrepriseDTO) throws JsonProcessingException {
         CompteProDTO compteProDTO = compteEntrepriseDTO.getComptePro();
-        EntrepriseDTO entrepriseDTO = compteEntrepriseDTO.getEntreprise();
+        EntrepriseDTO2 entrepriseDTO = compteEntrepriseDTO.getEntreprise();
         List<String> roleNames = compteEntrepriseDTO.getRoles();
 
         // Create a data map containing the information from DTOs and the roles list
@@ -334,8 +334,9 @@ public class AssociationService {
                 .map(associationMapper::toDto)
                 .collect(Collectors.toList());
     }
+    public AssociationDTO updateAssociationStatut(UUID associationId, StatutAssociation nouveauStatut, String nom, String prenom) throws FirebaseMessagingException {
+        log.debug("Request to update status of Association : {}, {}, {}, {}", associationId, nouveauStatut, nom, prenom);
 
-    public AssociationDTO updateAssociationStatut(UUID associationId, StatutAssociation nouveauStatut) throws FirebaseMessagingException {
         Association association = associationRepository.findById(associationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Association not found with id " + associationId));
 
@@ -345,25 +346,65 @@ public class AssociationService {
 
         association.setStatut(nouveauStatut);
         association = associationRepository.save(association);
+        AuditAssociation audit = auditAssociationRepository.findFirstByAssociationIdOrderByTimestampAsc(associationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Audit record not found for association id " + associationId));
+
+        String initiatorId = audit.getCompteId();
 
         // Prepare and send the notification
         String title = (nouveauStatut == StatutAssociation.ACCEPTED) ? "Association Acceptée" : "Association Refusée";
-        String message = (nouveauStatut == StatutAssociation.ACCEPTED) ?
-                "Votre demande d'association a été acceptée." :
-                "Votre demande d'association a été refusée.";
+        String message = String.format("Votre demande d'association avec %s %s a été %s.",
+                nom, prenom, (nouveauStatut == StatutAssociation.ACCEPTED) ? "acceptée" : "refusée");
 
-        ComptePro initiateur = association.getCompte();
-        Entreprise entreprise = association.getEntreprise();
-
-        // Data for notification
         Map<String, String> data = new HashMap<>();
         data.put("associationId", association.getId().toString());
-        data.put("emeteurId", initiateur.getId());
+        data.put("emeteurId", association.getCompte().getId());
+        data.put("nom", nom);
+        data.put("prenom", prenom);
 
-        sendAndPersistNotification(initiateur.getId(), title, message, data);
+        sendAndPersistNotification(initiatorId, title, message, data);
+
+        // Audit the association status update
+        AuditAssociation newAudit = new AuditAssociation();
+        newAudit.setCompteId(initiatorId);
+        newAudit.setAssociationId(associationId);
+        newAudit.setAction("STATUS_UPDATE");
+        newAudit.setTimestamp(Instant.now());
+        auditAssociationRepository.save(newAudit);
 
         return associationMapper.toDto(association);
     }
+    public void deleteAssociation(UUID associationId, String nom, String prenom, String nomEntreprise) throws FirebaseMessagingException {
+        log.debug("Request to delete Association : {}, {}, {}", associationId, nom, prenom);
+
+        Association association = associationRepository.findById(associationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Association not found"));
+        AuditAssociation audit = auditAssociationRepository.findFirstByAssociationIdOrderByTimestampAsc(associationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Audit record not found for association id " + associationId));
+
+        String initiatorId = audit.getCompteId();
+
+        String messageToInitiator = String.format("L'association avec %s %s dans l'entreprise %s a été annulée.",
+                nom, prenom, nomEntreprise);
+        Map<String, String> data = new HashMap<>();
+        data.put("associationId", associationId.toString());
+        data.put("emeteurId", association.getCompte().getId());
+        data.put("nom", nom);
+        data.put("prenom", prenom);
+
+        sendAndPersistNotification(initiatorId, "Association annulée", messageToInitiator, data);
+
+        AuditAssociation newAudit = new AuditAssociation();
+        newAudit.setCompteId(initiatorId);
+        newAudit.setAssociationId(associationId);
+        newAudit.setAction("DELETE");
+        newAudit.setTimestamp(Instant.now());
+        auditAssociationRepository.save(newAudit);
+
+        associationRepository.deleteById(associationId);
+    }
+
+
 
     private void sendAndPersistNotification(String compteProId, String title, String message, Map<String, String> data) throws FirebaseMessagingException {
         Contact contact = contactRepository.findByCompteProId(compteProId);

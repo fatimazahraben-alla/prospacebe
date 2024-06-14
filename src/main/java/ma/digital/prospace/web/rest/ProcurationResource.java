@@ -161,29 +161,34 @@ public class ProcurationResource {
                     .body(Collections.singletonMap("error", "An error occurred while creating procuration"));
         }
     }
-    @PatchMapping("/procurations/{id}/status")
+    @PatchMapping("/procurations/{id}/status/{nom}/{prenom}")
     public ResponseEntity<ProcurationDTO> updateProcurationStatus(
             @PathVariable UUID id,
-            @RequestParam("status") String status) {
+            @RequestParam String status,
+            @PathVariable String nom,
+            @PathVariable String prenom) {
         try {
             StatutInvitation statut = StatutInvitation.valueOf(status);
-            ProcurationDTO result = procurationService.changeProcurationStatus(id, statut);
+            ProcurationDTO result = procurationService.changeProcurationStatus(id, statut, nom, prenom);
             return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
         } catch (FirebaseMessagingException e) {
-            // Gérer l'exception Firebase spécifique
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).build();
         }
     }
-    @DeleteMapping("/procurations/{id}")
+
+    @DeleteMapping("/procurations/{id}/{nom}/{prenom}")
     @PreAuthorize("hasAuthority('GESTIONNAIRE')")
-    public ResponseEntity<Void> deleteProcuration(@PathVariable UUID id) {
-        log.debug("REST request to delete Procuration : {}", id);
+    public ResponseEntity<Void> deleteProcuration(
+            @PathVariable UUID id,
+            @PathVariable String nom,
+            @PathVariable String prenom) {
+        log.debug("REST request to delete Procuration : {}, {}, {}", id, nom, prenom);
         try {
-            procurationService.deleteProcuration(id);
+            procurationService.deleteProcuration(id, nom, prenom);
             return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
         } catch (FirebaseMessagingException e) {
             log.error("Notification sending failed for Procuration ID {}: {}", id, e.getMessage());

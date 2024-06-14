@@ -32,11 +32,11 @@ public class CompteFSAssociationDTO {
         this.comptePro = comptePro;
     }
 
-    public EntrepriseDTO getEntreprise() {
+    public EntrepriseDTO2 getEntreprise() {
         return entreprise;
     }
 
-    public void setEntreprise(EntrepriseDTO entreprise) {
+    public void setEntreprise(EntrepriseDTO2 entreprise) {
         this.entreprise = entreprise;
     }
 
@@ -49,7 +49,7 @@ public class CompteFSAssociationDTO {
     }
 
     private CompteProDTO comptePro;
-    private EntrepriseDTO entreprise;
+    private EntrepriseDTO2 entreprise;
     private List<String> roles;
     public String getStatut() {
         return statut;

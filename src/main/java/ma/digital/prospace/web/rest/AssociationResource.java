@@ -95,13 +95,27 @@ public class AssociationResource {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Internal server error: " + e.getMessage()));
         }
     }
-    @DeleteMapping("/associations/{id}")
+    @DeleteMapping("/associations/{id}/{nom}/{prenom}/{nomEntreprise}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<Void> deleteAssociation(@PathVariable UUID id) {
-        log.debug("REST request to delete Association : {}", id);
-        associationService.delete(id);
-        return ResponseEntity.noContent()
-                .build();
+    public ResponseEntity<Void> deleteAssociation(
+            @PathVariable UUID id,
+            @PathVariable String nom,
+            @PathVariable String prenom,
+            @PathVariable String nomEntreprise) {
+        log.debug("REST request to delete Association : {}, {}, {}, {}", id, nom, prenom, nomEntreprise);
+        try {
+            associationService.deleteAssociation(id, nom, prenom, nomEntreprise);
+            return ResponseEntity.noContent().build();
+        } catch (FirebaseMessagingException e) {
+            log.error("Notification sending failed for Association ID {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (ResponseStatusException e) {
+            log.error("Association deletion failed for ID {}: {}", id, e.getReason());
+            return ResponseEntity.status(e.getStatusCode()).build();
+        } catch (Exception e) {
+            log.error("Error deleting association", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @PostMapping("/association/processAuthenticationStep2")
@@ -165,28 +179,35 @@ public class AssociationResource {
         }
     }
 
-    @PutMapping("/associations/{id}/status")
+    @PutMapping("/associations/{id}/status/{nom}/{prenom}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> updateAssociationStatut(@PathVariable UUID id, @RequestParam String statut) {
+    public ResponseEntity<AssociationDTO> updateAssociationStatut(
+            @PathVariable UUID id,
+            @RequestParam String statut,
+            @PathVariable String nom,
+            @PathVariable String prenom) {
+        log.debug("REST request to update status of Association : {}, {}, {}, {}", id, statut, nom, prenom);
         StatutAssociation nouveauStatut;
         try {
             nouveauStatut = StatutAssociation.valueOf(statut.toUpperCase());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Invalid statut value"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
         try {
-            AssociationDTO result = associationService.updateAssociationStatut(id, nouveauStatut);
+            AssociationDTO result = associationService.updateAssociationStatut(id, nouveauStatut, nom, prenom);
             return ResponseEntity.ok(result);
         } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(Collections.singletonMap("error", e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(null);
         } catch (FirebaseMessagingException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Error sending notification: " + e.getMessage()));
+            log.error("Notification sending failed for Association ID {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         } catch (Exception e) {
             log.error("Error updating association status", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Internal server error: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 
     @GetMapping("/associations/roles")
     public ResponseEntity<?> getRolesByCompteProAndEntreprise(@RequestParam String compteProId, @RequestParam String entrepriseId) {
@@ -210,4 +231,3 @@ public class AssociationResource {
         return ResponseEntity.ok(associations.isEmpty() ? Collections.emptyList() : associations);
     }
 }
-
