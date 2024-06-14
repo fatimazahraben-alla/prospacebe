@@ -62,8 +62,8 @@ public class EntrepriseService {
     private final AssociationRepository associationRepository;
     private CompteProRepository CompteProRepository;
 
-    //  @Autowired
-    // private JwtDecoder jwtDecoder;
+    //   @Autowired
+    //  private JwtDecoder jwtDecoder;
 
     private final UserService userService;
     @Autowired
@@ -205,7 +205,7 @@ public class EntrepriseService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<EntrepriseDTO> findOne(UUID id) {
+    public Optional<EntrepriseDTO> findOne(String id) {
         log.debug("Request to get Entreprise : {}", id);
         return entrepriseRepository.findById(id).map(entrepriseMapper::toDto);
     }
@@ -215,14 +215,14 @@ public class EntrepriseService {
      *
      * @param id the id of the entity.
      */
-    public void delete(UUID id) {
+    public void delete(String id) {
         log.debug("Request to delete Entreprise : {}", id);
         entrepriseRepository.deleteById(id);
     }
 
 
     // Méthode pour vérifier si l'utilisateur actuellement connecté correspond à un ID spécifique
- /*   public boolean isCurrentUser(String accountId) {
+    public boolean isCurrentUser(String accountId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
@@ -247,7 +247,7 @@ public class EntrepriseService {
             throw new IllegalStateException("Le type de l'objet Principal n'est ni Jwt ni OidcUser.");
         }
     }
-    private String UserId() {
+  /*  private String UserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
@@ -383,17 +383,19 @@ public class EntrepriseService {
         if ((personnephysiqueDTO != null) && (checktribunal(juridictions,entrepriseRequest))) {
             Optional<ComptePro> compteOptional = CompteProRepository.findByCustomIdQuery(entrepriseRequest.getCOMPID());
             ComptePro compte = compteOptional.orElse(null);
-            //String compIdUUID = entrepriseRequest.getCOMPID();
+            // String compIdUUID = entrepriseRequest.getCOMPID();
             //String compIdString = compIdUUID.toString();
             String compIdString = "compte3";
-            //  if (isCurrentUser(compIdString))
+            // if (isCurrentUser(compIdString)){
             if (compIdString == "compte1") {
                 if (checkManagerPp(entrepriseRequest, personnephysiqueDTO)) {
                     EntrepriseDTO entrepriseDTO = new EntrepriseDTO();
                     Entreprise newEntreprise = new Entreprise();
+                    newEntreprise.setId(entrepriseRequest.getNumeroRC()+"_"+entrepriseRequest.getTribunal());
                     newEntreprise.setEtat(personnephysiqueDTO.getPersonneRc().getEtat());
                     newEntreprise.setStatus_Perphysique_Permorale(entrepriseRequest.getPerphysique_Permorale());
-                    try {
+                    String id = entrepriseRequest.getNumeroRC()+"_"+entrepriseRequest.getTribunal();
+                    if (entrepriseRepository.findEntrepriseById(id) == null){
                         entrepriseRepository.save(newEntreprise);
                         newEntreprise.getGerants().add(compte);
                         compte.getEntrepriseGeree().add(newEntreprise);
@@ -405,9 +407,10 @@ public class EntrepriseService {
                         auditLogger1.info("Nouvelle entreprise créée avec succès par {} pour le tribunal {} et le numéro RC {}", compIdString, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
                         auditLogger1.info("Successfully created company with NumRC: {}", entrepriseRequest.getNumeroRC());
                         return entrepriseDTO;
-                    } catch (Exception e) {
-                        log.error("Erreur lors de l'enregistrement de l'entreprise : " + e.getMessage());
-                        auditLogger1.error("Échec de la création de l'entreprise par {} pour le tribunal {} et le numéro RC {}", compIdString, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC(), e);
+                    } else {
+                        log.error("Erreur lors de l'enregistrement de l'entreprise : " );
+                        auditLogger1.error("Échec de la création de l'entreprise par {} pour le tribunal {} et le numéro RC {}", compIdString, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
+                        return null;
                     }
                 } else {
                     log.info("Vous n'êtes pas le manager.");
@@ -415,15 +418,17 @@ public class EntrepriseService {
                 }
 
             } else {
-                // String accountConnectedId = UserId();
-                String accountConnectedId = "Compte2";
+                //   String accountConnectedId = UserId();
+                String accountConnectedId = "4c973896-5761-41fc-8217-07c5d13a004b";
                 Procuration procuration = procurationRepository.findProcurationByUtilisateurProIdAndGestionnaireEspaceProId(entrepriseRequest.getCOMPID(), accountConnectedId);
                 if ( procuration.getStatut() == StatutInvitation.ACCEPTED  && checkPp(personnephysiqueDTO, entrepriseRequest.getCOMPID(),entrepriseRequest)) {
                     EntrepriseDTO entrepriseDTO = new EntrepriseDTO();
                     Entreprise newEntreprise2 = new Entreprise();
+                    newEntreprise2.setId(entrepriseRequest.getNumeroRC()+"_"+entrepriseRequest.getTribunal());
                     newEntreprise2.setEtat(personnephysiqueDTO.getPersonneRc().getEtat());
                     newEntreprise2.setStatus_Perphysique_Permorale(entrepriseRequest.getPerphysique_Permorale());
-                    try {
+                    String id = entrepriseRequest.getNumeroRC()+"_"+entrepriseRequest.getTribunal();
+                    if (entrepriseRepository.findEntrepriseById(id) == null){
                         entrepriseRepository.save(newEntreprise2);
                         newEntreprise2.getGerants().add(compte);
                         compte.getEntrepriseGeree().add(newEntreprise2);
@@ -436,9 +441,10 @@ public class EntrepriseService {
                         auditLogger1.info("Nouvelle entreprise créée avec succès via procuration par {} pour le tribunal {} et le numéro RC {}", accountConnectedId, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
                         auditLogger1.info("Successfully created company with NumRC: {}", entrepriseRequest.getNumeroRC());
                         return entrepriseDTO;
-                    } catch (Exception e) {
-                        log.error("Erreur lors de l'enregistrement de l'entreprise : " + e.getMessage());
-                        auditLogger1.error("Échec de la création de l'entreprise via procuration par {} pour le tribunal {} et le numéro RC {}", accountConnectedId, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC(), e);
+                    } else {
+                        log.error("Erreur lors de l'enregistrement de l'entreprise : ");
+                        auditLogger1.error("Échec de la création de l'entreprise via procuration par {} pour le tribunal {} et le numéro RC {}", accountConnectedId, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
+                        return null;
                     }
                 } else {
                     log.info("Procuration non valide ou conditions de création non remplies.");
@@ -477,24 +483,26 @@ public class EntrepriseService {
     private EntrepriseDTO handleMoralPerson(EntrepriseRequest2 entrepriseRequest) throws BadRequestAlertException {
         EntrepriseWSMJ entrepriseWS = entrepriseWSMJService.getEntrepriseByJuridictionAndNumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
         List<Juridiction> juridictions = tribunalWSMJService.getListeTribunaux();
-        if ((!checktribunal(juridictions,entrepriseRequest)) && (entrepriseWS!=null)) {
+        if ((entrepriseWS == null) || !checktribunal(juridictions, entrepriseRequest) ) {
             auditLogger1.warn("Échec de la création de l'entreprise : aucune entreprise trouvée avec le tribunal {} et le numéro RC {}", entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
             return null;
         }
         else {
             Optional<ComptePro> compteOptional = CompteProRepository.findByCustomIdQuery(entrepriseRequest.getCOMPID());
             ComptePro compte = compteOptional.orElse(null);
-            // String compIdUUID = entrepriseRequest.getCOMPID();
+            //  String compIdUUID = entrepriseRequest.getCOMPID();
             // String compIdString = compIdUUID.toString();
             String compIdString = entrepriseRequest.getCOMPID();
-            //if (isCurrentUser(compIdString))
+            // if (isCurrentUser(compIdString)) {
             if (compIdString == entrepriseRequest.getCOMPID()) {
                 if (checkManager(entrepriseRequest, entrepriseWS, entrepriseRequest.getCOMPID())) {
                     EntrepriseDTO entrepriseDTO = new EntrepriseDTO();
                     Entreprise newEntreprise2 = new Entreprise();
+                    newEntreprise2.setId(entrepriseRequest.getNumeroRC()+"_"+entrepriseRequest.getTribunal());
                     newEntreprise2.setStatus_Perphysique_Permorale(entrepriseRequest.getPerphysique_Permorale());
                     newEntreprise2.setEtat(entrepriseWS.getPersonneRc().getIdentification().getEtat());
-                    if (newEntreprise2!=null){
+                    String id = entrepriseRequest.getNumeroRC()+"_"+entrepriseRequest.getTribunal();
+                    if (entrepriseRepository.findEntrepriseById(id) == null){
                         entrepriseRepository.save(newEntreprise2);
                         newEntreprise2.getGerants().add(compte);
                         compte.getEntrepriseGeree().add(newEntreprise2);
@@ -517,31 +525,33 @@ public class EntrepriseService {
                     throw new BadRequestAlertException("Tentative de création d'entreprise morale échouée pour {} - non manager.","Entreprise","autorisationNonAccordee");
                 }
             } else {
-                //String accountConnectedId = UserId();
+                // String accountConnectedId = UserId();
                 String accountConnectedId = "Compte2";
                 DIRIGEANTDTO dirigeants = entrepriseWSMJService.getDirigeantBycodeJuridictionAndnumRC(entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
                 Procuration procuration = procurationRepository.findProcurationByUtilisateurProIdAndGestionnaireEspaceProId(entrepriseRequest.getCOMPID(), accountConnectedId);
                 if ( procuration.getStatut() == StatutInvitation.ACCEPTED && checkDirigeantsWS(entrepriseRequest,entrepriseWS, dirigeants)) {
                     EntrepriseDTO entrepriseDTO = new EntrepriseDTO();
                     Entreprise newEntreprise2 = new Entreprise();
+                    newEntreprise2.setId(entrepriseRequest.getNumeroRC()+"_"+entrepriseRequest.getTribunal());
                     newEntreprise2.setStatus_Perphysique_Permorale(entrepriseRequest.getPerphysique_Permorale());
                     newEntreprise2.setEtat(entrepriseWS.getPersonneRc().getIdentification().getEtat());
-                    try {
+                    String id = entrepriseRequest.getNumeroRC()+"_"+entrepriseRequest.getTribunal();
+                    if (entrepriseRepository.findEntrepriseById(id) == null){
                         entrepriseRepository.save(newEntreprise2);
                         newEntreprise2.getGerants().add(compte);
                         compte.getEntrepriseGeree().add(newEntreprise2);
                         CompteProRepository.save(compte);
-                        entrepriseDTO.setId( newEntreprise2.getId());
+                        entrepriseDTO.setId(newEntreprise2.getId());
                         entrepriseDTO.setEtat( newEntreprise2.getEtat());
                         entrepriseDTO.setCompteId(entrepriseRequest.getCOMPID());
                         entrepriseDTO.setComptegestionnaire(accountConnectedId);
                         log.info("Enregistrement réussi de l'entreprise morale via procuration.");
                         auditLogger1.info("Nouvelle entreprise morale créée avec succès via procuration par {} pour le tribunal {} et le numéro RC {}", accountConnectedId, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
                         return entrepriseDTO;
-                    } catch (Exception e) {
-                        log.error("Erreur lors de l'enregistrement de l'entreprise : " + e.getMessage());
-                        auditLogger1.error("Échec de la création de l'entreprise morale via procuration par {} pour le tribunal {} et le numéro RC {}", accountConnectedId, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC(), e);
-                        return entrepriseDTO;
+                    } else {
+                        log.error("Erreur lors de l'enregistrement de l'entreprise  ");
+                        auditLogger1.error("Échec de la création de l'entreprise morale via procuration par {} pour le tribunal {} et le numéro RC {}", accountConnectedId, entrepriseRequest.getTribunal(), entrepriseRequest.getNumeroRC());
+                        return null;
                     }
                 } else {
                     log.info("Condition non vérifiée.");

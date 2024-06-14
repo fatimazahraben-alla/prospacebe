@@ -278,7 +278,7 @@ public class AssociationService {
     /**
      * Create an association
      */
-    public AssociationDTO createAssociationWithNotification(String compteID, String destinataireID, UUID entrepriseID, UUID roleID, String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
+    public AssociationDTO createAssociationWithNotification(String compteID, String destinataireID, String entrepriseID, UUID roleID, String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
         // Validation et récupération des entités requises
         ComptePro initiateur = compteProRepository.findById(compteID)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Compte not found"));
@@ -382,7 +382,7 @@ public class AssociationService {
         }
     }
 
-    public List<String> getRolesByCompteProAndEntreprise(String compteProId, UUID entrepriseId) {
+    public List<String> getRolesByCompteProAndEntreprise(String compteProId,String entrepriseId) {
         return associationRepository.findRoleNamesByCompteProIdAndEntrepriseId(compteProId, entrepriseId);
     }
 

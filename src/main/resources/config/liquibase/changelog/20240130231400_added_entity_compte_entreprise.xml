@@ -11,7 +11,7 @@
             <column name="compte_id" type="VARCHAR(50)">
                 <constraints nullable="false" />
             </column>
-            <column name="entreprise_geree_id" type="UUID">
+            <column name="entreprise_geree_id" type="VARCHAR(50)">
                 <constraints nullable="false" />
             </column>
         </createTable>

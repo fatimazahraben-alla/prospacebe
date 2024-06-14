@@ -8,7 +8,7 @@
     -->
     <changeSet id="20240130231406-1" author="jhipster">
         <createTable tableName="entreprise">
-            <column name="id" type="UUID">
+            <column name="id" type="VARCHAR(50)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="denomination" type="varchar(255)">
@@ -61,7 +61,7 @@
                   separator=";"
                   tableName="entreprise"
                   usePreparedStatements="true">
-            <column name="id" type="UUID"/>
+            <column name="id" type="string"/>
             <column name="denomination" type="string"/>
             <column name="statut_juridique" type="string"/>
             <column name="tribunal" type="string"/>

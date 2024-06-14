@@ -147,7 +147,7 @@ public class AssociationResource {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> createAssociationWithNotification(@RequestParam String compteID,
                                                                @RequestParam String destinataireID,
-                                                               @RequestParam UUID entrepriseID,
+                                                               @RequestParam String entrepriseID,
                                                                @RequestParam UUID roleID,
                                                                @RequestParam String prenomInitiateur,
                                                                @RequestParam String nomInitiateur,
@@ -189,7 +189,7 @@ public class AssociationResource {
     }
 
     @GetMapping("/associations/roles")
-    public ResponseEntity<?> getRolesByCompteProAndEntreprise(@RequestParam String compteProId, @RequestParam UUID entrepriseId) {
+    public ResponseEntity<?> getRolesByCompteProAndEntreprise(@RequestParam String compteProId, @RequestParam String entrepriseId) {
         if ((!compteProRepository.existsById(compteProId)) ||  (!entrepriseRepository.existsById(entrepriseId))) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ComptePro or Entreprise not found");
         }

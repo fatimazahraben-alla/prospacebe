@@ -17,7 +17,7 @@ public interface AssociationRepository extends JpaRepository<Association, UUID> 
     List<Association> findAllByFsAndCompteID(@Param("fsId") String fsId, @Param("compteId") String compteId);
     @Query("SELECT r.nom FROM Association a JOIN a.role r WHERE a.compte.id = :compteProId AND a.entreprise.id = :entrepriseId")
     List<String> findRoleNamesByCompteProIdAndEntrepriseId(@Param("compteProId") String compteProId,
-                                                           @Param("entrepriseId") UUID entrepriseId);
+                                                           @Param("entrepriseId") String entrepriseId);
     @Query("SELECT DISTINCT e FROM Entreprise e JOIN e.associations a WHERE a.compte.id = :compteID AND a.role.fs.id = :fsId")
     List<Entreprise> findAllDistinctByCompteIdAndRoleFsId(@Param("fsId") String fsId, @Param("compteID") String compteID);
 

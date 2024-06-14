@@ -27,10 +27,8 @@ public class Entreprise implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    private String id;
 
     @Transient
     @Column(name = "denomination")
@@ -81,11 +79,11 @@ public class Entreprise implements Serializable {
     @JsonIgnoreProperties(value = { "entreprise", "compte", "role" }, allowSetters = true)
     private Set<Association> associations = new HashSet<>();
 
-    public UUID getId() {
-        return this.id;
+    public String getId() {
+        return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
