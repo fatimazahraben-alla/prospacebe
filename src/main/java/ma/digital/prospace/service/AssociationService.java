@@ -504,10 +504,8 @@ public class AssociationService {
                 .collect(Collectors.toList());
     }
     public List<AssociationDTO> findAssociationsCreatedByAccountAndDelegates(String compteID) {
-        // Récupérer toutes les associations où compteInitiateurID est le manager ou ses délégués avec des procurations acceptées.
         List<Association> associations = associationRepository.findByCompteInitiateurID(compteID);
 
-        // Ajouter la récupération pour les délégués du manager.
         associations.addAll(associationRepository.findByCompteInitiateurIDIn(
                 associationRepository.findAllAcceptedDelegatesByManagerId(compteID)
         ));
