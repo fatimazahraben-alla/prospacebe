@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface AuditAssociationRepository extends JpaRepository<AuditAssociation, UUID> {
     List<AuditAssociation> findByCompteId(String compteId);
     Optional<AuditAssociation> findFirstByAssociationIdOrderByTimestampAsc(UUID associationId);
+    Optional<AuditAssociation> findFirstByAssociationIdAndCompteIdOrderByTimestampAsc(UUID associationId, String compteId);
 }

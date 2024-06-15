@@ -12,6 +12,7 @@ import ma.digital.prospace.service.AssociationService;
 import ma.digital.prospace.service.dto.*;
 import ma.digital.prospace.service.mapper.AssociationMapper;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
+import ma.digital.prospace.web.rest.errors.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -95,28 +96,6 @@ public class AssociationResource {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Internal server error: " + e.getMessage()));
         }
     }
-    @DeleteMapping("/associations/{id}/{nom}/{prenom}/{nomEntreprise}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<Void> deleteAssociation(
-            @PathVariable UUID id,
-            @PathVariable String nom,
-            @PathVariable String prenom,
-            @PathVariable String nomEntreprise) {
-        log.debug("REST request to delete Association : {}, {}, {}, {}", id, nom, prenom, nomEntreprise);
-        try {
-            associationService.deleteAssociation(id, nom, prenom, nomEntreprise);
-            return ResponseEntity.noContent().build();
-        } catch (FirebaseMessagingException e) {
-            log.error("Notification sending failed for Association ID {}: {}", id, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        } catch (ResponseStatusException e) {
-            log.error("Association deletion failed for ID {}: {}", id, e.getReason());
-            return ResponseEntity.status(e.getStatusCode()).build();
-        } catch (Exception e) {
-            log.error("Error deleting association", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
 
     @PostMapping("/association/processAuthenticationStep2")
     @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -159,56 +138,82 @@ public class AssociationResource {
     }
     @PostMapping("/associations")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> createAssociationWithNotification(@RequestParam String compteID,
-                                                               @RequestParam String destinataireID,
-                                                               @RequestParam String entrepriseID,
-                                                               @RequestParam UUID roleID,
-                                                               @RequestParam String prenomInitiateur,
-                                                               @RequestParam String nomInitiateur,
-                                                               @RequestParam String nomEntreprise) {
+    public ResponseEntity<Object> createAssociationWithNotification(@RequestParam String compteID,
+                                                                    @RequestParam String destinataireID,
+                                                                    @RequestParam String entrepriseID,
+                                                                    @RequestParam UUID roleID,
+                                                                    @RequestParam String prenomInitiateur,
+                                                                    @RequestParam String nomInitiateur,
+                                                                    @RequestParam String nomEntreprise) {
+        log.debug("Requête REST pour créer une association avec notification pour compteID: {}, destinataireID: {}, entrepriseID: {}, roleID: {}, prenomInitiateur: {}, nomInitiateur: {}, nomEntreprise: {}",
+                compteID, destinataireID, entrepriseID, roleID, prenomInitiateur, nomInitiateur, nomEntreprise);
+
         try {
-            AssociationDTO result = associationService.createAssociationWithNotification(compteID, destinataireID, entrepriseID, roleID, prenomInitiateur, nomInitiateur, nomEntreprise);
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                    .buildAndExpand(result.getId()).toUri();
-            return ResponseEntity.created(location).body(result);
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(Collections.singletonMap("error", e.getReason()));
+            Optional<Object> resultOpt = associationService.createAssociationWithNotification(
+                    compteID, destinataireID, entrepriseID, roleID, prenomInitiateur, nomInitiateur, nomEntreprise);
+
+            if (resultOpt.isPresent()) {
+                Object result = resultOpt.get();
+                if (result instanceof ErrorResponse) {
+                    ErrorResponse errorResponse = (ErrorResponse) result;
+                    log.warn("Erreur lors de la création de l'association : {}", errorResponse.getMessage());
+                    return ResponseEntity.status(HttpStatus.valueOf(errorResponse.getStatusCode())).body(errorResponse);
+                }
+                AssociationDTO associationDTO = (AssociationDTO) result;
+                URI location = URI.create(String.format("/api/associations/%s", associationDTO.getId()));
+                return ResponseEntity.created(location).body(associationDTO);
+            } else {
+                log.error("Erreur inattendue lors de la création de l'association.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Erreur inattendue."));
+            }
         } catch (Exception e) {
-            log.error("Error creating association with notification", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Internal server error: " + e.getMessage()));
+            log.error("Erreur lors de la création de l'association avec notification", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Erreur interne du serveur : " + e.getMessage()));
         }
     }
-
-    @PutMapping("/associations/{id}/status/{nom}/{prenom}")
+    @PatchMapping("/associations/{id}/status")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<AssociationDTO> updateAssociationStatut(
+    public ResponseEntity<?> updateAssociationStatut(
             @PathVariable UUID id,
-            @RequestParam String statut,
-            @PathVariable String nom,
-            @PathVariable String prenom) {
-        log.debug("REST request to update status of Association : {}, {}, {}, {}", id, statut, nom, prenom);
-        StatutAssociation nouveauStatut;
-        try {
-            nouveauStatut = StatutAssociation.valueOf(statut.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+            @RequestParam StatutAssociation statut,
+            @RequestBody NomPrenomEntrepriseDTO nomPrenomEntrepriseDTO) {
+        log.debug("REST request to update Association status: {}, {}", id, statut);
 
         try {
-            AssociationDTO result = associationService.updateAssociationStatut(id, nouveauStatut, nom, prenom);
-            return ResponseEntity.ok(result);
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(null);
-        } catch (FirebaseMessagingException e) {
-            log.error("Notification sending failed for Association ID {}: {}", id, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            AssociationDTO updatedAssociation = associationService.updateAssociationStatut(
+                    id, statut, nomPrenomEntrepriseDTO.getNom(), nomPrenomEntrepriseDTO.getPrenom());
+            return ResponseEntity.ok(updatedAssociation);
+        } catch (BadRequestAlertException e) {
+            log.error("Error updating association status with cause = '{}' and exception = '{}'", e.getCause(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "Error updating association status: " + e.getMessage()));
         } catch (Exception e) {
-            log.error("Error updating association status", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            log.error("Exception in updateAssociationStatut() with cause = '{}' and exception = '{}'", e.getCause(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "An error occurred while updating association status"));
         }
     }
 
+    @DeleteMapping("/associations/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> deleteAssociation(
+            @PathVariable UUID id,
+            @RequestBody NomPrenomEntrepriseDTO nomPrenomEntrepriseDTO) {
+        log.debug("REST request to delete Association: {}, {}", id, nomPrenomEntrepriseDTO);
 
+        try {
+            associationService.deleteAssociation(id, nomPrenomEntrepriseDTO);
+            return ResponseEntity.noContent().build();
+        } catch (ResponseStatusException e) {
+            log.error("Exception in deleteAssociation() with cause = '{}' and exception = '{}'", e.getCause(), e.getMessage());
+            return ResponseEntity.status(e.getStatusCode())
+                    .body(Collections.singletonMap("error", e.getReason()));
+        } catch (Exception e) {
+            log.error("Exception in deleteAssociation() with cause = '{}' and exception = '{}'", e.getCause(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "An error occurred while deleting association"));
+        }
+    }
     @GetMapping("/associations/roles")
     public ResponseEntity<?> getRolesByCompteProAndEntreprise(@RequestParam String compteProId, @RequestParam String entrepriseId) {
         if ((!compteProRepository.existsById(compteProId)) ||  (!entrepriseRepository.existsById(entrepriseId))) {
@@ -229,5 +234,12 @@ public class AssociationResource {
     public ResponseEntity<List<AssociationDTO>> getAssociationsCreatedBy(@PathVariable String compteId) {
         List<AssociationDTO> associations = associationService.findAssociationsByCompteId(compteId);
         return ResponseEntity.ok(associations.isEmpty() ? Collections.emptyList() : associations);
+    }
+    @GetMapping("/associations/created-by/{compteID}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<List<AssociationDTO>> getAssociationsCreatedByAccountAndDelegates(@PathVariable String compteID) {
+        log.debug("REST request to get Associations created by account and its delegates : {}", compteID);
+        List<AssociationDTO> associations = associationService.findAssociationsCreatedByAccountAndDelegates(compteID);
+        return ResponseEntity.ok().body(associations);
     }
 }

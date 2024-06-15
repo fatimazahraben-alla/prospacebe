@@ -8,13 +8,16 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.Contact;
 import ma.digital.prospace.domain.Procuration;
+import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.repository.ContactRepository;
 import ma.digital.prospace.repository.ProcurationRepository;
+import ma.digital.prospace.service.dto.NomPrenomDTO;
 import ma.digital.prospace.service.dto.NotificationDTO;
 import ma.digital.prospace.service.dto.ProcurationDTO;
 import ma.digital.prospace.service.mapper.ProcurationMapper;
+import ma.digital.prospace.web.rest.errors.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -127,13 +130,42 @@ public class ProcurationService {
         procurationRepository.deleteById(id);
     }
 
-    public ProcurationDTO createProcuration(ProcurationDTO procurationDTO) throws FirebaseMessagingException {
+    public Optional<Object> createProcuration(ProcurationDTO procurationDTO) throws FirebaseMessagingException {
         log.debug("Request to create Procuration : {}", procurationDTO);
-        ComptePro gestionnaire = compteProRepository.findById(procurationDTO.getGestionnaireEspaceProId())
-                .orElseThrow(() -> new RuntimeException("Gestionnaire Espace Pro introuvable"));
 
-        ComptePro utilisateur = compteProRepository.findById(procurationDTO.getUtilisateurProId())
-                .orElseThrow(() -> new RuntimeException("Utilisateur Pro introuvable"));
+        if (procurationRepository.existsByGestionnaireEspaceProIdAndUtilisateurProId(
+                procurationDTO.getGestionnaireEspaceProId(), procurationDTO.getUtilisateurProId())) {
+            log.warn("Procuration already exists between these accounts: GestionnaireEspaceProId={}, UtilisateurProId={}",
+                    procurationDTO.getGestionnaireEspaceProId(), procurationDTO.getUtilisateurProId());
+            return Optional.of(new ErrorResponse(
+                    "Une procuration existe déjà entre ces comptes.",
+                    409,
+                    "Conflict",
+                    "Une procuration entre le gestionnaire et l'utilisateur existe déjà."
+            ));
+        }
+        Optional<ComptePro> gestionnaireOpt = compteProRepository.findById(procurationDTO.getGestionnaireEspaceProId());
+        if (gestionnaireOpt.isEmpty()) {
+            log.warn("Gestionnaire Espace Pro introuvable: GestionnaireEspaceProId={}", procurationDTO.getGestionnaireEspaceProId());
+            return Optional.of(new ErrorResponse(
+                    "Gestionnaire introuvable.",
+                    404,
+                    "Not Found",
+                    "Le gestionnaire est introuvable avec l'ID fourni."
+            ));
+        }
+        Optional<ComptePro> utilisateurOpt = compteProRepository.findById(procurationDTO.getUtilisateurProId());
+        if (utilisateurOpt.isEmpty()) {
+            log.warn("Utilisateur Pro introuvable: UtilisateurProId={}", procurationDTO.getUtilisateurProId());
+            return Optional.of(new ErrorResponse(
+                    "Utilisateur introuvable.",
+                    404,
+                    "Not Found",
+                    "L'utilisateur pro est introuvable avec l'ID fourni."
+            ));
+        }
+        ComptePro gestionnaire = gestionnaireOpt.get();
+        ComptePro utilisateur = utilisateurOpt.get();
 
         Procuration procuration = new Procuration();
         procuration.setGestionnaireEspacePro(gestionnaire);
@@ -141,26 +173,24 @@ public class ProcurationService {
         procuration.setStatut(StatutInvitation.PENDING);
 
         Procuration savedProcuration = procurationRepository.save(procuration);
-
-        // Prepare the notification details
         String title = "Nouvelle demande de procuration";
         String message = "Vous avez reçu une nouvelle demande de procuration de " + procurationDTO.getNomUtilisateurPro() + " " + procurationDTO.getPrenomUtilisateurPro();
 
-        // Additional data for notification
+        // Data pour la notification
         Map<String, String> data = new HashMap<>();
         data.put("procurationId", savedProcuration.getId().toString());
         data.put("emeteurId", utilisateur.getId());
         data.put("nom", procurationDTO.getNomUtilisateurPro());
         data.put("prenom", procurationDTO.getPrenomUtilisateurPro());
+        data.put("typeNotification", "invitation");
 
-        // Send and persist the notification
         sendAndPersistNotification(gestionnaire.getId(), title, message, data);
 
-        return procurationMapper.toDto(savedProcuration);
+        return Optional.of(procurationMapper.toDto(savedProcuration));
     }
+    public ProcurationDTO changeProcurationStatus(UUID id, StatutInvitation statut, NomPrenomDTO nomPrenomDTO) throws FirebaseMessagingException {
+        log.debug("Request to change status of Procuration : {}, {}", id, statut);
 
-    public ProcurationDTO changeProcurationStatus(UUID id, StatutInvitation statut, String nom, String prenom) throws FirebaseMessagingException {
-        log.debug("Request to change status of Procuration : {}, {}, {}", id, nom, prenom);
         Procuration procuration = procurationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Procuration non trouvée"));
         procuration.setStatut(statut);
@@ -168,14 +198,15 @@ public class ProcurationService {
 
         String title = (statut == StatutInvitation.ACCEPTED) ? "Procuration acceptée" : "Procuration refusée";
         String message = String.format("Votre demande de procuration pour %s %s a été %s.",
-                nom, prenom, (statut == StatutInvitation.ACCEPTED) ? "acceptée" : "refusée");
+                nomPrenomDTO.getNom(), nomPrenomDTO.getPrenom(), (statut == StatutInvitation.ACCEPTED) ? "acceptée" : "refusée");
 
-        // Additional data for notification
+        // Data pour la notification
         Map<String, String> data = new HashMap<>();
         data.put("procurationId", savedProcuration.getId().toString());
         data.put("emeteurId", savedProcuration.getGestionnaireEspacePro().getId());
-        data.put("nom", nom);
-        data.put("prenom", prenom);
+        data.put("nom", nomPrenomDTO.getNom());
+        data.put("prenom", nomPrenomDTO.getPrenom());
+        data.put("typeNotification", statut == StatutInvitation.ACCEPTED ? "acceptation" : "refus");
 
         sendAndPersistNotification(savedProcuration.getUtilisateurPro().getId(), title, message, data);
 
@@ -183,25 +214,25 @@ public class ProcurationService {
     }
 
 
-    public void deleteProcuration(UUID procurationId, String nom, String prenom) throws FirebaseMessagingException {
+    public void deleteProcuration(UUID procurationId, NomPrenomDTO nomPrenomDTO) throws FirebaseMessagingException {
         Procuration procuration = procurationRepository.findById(procurationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Procuration not found"));
 
-        String messageToGestionnaire;
         String messageToUtilisateur;
 
         if (procuration.getStatut() == StatutInvitation.ACCEPTED) {
-            messageToUtilisateur = String.format("%s n'est plus gestionnaire de votre espace pro.", nom + " " + prenom);
+            messageToUtilisateur = String.format("%s n'est plus gestionnaire de votre espace pro.", nomPrenomDTO.getNom() + " " + nomPrenomDTO.getPrenom());
         } else {
-            messageToUtilisateur = String.format("Votre demande de procuration pour %s a été annulée.", nom + " " + prenom);
+            messageToUtilisateur = String.format("Votre demande de procuration pour %s a été annulée.", nomPrenomDTO.getNom() + " " + nomPrenomDTO.getPrenom());
         }
 
-        // Additional data for notification
+        // Data pour la notification
         Map<String, String> data = new HashMap<>();
         data.put("procurationId", procurationId.toString());
         data.put("emeteurId", procuration.getGestionnaireEspacePro().getId());
-        data.put("nom", nom);
-        data.put("prenom", prenom);
+        data.put("nom", nomPrenomDTO.getNom());
+        data.put("prenom", nomPrenomDTO.getPrenom());
+        data.put("typeNotification", "annulation");
 
         sendAndPersistNotification(procuration.getUtilisateurPro().getId(), "Procuration annulée", messageToUtilisateur, data);
 
@@ -230,7 +261,8 @@ public class ProcurationService {
         // Additional data for notification
         Map<String, String> data = new HashMap<>();
         data.put("procurationId", procuration.getId().toString());
-        data.put("emeteurId", gestionnaire.getId());
+        data.put("emeteurId", utilisateurProId);
+        data.put("typeNotification", "retrait");
 
         sendAndPersistNotification(gestionnaire.getId(), "Notification de retrait de délégation", messageToGestionnaire, data);
         sendAndPersistNotification(utilisateurPro.getId(), "Notification de retrait de délégation", messageToUtilisateurPro, data);

@@ -3,6 +3,7 @@ package ma.digital.prospace.repository;
 import ma.digital.prospace.domain.Association;
 import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.Entreprise;
+import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,5 +24,14 @@ public interface AssociationRepository extends JpaRepository<Association, UUID> 
 
     @Query("SELECT a FROM Association a WHERE a.compte.id = :compteId")
     List<Association> findAllByCompteID(@Param("compteId") String compteId);
+    List<Association> findByCompteIdAndEntrepriseId(String compteId, String entrepriseId);
+    List<Association> findByCompteIdAndStatutAndRoleNom(String compteId, StatutAssociation statut, String roleNom);
+    List<Association> findAllById(Iterable<UUID> ids);
+    List<Association> findByCompteInitiateurID(String compteInitiateurID);
+    List<Association> findByCompteInitiateurIDIn(List<String> compteInitiateurIDs);
+    @Query("SELECT p.utilisateurPro.id FROM Procuration p WHERE p.gestionnaireEspacePro.id = :managerID AND p.statut = 'ACCEPTED'")
+    List<String> findAllAcceptedDelegatesByManagerId(@Param("managerID") String managerID);
+    @Query("SELECT a.compte.id FROM Association a WHERE a.entreprise.id = :entrepriseID AND a.role.nom = 'GESTIONNAIRE_ENTREPRISE' AND a.statut = 'ACCEPTED'")
+    List<String> findAcceptedEnterpriseManagersByEntrepriseId(@Param("entrepriseID") String entrepriseID);
 }
 

@@ -10,7 +10,9 @@ import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.service.dto.CompteProDTO;
+import ma.digital.prospace.service.dto.NomPrenomDTO;
 import ma.digital.prospace.web.rest.errors.BadRequestAlertException;
+import ma.digital.prospace.web.rest.errors.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -148,74 +150,65 @@ public class ProcurationResource {
      * or with status 400 (Bad Request) if the procuration has not been created
      */
     @PostMapping("/procurations")
-    @PreAuthorize("hasAuthority('GERANT', 'GESTIONNAIRE')")
+    @PreAuthorize("hasAuthority('GERANT') or hasAuthority('GESTIONNAIRE')")
     public ResponseEntity<Object> createProcuration(@RequestBody ProcurationDTO procurationDTO) {
+        log.debug("Enter: createProcuration() with argument[s] = [{}]", procurationDTO);
+
+        Optional<Object> result;
         try {
-            ProcurationDTO result = procurationService.createProcuration(procurationDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(result);
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Collections.singletonMap("error", e.getMessage()));
+            result = procurationService.createProcuration(procurationDTO);
         } catch (Exception e) {
+            log.error("Exception in createProcuration() with cause = '{}' and exception = '{}'", e.getCause(), e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Collections.singletonMap("error", "An error occurred while creating procuration"));
         }
-    }
-    @PatchMapping("/procurations/{id}/status/{nom}/{prenom}")
-    public ResponseEntity<ProcurationDTO> updateProcurationStatus(
-            @PathVariable UUID id,
-            @RequestParam String status,
-            @PathVariable String nom,
-            @PathVariable String prenom) {
-        try {
-            StatutInvitation statut = StatutInvitation.valueOf(status);
-            ProcurationDTO result = procurationService.changeProcurationStatus(id, statut, nom, prenom);
-            return ResponseEntity.ok(result);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
-        } catch (FirebaseMessagingException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).build();
+        if (result.isPresent()) {
+            Object response = result.get();
+            if (response instanceof ErrorResponse) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "Unknown error occurred while creating procuration"));
         }
     }
+    @PatchMapping("/procurations/{id}/statut")
+    @PreAuthorize("hasAuthority('GERANT', 'GESTIONNAIRE')")
+    public ResponseEntity<Object> updateProcurationStatus(
+            @PathVariable UUID id,
+            @RequestParam StatutInvitation statut,
+            @RequestBody NomPrenomDTO nomPrenomDTO) {
+        log.debug("REST request to update Procuration status : {}", id);
 
-    @DeleteMapping("/procurations/{id}/{nom}/{prenom}")
-    @PreAuthorize("hasAuthority('GESTIONNAIRE')")
-    public ResponseEntity<Void> deleteProcuration(
-            @PathVariable UUID id,
-            @PathVariable String nom,
-            @PathVariable String prenom) {
-        log.debug("REST request to delete Procuration : {}, {}, {}", id, nom, prenom);
         try {
-            procurationService.deleteProcuration(id, nom, prenom);
-            return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
-        } catch (FirebaseMessagingException e) {
-            log.error("Notification sending failed for Procuration ID {}: {}", id, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        } catch (ResponseStatusException e) {
-            log.error("Procuration deletion failed for ID {}: {}", id, e.getReason());
-            return ResponseEntity.status(e.getStatusCode()).build();
+            ProcurationDTO updatedProcuration = procurationService.changeProcurationStatus(id, statut, nomPrenomDTO);
+            return ResponseEntity.ok(updatedProcuration);
+        } catch (Exception e) {
+            log.error("Exception in updateProcurationStatus() with cause = '{}' and exception = '{}'", e.getCause(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "An error occurred while updating procuration status"));
         }
     }
-    @DeleteMapping("/procurations/{utilisateurProId}/{gestionnaireEspaceProId}")
-    @PreAuthorize("hasAuthority('GERANT')")
-    public ResponseEntity<Void> removeDelegation(
-            @PathVariable String utilisateurProId,
-            @PathVariable String gestionnaireEspaceProId) {
-        log.debug("REST request to remove delegation: UtilisateurPro ID: {}, GestionnaireEspacePro ID: {}", utilisateurProId, gestionnaireEspaceProId);
+    @DeleteMapping("/procurations/{id}")
+    @PreAuthorize("hasAuthority('GERANT', 'GESTIONNAIRE')")
+    public ResponseEntity<Object> deleteProcuration(
+            @PathVariable UUID id,
+            @RequestBody NomPrenomDTO nomPrenomDTO) {
+        log.debug("REST request to delete Procuration : {}", id);
+
         try {
-            procurationService.removeDelegation(utilisateurProId, gestionnaireEspaceProId);
+            procurationService.deleteProcuration(id, nomPrenomDTO);
             return ResponseEntity.noContent().build();
-        } catch (FirebaseMessagingException e) {
-            log.error("Failed to send notification: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (ResponseStatusException e) {
-            log.error("Error removing delegation", e);
-            return ResponseEntity.status(e.getStatusCode()).build();
+            log.error("Exception in deleteProcuration() with cause = '{}' and exception = '{}'", e.getCause(), e.getMessage());
+            return ResponseEntity.status(e.getStatusCode())
+                    .body(Collections.singletonMap("error", e.getReason()));
         } catch (Exception e) {
-            log.error("Error removing delegation", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            log.error("Exception in deleteProcuration() with cause = '{}' and exception = '{}'", e.getCause(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "An error occurred while deleting procuration"));
         }
     }
     @GetMapping("/comptes/espacePro/{espaceProId}")

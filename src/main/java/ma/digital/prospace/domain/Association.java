@@ -57,9 +57,15 @@ public class Association implements Serializable {
     private ComptePro compte;
     @ManyToOne
     private Rolee role;
+    @Column(name = "compte_initiateur_id")
+    private String compteInitiateurID;
+    public String getCompteInitiateurID() {
+        return compteInitiateurID;
+    }
 
-
-
+    public void setCompteInitiateurID(String compteInitiateurID) {
+        this.compteInitiateurID = compteInitiateurID;
+    }
     public UUID getId() {
         return id;
     }

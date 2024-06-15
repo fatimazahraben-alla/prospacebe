@@ -36,7 +36,14 @@ public class AssociationDTO implements Serializable {
 
 
     private StatutAssociation statut;
+    private String compteInitiateurID;
+    public String getCompteInitiateurID() {
+        return compteInitiateurID;
+    }
 
+    public void setCompteInitiateurID(String compteInitiateurID) {
+        this.compteInitiateurID = compteInitiateurID;
+    }
     public UUID getId() {
         return id;
     }
@@ -135,6 +142,7 @@ public class AssociationDTO implements Serializable {
                 ", dateFin=" + dateFin +
                 ", dateEffet=" + dateEffet +
                 ", statut=" + statut +
+                ", compteInitiateurID='" + compteInitiateurID + '\'' +
                 '}';
     }
 }

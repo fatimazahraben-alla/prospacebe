@@ -7,7 +7,9 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
+import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import ma.digital.prospace.service.mapper.AssociationMapper;
+import ma.digital.prospace.web.rest.errors.ErrorResponse;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +50,8 @@ public class AssociationService {
     @Autowired
     private SessionRepository sessionRepository;
     @Autowired
+    private ProcurationRepository procurationRepository;
+    @Autowired
     private CompteProRepository compteProRepository;
     @Autowired
     private EntrepriseRepository entrepriseRepository;
@@ -70,7 +74,8 @@ public class AssociationService {
                               ObjectMapper objectMapper,
                               FirebaseMessaging firebaseMessaging,
                               FirebaseNotificationService firebaseNotificationService,
-                              NotificationService notificationService) { // Add ObjectMapper to the constructor
+                              NotificationService notificationService,
+                              ProcurationRepository procurationRepository) { // Add ObjectMapper to the constructor
         this.associationRepository = associationRepository;
         this.auditAssociationRepository = auditAssociationRepository;
         this.associationMapper = associationMapper;
@@ -82,6 +87,7 @@ public class AssociationService {
         this.firebaseMessaging = firebaseMessaging;
         this.firebaseNotificationService = firebaseNotificationService;
         this.notificationService = notificationService;
+        this.procurationRepository = procurationRepository;
     }
     public AssociationDTO save(AssociationDTO associationDTO) {
         log.debug("Request to save Association : {}", associationDTO);
@@ -278,51 +284,114 @@ public class AssociationService {
     /**
      * Create an association
      */
-    public AssociationDTO createAssociationWithNotification(String compteID, String destinataireID, String entrepriseID, UUID roleID, String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
-        // Validation et récupération des entités requises
-        ComptePro initiateur = compteProRepository.findById(compteID)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Compte not found"));
-        ComptePro destinataire = compteProRepository.findById(destinataireID)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Destinataire not found"));
-        Entreprise entreprise = entrepriseRepository.findById(entrepriseID)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Entreprise not found"));
-        Rolee role = roleeRepository.findById(roleID)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found"));
+    public Optional<Object> createAssociationWithNotification(
+            String compteID, String destinataireID, String entrepriseID, UUID roleID,
+            String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
 
-        // Création et sauvegarde de l'association
+        log.debug("Tentative de création d'une association avec les paramètres : compteID={}, destinataireID={}, entrepriseID={}, roleID={}, prenomInitiateur={}, nomInitiateur={}, nomEntreprise={}",
+                compteID, destinataireID, entrepriseID, roleID, prenomInitiateur, nomInitiateur, nomEntreprise);
+
+        List<Association> existingAssociations = associationRepository.findByCompteIdAndEntrepriseId(destinataireID, entrepriseID);
+
+        for (Association assoc : existingAssociations) {
+            if (assoc.getRole().getId().equals(roleID)) {
+                log.warn("Une association avec le même rôle et entreprise existe déjà pour le ComptePro ID: {} et l'Entreprise ID: {}",
+                        destinataireID, entrepriseID);
+                return Optional.of(new ErrorResponse(
+                        "Une association existe déjà entre ces comptes pour le même rôle et entreprise.",
+                        409,
+                        "Conflict",
+                        "Une association pour le même rôle et entreprise existe déjà."
+                ));
+            }
+        }
+
+        Optional<ComptePro> initiateurOpt = compteProRepository.findById(compteID);
+        if (initiateurOpt.isEmpty()) {
+            log.warn("Le compte initiateur est introuvable : CompteProId={}", compteID);
+            return Optional.of(new ErrorResponse(
+                    "Le compte initiateur est introuvable.",
+                    404,
+                    "Not Found",
+                    "Le compte initiateur est introuvable avec l'ID fourni."
+            ));
+        }
+
+        Optional<ComptePro> destinataireOpt = compteProRepository.findById(destinataireID);
+        if (destinataireOpt.isEmpty()) {
+            log.warn("Le compte destinataire est introuvable : CompteProId={}", destinataireID);
+            return Optional.of(new ErrorResponse(
+                    "Le compte destinataire est introuvable.",
+                    404,
+                    "Not Found",
+                    "Le compte destinataire est introuvable avec l'ID fourni."
+            ));
+        }
+
+        Optional<Entreprise> entrepriseOpt = entrepriseRepository.findById(entrepriseID);
+        if (entrepriseOpt.isEmpty()) {
+            log.warn("L'entreprise est introuvable : EntrepriseId={}", entrepriseID);
+            return Optional.of(new ErrorResponse(
+                    "L'entreprise est introuvable.",
+                    404,
+                    "Not Found",
+                    "L'entreprise est introuvable avec l'ID fourni."
+            ));
+        }
+
+        Optional<Rolee> roleOpt = roleeRepository.findById(roleID);
+        if (roleOpt.isEmpty()) {
+            log.warn("Le rôle est introuvable : RoleId={}", roleID);
+            return Optional.of(new ErrorResponse(
+                    "Le rôle est introuvable.",
+                    404,
+                    "Not Found",
+                    "Le rôle est introuvable avec l'ID fourni."
+            ));
+        }
+
+        ComptePro initiateur = initiateurOpt.get();
+        ComptePro destinataire = destinataireOpt.get();
+        Entreprise entreprise = entrepriseOpt.get();
+        Rolee role = roleOpt.get();
+
         Association association = new Association();
         association.setCompte(destinataire);
         association.setEntreprise(entreprise);
         association.setRole(role);
         association.setStatut(StatutAssociation.PENDING);
-        association = associationRepository.save(association);
 
-        // Enregistrement dans l'audit
+        // Ajouter le compte initiateur
+        association.setCompteInitiateurID(compteID);
+
+        Association savedAssociation = associationRepository.save(association);
+
+        // Audit de l'association
         AuditAssociation audit = new AuditAssociation();
         audit.setCompteId(compteID);
-        audit.setAssociationId(association.getId());
+        audit.setAssociationId(savedAssociation.getId());
         audit.setAction("CREATE");
         audit.setTimestamp(Instant.now());
         auditAssociationRepository.save(audit);
 
-        // Envoi de la notification
         String message = String.format("%s %s vous invite en tant que %s dans l'entreprise %s",
                 prenomInitiateur, nomInitiateur, role.getNom(), nomEntreprise);
 
-        // Data for notification
         Map<String, String> data = new HashMap<>();
-        data.put("associationId", association.getId().toString());
+        data.put("associationId", savedAssociation.getId().toString());
         data.put("emeteurId", compteID);
         data.put("nom", nomInitiateur);
         data.put("prenom", prenomInitiateur);
         data.put("nomEntreprise", nomEntreprise);
-
+        data.put("typeNotification", "invitation");
 
         sendAndPersistNotification(destinataire.getId(), "Nouvelle invitation", message, data);
 
-        return associationMapper.toDto(association);
-    }
+        log.info("Association créée avec succès entre le ComptePro ID: {} et l'Entreprise ID: {} pour le rôle ID: {}",
+                destinataireID, entrepriseID, roleID);
 
+        return Optional.of(associationMapper.toDto(savedAssociation));
+    }
     public List<AssociationDTO> findAssociationsByCompteId(String compteId) {
         List<AuditAssociation> audits = auditAssociationRepository.findByCompteId(compteId);
         List<UUID> associationIds = audits.stream()
@@ -335,7 +404,7 @@ public class AssociationService {
                 .collect(Collectors.toList());
     }
     public AssociationDTO updateAssociationStatut(UUID associationId, StatutAssociation nouveauStatut, String nom, String prenom) throws FirebaseMessagingException {
-        log.debug("Request to update status of Association : {}, {}, {}, {}", associationId, nouveauStatut, nom, prenom);
+        log.debug("Request to update status of Association : {}, {}, {}", associationId, nouveauStatut, nom);
 
         Association association = associationRepository.findById(associationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Association not found with id " + associationId));
@@ -346,6 +415,7 @@ public class AssociationService {
 
         association.setStatut(nouveauStatut);
         association = associationRepository.save(association);
+
         AuditAssociation audit = auditAssociationRepository.findFirstByAssociationIdOrderByTimestampAsc(associationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Audit record not found for association id " + associationId));
 
@@ -361,6 +431,7 @@ public class AssociationService {
         data.put("emeteurId", association.getCompte().getId());
         data.put("nom", nom);
         data.put("prenom", prenom);
+        data.put("typeNotification", nouveauStatut == StatutAssociation.ACCEPTED ? "acceptation" : "refus");
 
         sendAndPersistNotification(initiatorId, title, message, data);
 
@@ -374,23 +445,26 @@ public class AssociationService {
 
         return associationMapper.toDto(association);
     }
-    public void deleteAssociation(UUID associationId, String nom, String prenom, String nomEntreprise) throws FirebaseMessagingException {
-        log.debug("Request to delete Association : {}, {}, {}", associationId, nom, prenom);
+    public void deleteAssociation(UUID associationId, NomPrenomEntrepriseDTO nomPrenomEntrepriseDTO) throws FirebaseMessagingException {
+        log.debug("Request to delete Association : {}, {}", associationId, nomPrenomEntrepriseDTO);
 
         Association association = associationRepository.findById(associationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Association not found"));
+
         AuditAssociation audit = auditAssociationRepository.findFirstByAssociationIdOrderByTimestampAsc(associationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Audit record not found for association id " + associationId));
 
         String initiatorId = audit.getCompteId();
 
         String messageToInitiator = String.format("L'association avec %s %s dans l'entreprise %s a été annulée.",
-                nom, prenom, nomEntreprise);
+                nomPrenomEntrepriseDTO.getNom(), nomPrenomEntrepriseDTO.getPrenom(), nomPrenomEntrepriseDTO.getNomEntreprise());
+
         Map<String, String> data = new HashMap<>();
         data.put("associationId", associationId.toString());
         data.put("emeteurId", association.getCompte().getId());
-        data.put("nom", nom);
-        data.put("prenom", prenom);
+        data.put("nom", nomPrenomEntrepriseDTO.getNom());
+        data.put("prenom", nomPrenomEntrepriseDTO.getPrenom());
+        data.put("typeNotification", "annulation");
 
         sendAndPersistNotification(initiatorId, "Association annulée", messageToInitiator, data);
 
@@ -403,9 +477,6 @@ public class AssociationService {
 
         associationRepository.deleteById(associationId);
     }
-
-
-
     private void sendAndPersistNotification(String compteProId, String title, String message, Map<String, String> data) throws FirebaseMessagingException {
         Contact contact = contactRepository.findByCompteProId(compteProId);
         if (contact != null && contact.getDeviceToken() != null && !contact.getDeviceToken().isEmpty()) {
@@ -422,13 +493,25 @@ public class AssociationService {
             throw new RuntimeException("Aucun token de device trouvé pour l'ID de ComptePro : " + compteProId);
         }
     }
-
     public List<String> getRolesByCompteProAndEntreprise(String compteProId,String entrepriseId) {
         return associationRepository.findRoleNamesByCompteProIdAndEntrepriseId(compteProId, entrepriseId);
     }
 
     public List<AssociationDTO> getEntrepriseRole(String fs, String compteProId) {
         List<Association> associations = associationRepository.findAllByFsAndCompteID(fs, compteProId);
+        return associations.stream()
+                .map(associationMapper::toDto)
+                .collect(Collectors.toList());
+    }
+    public List<AssociationDTO> findAssociationsCreatedByAccountAndDelegates(String compteID) {
+        // Récupérer toutes les associations où compteInitiateurID est le manager ou ses délégués avec des procurations acceptées.
+        List<Association> associations = associationRepository.findByCompteInitiateurID(compteID);
+
+        // Ajouter la récupération pour les délégués du manager.
+        associations.addAll(associationRepository.findByCompteInitiateurIDIn(
+                associationRepository.findAllAcceptedDelegatesByManagerId(compteID)
+        ));
+
         return associations.stream()
                 .map(associationMapper::toDto)
                 .collect(Collectors.toList());

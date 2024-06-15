@@ -1,6 +1,7 @@
 package ma.digital.prospace.repository;
 
 import ma.digital.prospace.domain.Procuration;
+import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -33,5 +34,6 @@ public interface ProcurationRepository extends JpaRepository<Procuration, UUID> 
     void deleteByCompteProId(String compteId);
     @Query("SELECT p FROM Procuration p WHERE p.gestionnaireEspacePro.id = :gestionnaireId AND p.statut = 'ACCEPTED'")
     List<Procuration> findAcceptedProcurationsForGestionnaire(@Param("gestionnaireId") String gestionnaireId);
+    List<Procuration> findByGestionnaireEspaceProIdAndStatut(String gestionnaireEspaceProId, StatutInvitation statut);
 
 }

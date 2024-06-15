@@ -21,4 +21,5 @@ public interface EntrepriseRepository extends JpaRepository<Entreprise, String> 
     List<Entreprise> findByGerantsId(String compteId);
 
     Entreprise findEntrepriseById(String id);
+
 }
