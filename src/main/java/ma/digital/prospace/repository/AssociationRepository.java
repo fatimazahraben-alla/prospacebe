@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -25,13 +26,20 @@ public interface AssociationRepository extends JpaRepository<Association, UUID> 
     @Query("SELECT a FROM Association a WHERE a.compte.id = :compteId")
     List<Association> findAllByCompteID(@Param("compteId") String compteId);
     List<Association> findByCompteIdAndEntrepriseId(String compteId, String entrepriseId);
-    List<Association> findByCompteIdAndStatutAndRoleNom(String compteId, StatutAssociation statut, String roleNom);
     List<Association> findAllById(Iterable<UUID> ids);
-    List<Association> findByCompteInitiateurID(String compteInitiateurID);
-    List<Association> findByCompteInitiateurIDIn(List<String> compteInitiateurIDs);
-    @Query("SELECT p.utilisateurPro.id FROM Procuration p WHERE p.gestionnaireEspacePro.id = :managerID AND p.statut = 'ACCEPTED'")
-    List<String> findAllAcceptedDelegatesByManagerId(@Param("managerID") String managerID);
-    @Query("SELECT a.compte.id FROM Association a WHERE a.entreprise.id = :entrepriseID AND a.role.nom = 'GESTIONNAIRE_ENTREPRISE' AND a.statut = 'ACCEPTED'")
-    List<String> findAcceptedEnterpriseManagersByEntrepriseId(@Param("entrepriseID") String entrepriseID);
+
+    List<Association> findByCompteInitiateurIDIn(Set<String> compteInitiateurIDs);
+    @Query("SELECT DISTINCT assoc.compte.id FROM Association assoc " +
+            "WHERE assoc.role.nom = 'gestionnaire_entreprise' " +
+            "AND assoc.statut = :statut " +
+            "AND assoc.id IN (" +
+            "    SELECT a.associationId FROM AuditAssociation a " +
+            "    WHERE a.compteId = :compteID)")
+    List<String> findAcceptedManagersByEntrepriseCompteId(
+            @Param("compteID") String compteID,
+            @Param("statut") StatutAssociation statut);
+
+
+
 }
 

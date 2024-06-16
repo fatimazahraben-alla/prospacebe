@@ -34,6 +34,11 @@ public interface ProcurationRepository extends JpaRepository<Procuration, UUID> 
     void deleteByCompteProId(String compteId);
     @Query("SELECT p FROM Procuration p WHERE p.gestionnaireEspacePro.id = :gestionnaireId AND p.statut = 'ACCEPTED'")
     List<Procuration> findAcceptedProcurationsForGestionnaire(@Param("gestionnaireId") String gestionnaireId);
-    List<Procuration> findByGestionnaireEspaceProIdAndStatut(String gestionnaireEspaceProId, StatutInvitation statut);
+
+    boolean existsByGestionnaireEspaceProIdAndUtilisateurProIdAndStatut(String gestionnaireEspaceProId, String utilisateurProId, StatutInvitation statut);
+
+    @Query("SELECT p.gestionnaireEspacePro.id FROM Procuration p " +
+            "WHERE p.utilisateurPro.id = :utilisateurProId AND p.statut = 'ACCEPTED'")
+    List<String> findAcceptedDelegatesByUtilisateurProId(@Param("utilisateurProId") String utilisateurProId);
 
 }

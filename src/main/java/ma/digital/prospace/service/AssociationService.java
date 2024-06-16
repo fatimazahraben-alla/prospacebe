@@ -284,15 +284,26 @@ public class AssociationService {
     /**
      * Create an association
      */
+
     public Optional<Object> createAssociationWithNotification(
             String compteID, String destinataireID, String entrepriseID, UUID roleID,
-            String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
+            String compteInitiateurID, String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
 
-        log.debug("Tentative de création d'une association avec les paramètres : compteID={}, destinataireID={}, entrepriseID={}, roleID={}, prenomInitiateur={}, nomInitiateur={}, nomEntreprise={}",
-                compteID, destinataireID, entrepriseID, roleID, prenomInitiateur, nomInitiateur, nomEntreprise);
+        log.debug("Tentative de création d'une association avec les paramètres : compteID={}, destinataireID={}, entrepriseID={}, roleID={}, compteInitiateurID={}, prenomInitiateur={}, nomInitiateur={}, nomEntreprise={}",
+                compteID, destinataireID, entrepriseID, roleID, compteInitiateurID, prenomInitiateur, nomInitiateur, nomEntreprise);
 
+        // Vérifier que compteInitiateurID est autorisé à créer une association au nom de compteID
+        if (!isAuthorizedInitiator(compteID, compteInitiateurID)) {
+            return Optional.of(new ErrorResponse(
+                    "Le compte initiateur n'a pas les droits nécessaires pour créer cette association.",
+                    403,
+                    "Forbidden",
+                    "Procuration ou association non acceptée."
+            ));
+        }
+
+        // Vérification de l'existence de l'association avec le même rôle et entreprise
         List<Association> existingAssociations = associationRepository.findByCompteIdAndEntrepriseId(destinataireID, entrepriseID);
-
         for (Association assoc : existingAssociations) {
             if (assoc.getRole().getId().equals(roleID)) {
                 log.warn("Une association avec le même rôle et entreprise existe déjà pour le ComptePro ID: {} et l'Entreprise ID: {}",
@@ -306,80 +317,41 @@ public class AssociationService {
             }
         }
 
-        Optional<ComptePro> initiateurOpt = compteProRepository.findById(compteID);
-        if (initiateurOpt.isEmpty()) {
-            log.warn("Le compte initiateur est introuvable : CompteProId={}", compteID);
-            return Optional.of(new ErrorResponse(
-                    "Le compte initiateur est introuvable.",
-                    404,
-                    "Not Found",
-                    "Le compte initiateur est introuvable avec l'ID fourni."
-            ));
-        }
+        // Récupération des entités
+        ComptePro initiateur = compteProRepository.findById(compteInitiateurID)
+                .orElseThrow(() -> new EntityNotFoundException("Le compte initiateur est introuvable."));
+        ComptePro destinataire = compteProRepository.findById(destinataireID)
+                .orElseThrow(() -> new EntityNotFoundException("Le compte destinataire est introuvable."));
+        Entreprise entreprise = entrepriseRepository.findById(entrepriseID)
+                .orElseThrow(() -> new EntityNotFoundException("L'entreprise est introuvable."));
+        Rolee role = roleeRepository.findById(roleID)
+                .orElseThrow(() -> new EntityNotFoundException("Le rôle est introuvable."));
 
-        Optional<ComptePro> destinataireOpt = compteProRepository.findById(destinataireID);
-        if (destinataireOpt.isEmpty()) {
-            log.warn("Le compte destinataire est introuvable : CompteProId={}", destinataireID);
-            return Optional.of(new ErrorResponse(
-                    "Le compte destinataire est introuvable.",
-                    404,
-                    "Not Found",
-                    "Le compte destinataire est introuvable avec l'ID fourni."
-            ));
-        }
-
-        Optional<Entreprise> entrepriseOpt = entrepriseRepository.findById(entrepriseID);
-        if (entrepriseOpt.isEmpty()) {
-            log.warn("L'entreprise est introuvable : EntrepriseId={}", entrepriseID);
-            return Optional.of(new ErrorResponse(
-                    "L'entreprise est introuvable.",
-                    404,
-                    "Not Found",
-                    "L'entreprise est introuvable avec l'ID fourni."
-            ));
-        }
-
-        Optional<Rolee> roleOpt = roleeRepository.findById(roleID);
-        if (roleOpt.isEmpty()) {
-            log.warn("Le rôle est introuvable : RoleId={}", roleID);
-            return Optional.of(new ErrorResponse(
-                    "Le rôle est introuvable.",
-                    404,
-                    "Not Found",
-                    "Le rôle est introuvable avec l'ID fourni."
-            ));
-        }
-
-        ComptePro initiateur = initiateurOpt.get();
-        ComptePro destinataire = destinataireOpt.get();
-        Entreprise entreprise = entrepriseOpt.get();
-        Rolee role = roleOpt.get();
-
+        // Création de l'association
         Association association = new Association();
         association.setCompte(destinataire);
         association.setEntreprise(entreprise);
         association.setRole(role);
         association.setStatut(StatutAssociation.PENDING);
-
-        // Ajouter le compte initiateur
-        association.setCompteInitiateurID(compteID);
+        association.setCompteInitiateurID(compteInitiateurID);
 
         Association savedAssociation = associationRepository.save(association);
 
         // Audit de l'association
         AuditAssociation audit = new AuditAssociation();
-        audit.setCompteId(compteID);
+        audit.setCompteId(compteID); // Stocker compteID pour vérification future
         audit.setAssociationId(savedAssociation.getId());
         audit.setAction("CREATE");
         audit.setTimestamp(Instant.now());
         auditAssociationRepository.save(audit);
 
+        // Notification
         String message = String.format("%s %s vous invite en tant que %s dans l'entreprise %s",
                 prenomInitiateur, nomInitiateur, role.getNom(), nomEntreprise);
 
         Map<String, String> data = new HashMap<>();
         data.put("associationId", savedAssociation.getId().toString());
-        data.put("emeteurId", compteID);
+        data.put("emeteurId", compteInitiateurID);
         data.put("nom", nomInitiateur);
         data.put("prenom", prenomInitiateur);
         data.put("nomEntreprise", nomEntreprise);
@@ -392,6 +364,32 @@ public class AssociationService {
 
         return Optional.of(associationMapper.toDto(savedAssociation));
     }
+
+    private boolean isAuthorizedInitiator(String compteID, String compteInitiateurID) {
+        // Vérifier si le compte initiateur est le compte principal
+        if (compteID.equals(compteInitiateurID)) {
+            return true;
+        }
+
+        // Vérifier si le compte initiateur a une procuration acceptée
+        boolean hasAcceptedProcuration = procurationRepository.existsByGestionnaireEspaceProIdAndUtilisateurProIdAndStatut(
+                compteInitiateurID, // Le gestionnaire de l'espace (initiateur)
+                compteID,          // Le compte principal
+                StatutInvitation.ACCEPTED
+        );
+
+        // Vérifier si le compte initiateur est un gestionnaire d'entreprise accepté
+        boolean hasAcceptedAssociation = auditAssociationRepository.existsByCompteIdAndAssociationIdAndAssociationRoleNomAndAssociationStatut(
+                compteInitiateurID,   // Le gestionnaire d'entreprise (initiateur)
+                compteID,             // Le compte principal
+                "gestionnaire_entreprise", // Le rôle de gestionnaire d'entreprise
+                StatutAssociation.ACCEPTED
+        );
+
+        return hasAcceptedProcuration || hasAcceptedAssociation;
+    }
+
+
     public List<AssociationDTO> findAssociationsByCompteId(String compteId) {
         List<AuditAssociation> audits = auditAssociationRepository.findByCompteId(compteId);
         List<UUID> associationIds = audits.stream()
@@ -503,15 +501,24 @@ public class AssociationService {
                 .map(associationMapper::toDto)
                 .collect(Collectors.toList());
     }
-    public List<AssociationDTO> findAssociationsCreatedByAccountAndDelegates(String compteID) {
-        List<Association> associations = associationRepository.findByCompteInitiateurID(compteID);
 
-        associations.addAll(associationRepository.findByCompteInitiateurIDIn(
-                associationRepository.findAllAcceptedDelegatesByManagerId(compteID)
-        ));
+    public List<AssociationDTO> findAssociationsCreatedByAccountAndDelegates(String compteID) {
+
+        List<String> delegateIds = procurationRepository.findAcceptedDelegatesByUtilisateurProId(compteID);
+
+        List<String> managerIds = associationRepository.findAcceptedManagersByEntrepriseCompteId(compteID, StatutAssociation.ACCEPTED);
+
+        Set<String> allRelatedIds = new HashSet<>(delegateIds);
+        allRelatedIds.addAll(managerIds);
+        allRelatedIds.add(compteID);
+
+        List<Association> associations = associationRepository.findByCompteInitiateurIDIn(allRelatedIds);
 
         return associations.stream()
                 .map(associationMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+
+
 }

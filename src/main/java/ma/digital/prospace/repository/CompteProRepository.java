@@ -26,6 +26,7 @@ public interface CompteProRepository extends JpaRepository<ComptePro, String> {
     List<Entreprise> findEntreprisesByGerants(@Param("compteProId") String compteProId);
 
     ComptePro findCompteProById(String compte);
-
+    @Query("SELECT e.id FROM Entreprise e JOIN e.associations a WHERE a.compte.id = :compteProId AND a.statut = 'ACCEPTED'")
+    List<String> findAllEntrepriseIdsByCompteProId(@Param("compteProId") String compteProId);
 
 }
