@@ -286,11 +286,11 @@ public class AssociationService {
      */
 
     public Optional<Object> createAssociationWithNotification(
-            String compteID, String destinataireID, String entrepriseID, UUID roleID,
-            String compteInitiateurID, String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
+            String compteID, String compteInitiateurID, String destinataireID, String entrepriseID, UUID roleID,
+            String prenomInitiateur, String nomInitiateur, String nomEntreprise) throws FirebaseMessagingException {
 
-        log.debug("Tentative de création d'une association avec les paramètres : compteID={}, destinataireID={}, entrepriseID={}, roleID={}, compteInitiateurID={}, prenomInitiateur={}, nomInitiateur={}, nomEntreprise={}",
-                compteID, destinataireID, entrepriseID, roleID, compteInitiateurID, prenomInitiateur, nomInitiateur, nomEntreprise);
+        log.debug("Tentative de création d'une association avec les paramètres : compteID={}, compteInitiateurID={}, destinataireID={}, entrepriseID={}, roleID={}, prenomInitiateur={}, nomInitiateur={}, nomEntreprise={}",
+                compteID, compteInitiateurID, destinataireID, entrepriseID, roleID, prenomInitiateur, nomInitiateur, nomEntreprise);
 
         // Vérifier que compteInitiateurID est autorisé à créer une association au nom de compteID
         if (!isAuthorizedInitiator(compteID, compteInitiateurID)) {
@@ -364,6 +364,7 @@ public class AssociationService {
 
         return Optional.of(associationMapper.toDto(savedAssociation));
     }
+
 
     private boolean isAuthorizedInitiator(String compteID, String compteInitiateurID) {
         // Vérifier si le compte initiateur est le compte principal

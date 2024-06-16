@@ -51,28 +51,6 @@ public class AssociationResource {
         this.roleeRepository = roleeRepository;
     }
 
-    /*@PostMapping("/associations")
-    public ResponseEntity<AssociationDTO> createAssociation(@Valid @RequestBody AssociationDTO associationDTO) throws URISyntaxException {
-        log.debug("REST request to save Association : {}", associationDTO);
-        if (associationDTO.getId() != null) {
-            throw new IllegalArgumentException("A new association cannot already have an ID");
-        }
-        AssociationDTO result = associationService.save(associationDTO);
-        return ResponseEntity.created(new URI("/api/associations/" + result.getId()))
-                .body(result);
-    }*/
-
-    /*@PutMapping("/associations")
-    public ResponseEntity<AssociationDTO> updateAssociation(@Valid @RequestBody AssociationDTO associationDTO) {
-        log.debug("REST request to update Association : {}", associationDTO);
-        if (associationDTO.getId() == null) {
-            throw new IllegalArgumentException("Invalid id");
-        }
-        AssociationDTO result = associationService.update(associationDTO);
-        return ResponseEntity.ok()
-                .body(result);
-    }*/
-
     @GetMapping("/associations")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Page<AssociationDTO>> getAllAssociations(Pageable pageable) {
@@ -140,20 +118,20 @@ public class AssociationResource {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Object> createAssociationWithNotification(
             @RequestParam String compteID,
+            @RequestParam String compteInitiateurID,
             @RequestParam String destinataireID,
             @RequestParam String entrepriseID,
             @RequestParam UUID roleID,
-            @RequestParam String compteInitiateurID,
             @RequestParam String prenomInitiateur,
             @RequestParam String nomInitiateur,
             @RequestParam String nomEntreprise) {
 
-        log.debug("Requête REST pour créer une association avec notification pour compteID: {}, destinataireID: {}, entrepriseID: {}, roleID: {}, compteInitiateurID: {}, prenomInitiateur: {}, nomInitiateur: {}, nomEntreprise: {}",
-                compteID, destinataireID, entrepriseID, roleID, compteInitiateurID, prenomInitiateur, nomInitiateur, nomEntreprise);
+        log.debug("Requête REST pour créer une association avec notification pour compteID: {}, compteInitiateurID: {}, destinataireID: {}, entrepriseID: {}, roleID: {}, prenomInitiateur: {}, nomInitiateur: {}, nomEntreprise: {}",
+                compteID, compteInitiateurID, destinataireID, entrepriseID, roleID, prenomInitiateur, nomInitiateur, nomEntreprise);
 
         try {
             Optional<Object> resultOpt = associationService.createAssociationWithNotification(
-                    compteID, destinataireID, entrepriseID, roleID, compteInitiateurID, prenomInitiateur, nomInitiateur, nomEntreprise);
+                    compteID, compteInitiateurID, destinataireID, entrepriseID, roleID, prenomInitiateur, nomInitiateur, nomEntreprise);
 
             if (resultOpt.isPresent()) {
                 Object result = resultOpt.get();
@@ -174,6 +152,7 @@ public class AssociationResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Erreur interne du serveur : " + e.getMessage()));
         }
     }
+
 
     @PatchMapping("/associations/{id}/status")
     @PreAuthorize("hasAuthority('ADMIN')")
