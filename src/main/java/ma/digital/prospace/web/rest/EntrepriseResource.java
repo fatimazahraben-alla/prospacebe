@@ -231,12 +231,12 @@ public class EntrepriseResource {
         return entrepriseWSMJService.getBycodeJuridictionAndnumRC(codeJuridiction, numRC);
     }
     @GetMapping("/entreprise/{compteid}")
-    public List<EntrepriseList> getEntreprisesByEspace(@PathVariable String compteid) {
-        List<EntrepriseList> entreprises = entrepriseService.findEntreprisesByCompteId(compteid);
+    public List<EntrepriseList> getEntreprisesByEspace(@PathVariable("compteid") String compteId, @RequestParam("espace") String espace) {
+        List<EntrepriseList> entreprises = entrepriseService.findEntreprisesByCompteId(compteId, espace);
         if (!entreprises.isEmpty()) {
-            auditLogger.info("{} entreprises trouvées pour l'identifiant : {}", entreprises.size(), compteid);
+            auditLogger.info("{} entreprises trouvées pour l'identifiant : {}", entreprises.size(), compteId);
         } else {
-            auditLogger.info("Aucune entreprise trouvée pour l'identifiant : {}", compteid);
+            auditLogger.info("Aucune entreprise trouvée pour l'identifiant : {}", compteId);
         }
         return entreprises;
     }
