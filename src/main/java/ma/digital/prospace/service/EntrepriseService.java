@@ -81,10 +81,10 @@ public class EntrepriseService {
         this.tribunalWSMJService = tribunalWSMJService;
     }
 
-
     public List<EntrepriseList> findEntreprisesByCompteId(String compteId, String espace) {
-        // cas de liste des entreprises de mon espace
-        if (compteId.equals(espace)) {
+        //cas de liste des entreprise de mon espace
+        if(compteId.equals(espace))
+        {
             ComptePro compte = CompteProRepository.findCompteProById(compteId);
             List<Entreprise> entreprises = entrepriseRepository.findByGerantsId(compteId);
             if (entreprises != null && !entreprises.isEmpty() && compte != null) {
@@ -97,27 +97,31 @@ public class EntrepriseService {
                             return entrepriseList;
                         })
                         .collect(Collectors.toList());
-            }
+              }
         } else {
-            Procuration procurationExistante = procurationRepository.findProcurationByGestionnaireEspaceProId(compteId);
-            if (procurationExistante != null && procurationExistante.getStatut() == StatutInvitation.ACCEPTED) {
-                ComptePro utilisateurPro = procurationExistante.getUtilisateurPro();
-                List<Entreprise> entreprises = entrepriseRepository.findByGerantsId(utilisateurPro.getId());
-                return entreprises.stream()
-                        .map(entreprise -> {
-                            EntrepriseList entrepriseList = new EntrepriseList();
-                            entrepriseList.setId(entreprise.getId());
-                            entrepriseList.setEtat(entreprise.getEtat());
-                            // Autres mappings nécessaires
-                            return entrepriseList;
-                        })
-                        .collect(Collectors.toList());
-            } else {
-                return Collections.emptyList();
+                Procuration procurationExistante = procurationRepository.findProcurationByGestionnaireEspaceProIdAndUtilisateurProId(compteId,espace);
+                if (procurationExistante != null && procurationExistante.getStatut() == StatutInvitation.ACCEPTED) {
+                    ComptePro utilisateurPro = procurationExistante.getUtilisateurPro();
+                    List<Entreprise> entreprises1 = entrepriseRepository.findByGerantsId(utilisateurPro.getId());
+                    return entreprises1.stream()
+                            .map(entreprise -> {
+                                EntrepriseList entrepriseList = new EntrepriseList();
+                                entrepriseList.setId(entreprise.getId());
+                                entrepriseList.setEtat(entreprise.getEtat());
+                                // Autres mappings nécessaires
+                                return entrepriseList;
+                            })
+                            .collect(Collectors.toList());
+                } else {
+                    return Collections.emptyList();
+                }
+
             }
-        }
-        return Collections.emptyList();
+        return null;
+
     }
+
+
 
 
     /**

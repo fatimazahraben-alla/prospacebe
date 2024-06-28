@@ -305,7 +305,7 @@ public class AssociationService {
         // Vérification de l'existence de l'association avec le même rôle et entreprise
         List<Association> existingAssociations = associationRepository.findByCompteIdAndEntrepriseId(destinataireID, entrepriseID);
         for (Association assoc : existingAssociations) {
-            if (assoc.getRole().getId().equals(roleID)) {
+            if (assoc.getRole().getId().equals(roleID) ) {
                 log.warn("Une association avec le même rôle et entreprise existe déjà pour le ComptePro ID: {} et l'Entreprise ID: {}",
                         destinataireID, entrepriseID);
                 return Optional.of(new ErrorResponse(
