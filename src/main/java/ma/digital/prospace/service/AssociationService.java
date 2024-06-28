@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import ma.digital.prospace.service.mapper.AssociationMapper;
+import ma.digital.prospace.service.mapper.EntrepriseMapper;
 import ma.digital.prospace.web.rest.errors.ErrorResponse;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
@@ -59,12 +60,14 @@ public class AssociationService {
     private RoleeRepository roleeRepository;
     @Autowired
     private final FirebaseMessaging firebaseMessaging;
+
+    private  EntrepriseMapper entrepriseMapper;
     private Logger logger = LoggerFactory.getLogger(AssociationService.class);
     private final FirebaseNotificationService firebaseNotificationService;
     private final ObjectMapper objectMapper;
     private final NotificationService notificationService;
     // Constructor
-    public AssociationService(AssociationRepository associationRepository,
+    public AssociationService(EntrepriseMapper entrepriseMapper,AssociationRepository associationRepository,
                               AuditAssociationRepository auditAssociationRepository,
                               AssociationMapper associationMapper,
                               SessionRepository sessionRepository,
@@ -88,6 +91,7 @@ public class AssociationService {
         this.firebaseNotificationService = firebaseNotificationService;
         this.notificationService = notificationService;
         this.procurationRepository = procurationRepository;
+        this.entrepriseMapper=entrepriseMapper;
     }
     public AssociationDTO save(AssociationDTO associationDTO) {
         log.debug("Request to save Association : {}", associationDTO);
@@ -502,6 +506,30 @@ public class AssociationService {
                 .map(associationMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    public List<EntrepriseDTO> getEntreprisesByCompteGestionnaire(String compteId, String espace) {
+        List<EntrepriseDTO> allEntreprises = new ArrayList<>();
+        List<Association> associations = associationRepository.findAssociationsByCompte_IdAndCompteInitiateurID(compteId, espace);
+
+        for (Association association : associations) {
+            Entreprise entrepriseExisting = association.getEntreprise();
+            Rolee roleExisting = association.getRole();
+            String roleName = roleExisting.getNom();
+
+
+            if (entrepriseExisting != null && "gestionnaire_entreprise".equals(roleName)) {
+
+                EntrepriseDTO entrepriseDtoExisting = entrepriseMapper.toDto(entrepriseExisting);
+                entrepriseDtoExisting.setComptegestionnaire(association.getCompte().getId());
+                entrepriseDtoExisting.setCompteId(association.getCompteInitiateurID());
+                allEntreprises.add(entrepriseDtoExisting);
+            }
+        }
+        return allEntreprises;
+    }
+
+
+
 
     public List<AssociationDTO> findAssociationsCreatedByAccountAndDelegates(String compteID) {
 

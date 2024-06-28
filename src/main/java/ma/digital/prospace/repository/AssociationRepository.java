@@ -28,6 +28,9 @@ public interface AssociationRepository extends JpaRepository<Association, UUID> 
     List<Association> findByCompteIdAndEntrepriseId(String compteId, String entrepriseId);
     List<Association> findAllById(Iterable<UUID> ids);
 
+
+    List<Association> findAssociationsByCompte_IdAndCompteInitiateurID(String Compte,String Compteinit);
+
     List<Association> findByCompteInitiateurIDIn(Set<String> compteInitiateurIDs);
     @Query("SELECT DISTINCT assoc.compte.id FROM Association assoc " +
             "WHERE assoc.role.nom = 'gestionnaire_entreprise' " +

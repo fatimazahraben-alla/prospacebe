@@ -14,11 +14,15 @@ public class EntrepriseRequest2 {
     private String COMPID;
     private Statut Perphysique_Permorale;
 
+    private String CompteInitiateur;
 
+    public String getCompteInitiateur() {
+        return CompteInitiateur;
+    }
 
-
-
-
+    public void setCompteInitiateur(String compteInitiateur) {
+        CompteInitiateur = compteInitiateur;
+    }
 
     public String getTribunal() {
         return tribunal;

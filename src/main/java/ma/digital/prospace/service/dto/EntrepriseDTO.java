@@ -19,6 +19,7 @@ public class EntrepriseDTO implements Serializable {
     private String etat;
     private String CompteId;
 
+
     private String comptegestionnaire ;
 
 

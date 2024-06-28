@@ -220,4 +220,15 @@ public class AssociationResource {
         List<AssociationDTO> associations = associationService.findAssociationsCreatedByAccountAndDelegates(compteID);
         return ResponseEntity.ok().body(associations);
     }
+
+    @GetMapping("/entreprisesgesionnaire")
+    public ResponseEntity<List<EntrepriseDTO>> getEntreprisesByCompteGestionnaire(@RequestParam String compteId, @RequestParam String espace) {
+        List<EntrepriseDTO> allEntreprises = associationService.getEntreprisesByCompteGestionnaire(compteId, espace);
+
+        if (allEntreprises.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(allEntreprises, HttpStatus.OK);
+        }
+    }
 }
