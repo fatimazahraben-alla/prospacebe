@@ -309,7 +309,7 @@ public class AssociationService {
         // Vérification de l'existence de l'association avec le même rôle et entreprise
         List<Association> existingAssociations = associationRepository.findByCompteIdAndEntrepriseId(destinataireID, entrepriseID);
         for (Association assoc : existingAssociations) {
-            if (assoc.getRole().getId().equals(roleID) ) {
+            if (assoc.getRole().getId().equals(roleID)) {
                 log.warn("Une association avec le même rôle et entreprise existe déjà pour le ComptePro ID: {} et l'Entreprise ID: {}",
                         destinataireID, entrepriseID);
                 return Optional.of(new ErrorResponse(
@@ -349,7 +349,8 @@ public class AssociationService {
         audit.setTimestamp(Instant.now());
         auditAssociationRepository.save(audit);
 
-        // Notification
+        // Définir le type de notification en fonction du rôle
+        String typeNotification = role.getNom().equalsIgnoreCase("gestionnaire_entreprise") ? "inviter_gestionnaire_entreprise" : "inviter_membre_entreprise";
         String message = String.format("%s %s vous invite en tant que %s dans l'entreprise %s",
                 prenomInitiateur, nomInitiateur, role.getNom(), nomEntreprise);
 
@@ -359,7 +360,10 @@ public class AssociationService {
         data.put("nom", nomInitiateur);
         data.put("prenom", prenomInitiateur);
         data.put("nomEntreprise", nomEntreprise);
-        data.put("typeNotification", "invitation");
+        data.put("typeNotification", typeNotification);
+        data.put("roleNom", role.getNom());
+        data.put("roleId", roleID.toString());
+        data.put("entrepriseId", entrepriseID);
 
         sendAndPersistNotification(destinataire.getId(), "Nouvelle invitation", message, data);
 
@@ -368,7 +372,6 @@ public class AssociationService {
 
         return Optional.of(associationMapper.toDto(savedAssociation));
     }
-
 
     private boolean isAuthorizedInitiator(String compteID, String compteInitiateurID) {
         // Vérifier si le compte initiateur est le compte principal
@@ -393,6 +396,7 @@ public class AssociationService {
 
         return hasAcceptedProcuration || hasAcceptedAssociation;
     }
+
 
 
     public List<AssociationDTO> findAssociationsByCompteId(String compteId) {
