@@ -293,7 +293,7 @@ public class EntrepriseService {
     }
 
 
-    private boolean checkManager(EntrepriseRequest2 entrepriseRequest2, EntrepriseWSMJ entreprise, String CompID) {
+   public boolean checkManager(EntrepriseRequest2 entrepriseRequest2, EntrepriseWSMJ entreprise, String CompID) {
         List<DirigeantPMDTO> dirigeantsPM = entreprise.getPersonneRc().getDirigeantsPM();
         for (DirigeantPMDTO dirigeant : dirigeantsPM) {
             List<RepresentantDTO> representants = dirigeant.getRepresentants();
@@ -479,7 +479,7 @@ public class EntrepriseService {
 
     }
 
-    private boolean checktribunal( List<Juridiction> juridictions,EntrepriseRequest2 entrepriseRequest2) {
+    public boolean checktribunal( List<Juridiction> juridictions,EntrepriseRequest2 entrepriseRequest2) {
         for (Juridiction tribunal : juridictions) {
             if (tribunal.getCode().equals(entrepriseRequest2.getTribunal())) {
                 return true;

@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class ObservationDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    @JsonProperty("DateObservation")
+    @JsonProperty("DeteObservation")
     private Date dateObservation;
 
     @JsonProperty("Resume")

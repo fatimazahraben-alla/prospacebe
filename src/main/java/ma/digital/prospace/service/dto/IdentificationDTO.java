@@ -10,7 +10,16 @@ public class IdentificationDTO {
 
     @JsonProperty("NumChronologique")
     private String numChronologique;
+    @JsonProperty("SiegeSocial")
+    private SiegeSocialDTO SiegeSocial;
 
+    public SiegeSocialDTO getSiegeSocial() {
+        return SiegeSocial;
+    }
+
+    public void setSiegeSocial(SiegeSocialDTO siegeSocial) {
+        SiegeSocial = siegeSocial;
+    }
 
     @JsonProperty("Denomination")
     private String denomination;

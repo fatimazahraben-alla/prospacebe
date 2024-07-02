@@ -8,9 +8,6 @@ public class PersonneRcDTO {
     @JsonProperty("Identification")
     private IdentificationDTO identification;
 
-    @JsonProperty("SiegeSocial")
-    private SiegeSocialDTO SiegeSocial;
-
     @JsonProperty("SuccurssalesOuAgences")
     private List<SuccursaleOuAgenceDTO> succurssalesOuAgences;
 
@@ -28,13 +25,7 @@ public class PersonneRcDTO {
         this.identification = identification;
     }
 
-    public SiegeSocialDTO getSiegeSocial() {
-        return SiegeSocial;
-    }
 
-    public void setSiegeSocial(SiegeSocialDTO siegeSocial) {
-        SiegeSocial = siegeSocial;
-    }
 
     public List<SuccursaleOuAgenceDTO> getSuccurssalesOuAgences() {
         return succurssalesOuAgences;

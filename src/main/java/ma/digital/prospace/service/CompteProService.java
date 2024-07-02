@@ -146,7 +146,13 @@ public class CompteProService {
         log.debug("Request to get ComptePro : {}", id);
         return compteProRepository.findById(id).map(compteProMapper::toDto);
     }
-
+    @Transactional
+    public List<CompteProDTO> findAll() {
+        log.debug("Request to get all ComptePros");
+        return compteProRepository.findAll().stream()
+                .map(compteProMapper::toDto)
+                .collect(Collectors.toList());
+    }
     /**
      * Delete the comptePro by id.
      *
