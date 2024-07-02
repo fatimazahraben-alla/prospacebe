@@ -7,15 +7,14 @@ import java.util.stream.Collectors;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import ma.digital.prospace.domain.ComptePro;
 import ma.digital.prospace.domain.Contact;
+import ma.digital.prospace.domain.Entreprise;
 import ma.digital.prospace.domain.Procuration;
 import ma.digital.prospace.domain.enumeration.StatutAssociation;
 import ma.digital.prospace.domain.enumeration.StatutInvitation;
 import ma.digital.prospace.repository.CompteProRepository;
 import ma.digital.prospace.repository.ContactRepository;
 import ma.digital.prospace.repository.ProcurationRepository;
-import ma.digital.prospace.service.dto.NomPrenomDTO;
-import ma.digital.prospace.service.dto.NotificationDTO;
-import ma.digital.prospace.service.dto.ProcurationDTO;
+import ma.digital.prospace.service.dto.*;
 import ma.digital.prospace.service.mapper.ProcurationMapper;
 import ma.digital.prospace.web.rest.errors.ErrorResponse;
 import org.slf4j.Logger;
@@ -41,13 +40,16 @@ public class ProcurationService {
     private final ProcurationMapper procurationMapper;
     private final CompteProRepository compteProRepository;
 
-    public ProcurationService(ProcurationRepository procurationRepository, ProcurationMapper procurationMapper, CompteProRepository compteProRepository, FirebaseNotificationService firebaseNotificationService, ContactRepository contactRepository, NotificationService notificationService) {
+    private final EntrepriseService entrepriseService;
+
+    public ProcurationService(EntrepriseService entrepriseService,ProcurationRepository procurationRepository, ProcurationMapper procurationMapper, CompteProRepository compteProRepository, FirebaseNotificationService firebaseNotificationService, ContactRepository contactRepository, NotificationService notificationService) {
         this.procurationRepository = procurationRepository;
         this.procurationMapper = procurationMapper;
         this.compteProRepository = compteProRepository;
         this.firebaseNotificationService = firebaseNotificationService;
         this.contactRepository = contactRepository;
         this.notificationService = notificationService;
+        this.entrepriseService = entrepriseService;
     }
 
     /**
@@ -172,9 +174,11 @@ public class ProcurationService {
         procuration.setUtilisateurPro(utilisateur);
         procuration.setStatut(StatutInvitation.PENDING);
 
+        List<EntrepriseList> entrepriseLists = entrepriseService.findEntreprisesByCompteId(procurationDTO.getUtilisateurProId(),procurationDTO.getUtilisateurProId());
         Procuration savedProcuration = procurationRepository.save(procuration);
         String title = "Nouvelle demande de procuration";
         String message = "Vous avez reçu une nouvelle demande de procuration de " + procurationDTO.getNomUtilisateurPro() + " " + procurationDTO.getPrenomUtilisateurPro();
+
 
         // Data pour la notification
         Map<String, String> data = new HashMap<>();
@@ -182,6 +186,7 @@ public class ProcurationService {
         data.put("emeteurId", utilisateur.getId());
         data.put("nom", procurationDTO.getNomUtilisateurPro());
         data.put("prenom", procurationDTO.getPrenomUtilisateurPro());
+        data.put("Entreprises",entrepriseLists.toString());
         data.put("typeNotification", "invitation");
 
         sendAndPersistNotification(gestionnaire.getId(), title, message, data);
